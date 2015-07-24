@@ -1,0 +1,120 @@
+\documentclass[a4paper,10pt]{article}
+
+%include paper.fmt
+
+\usepackage{color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+
+
+%% Encoding, font stuff
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Symbols and whatever
+\usepackage{amsmath,amsthm,amssymb,stmaryrd}
+
+%% Layout stuff and other related goodies.
+\usepackage[parfill]{parskip}
+\usepackage{xspace}
+\usepackage{todonotes}
+
+
+%% URLs and other link stuff
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[noabbrev]{cleveref}
+
+\hypersetup{
+  colorlinks,
+  citecolor=DarkBlue,
+  linkcolor=black,
+  urlcolor=DarkBlue}
+
+% Bibliography stuff
+\usepackage[autostyle]{csquotes}
+
+%% Commands
+\newcommand{\todoi}[1]{\todo[inline]{#1}}
+\newcommand{\withoutk}{\xspace\verb+--without-K+\xspace}
+\newcommand{\uip}{uniqueness of identity proofs\xspace}
+\newcommand{\Uip}{Uniqueness of identity proofs\xspace}
+\newcommand{\hott}{homotopy type theory\xspace}
+\newcommand{\Hott}{Homotopy type theory\xspace}
+\newcommand{\mltt}{Martin-L\"of's type theory\xspace}
+\newcommand{\hit}{higher inductive type\xspace}
+\newcommand{\Hit}{Higher inductive type\xspace}
+\newcommand{\hits}{higher inductive types\xspace}
+\newcommand{\Hits}{Higher inductive types\xspace}
+\newcommand{\oit}{ordinary inductive type\xspace}
+\newcommand{\Oit}{Ordinary inductive type\xspace}
+\newcommand{\oits}{ordinary inductive types\xspace}
+\newcommand{\Oits}{Ordinary inductive types\xspace}
+\newcommand{\zeroconstructor}{$0$-constructor\xspace}
+\newcommand{\zeroconstructors}{$0$-constructors\xspace}
+\newcommand{\onehit}{$1$-HIT\xspace}
+\newcommand{\onehits}{$1$-HITs\xspace}
+\newcommand{\oneconstructor}{$1$-constructor\xspace}
+\newcommand{\oneconstructors}{$1$-constructors\xspace}
+\newcommand{\twohit}{$2$-HIT\xspace}
+\newcommand{\twohits}{$2$-HITs\xspace}
+\newcommand{\twoconstructor}{$2$-constructor\xspace}
+\newcommand{\twoconstructors}{$2$-constructors\xspace}
+\newcommand{\zerovariable}{$0$-variable\xspace}
+\newcommand{\onevariable}{$1$-variable\xspace}
+\newcommand{\twovariable}{$2$-variable\xspace}
+\newcommand{\zerovariables}{$0$-variables\xspace}
+\newcommand{\onevariables}{$1$-variables\xspace}
+\newcommand{\twovariables}{$2$-variables\xspace}
+\newcommand{\ie}{i.e.\xspace}
+\newcommand{\eg}{e.g.\xspace}
+\newcommand{\Type}{\mbox{Type}}
+
+% Path composition from The Book.
+\newcommand{\ct}{%
+  \mathchoice{\mathbin{\raisebox{0.5ex}{$\displaystyle\centerdot$}}}%
+             {\mathbin{\raisebox{0.5ex}{$\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
+             {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
+}
+
+\title{Notes on \onehits}
+
+\author{Gabe Dijkstra}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+The data for higher inductive types are comprised of a sequence of
+(higher) constructors. Each constructor can be given as a dependent
+dialgebra on the category of dependent dialgebras of the previous
+constructor, with $\Type$ being the base of this induction. Suppose we
+have a higher inductive type $T$, given by the following constructors:
+
+\begin{align*}
+  &c_0 : (x : F_0 T)                         &\rightarrow &G_0 (T, x) \\
+  &c_1 : (x : F_1 (T, c_0))                  &\rightarrow &G_1 ((T, c_0), x) \\
+  &c_2 : (x : F_2 (T, c_0, c_1))             &\rightarrow &G_2 ((T, c_0, c_1), x) \\
+  \vdots \\                               
+  &c_k : (x : F_k (T, c_0, \hdots, c_{k-1}))  &\rightarrow &G_k ((T, c_0, \hdots, c_{k-1}), x)
+\end{align*}
+
+Where the functors have the following types:
+
+\begin{align*}
+  F_0 : \Type \rightarrow \Type \\
+  F_{i+1} : (F_i,G_i)\mbox{-dialg} \rightarrow \Type \\
+\end{align*}
+
+\begin{align*}
+  G_0 : \int_{\Type} F_0 \rightarrow \Type \\
+  G_{i+1} : \int_{(F_i,G_i)\mbox{-dialg}} F_{i+1} \rightarrow \Type \\
+\end{align*}
+
+\todoi{Derivation of free monad approach}
+
+\todoi{Write down type formation rules etc. for the restricted version of the \onehit.}
+
+\end{document}
