@@ -8,7 +8,7 @@ LOG=$(subst .ltx,.log,$(LTX))
 default : $(PDF)
 
 $(TEX) : $(LTX) $(FMT)
-	lhs2TeX $(LTX) > $(TEX)
+	lhs2TeX --agda $(LTX) > $(TEX)
 
 preview : $(PDF)
 	@if [ `uname` = 'Darwin' ]; then \

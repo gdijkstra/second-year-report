@@ -1,17 +1,20 @@
 \documentclass[a4paper,10pt]{article}
 
-%include note.fmt
-
 \usepackage{color}
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 
 
 %% Encoding, font stuff
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{autofe}
+\usepackage{ucs}
+\usepackage[greek,english]{babel}
+\usepackage{bbm}
 
 %% Symbols and whatever
-\usepackage{amsmath,amsthm,amssymb,stmaryrd}
+\usepackage{amsmath,amsthm,amssymb,amsfonts,stmaryrd}
+
+%include note.fmt
 
 %% Layout stuff and other related goodies.
 \usepackage[parfill]{parskip}
@@ -68,14 +71,12 @@
 \newcommand{\ie}{i.e.\xspace}
 \newcommand{\eg}{e.g.\xspace}
 \newcommand{\Type}{\mbox{Type}}
-
-% Path composition from The Book.
-\newcommand{\ct}{%
-  \mathchoice{\mathbin{\raisebox{0.5ex}{$\displaystyle\centerdot$}}}%
-             {\mathbin{\raisebox{0.5ex}{$\centerdot$}}}%
-             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
-             {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
-}
+\newcommand{\wtypes}{$W$-types\xspace}
+\newcommand{\wtype}{$W$-type\xspace}
+\newcommand{\ronehit}{restricted \onehit\xspace}
+\newcommand{\ronehits}{restricted \onehits\xspace}
+\newcommand{\Ronehit}{Restricted \onehit\xspace}
+\newcommand{\Ronehits}{Restricted \onehits\xspace}
 
 \title{Notes on \onehits}
 
@@ -86,5 +87,166 @@
 \begin{document}
 
 \maketitle
+
+\section{Introduction}
+
+\section{Describing \hits}
+
+
+\section{\Ronehits}
+
+
+
+\section{Homotopy initiality for \wtypes}
+
+In type theory, a data type is described by its introduction rule (the
+constructors) and its elimination rule (the induction principle) along
+with a computation rule describing how these two rules interact.
+
+\todoi{Natural numbers example?}
+
+\subsection{Induction principle}
+
+Given a functor |F : Type -> Type| given as a container |F := S
+◁ P|, the \wtype |W| is defined as having the following
+introduction rule / constructor:
+
+\begin{code}
+  c : F W -> W
+\end{code}
+
+as well as an elimination rule / induction principle:
+
+\begin{code}
+  ind :   
+       (B : W -> Type)
+       (m : (x : F W) → □ F B x → B (c x))
+       (x : W) 
+   ->  B x
+
+\end{code}
+
+with computation rule:
+
+\begin{code}
+  ind-β₀ :
+       (B : W -> Type) 
+       (m : (x : F W) → □ F B x → B (c x))
+       (x : F W)
+   ->  ind B m (c x) == m x (□-lift F (ind B m) x)
+\end{code}
+
+\subsection{Algebras}
+
+The type of \emph{|F|-algebras}, or simply \emph{algebras}, can be
+defined as follows:
+
+\begin{code}
+  Alg := (X : Type) × (θ : F X -> X)
+\end{code}
+
+where the type morphisms is defined as follows:
+
+\begin{code}
+  Alg-hom : Alg -> Alg -> Type
+  Alg-hom (X , θ) (Y , ρ) :=
+       (f : X -> Y)
+    ×  (f-β₀ : (x : F X) -> f (θ x) == ρ (F f x))
+\end{code}
+
+The witness of commutativity has suggestively been named |f-β₀| as
+this gives us the |β|-rule for the recursion and induction principles.
+
+\todoi{Something about having |f₀ : f ∘ θ = ρ ∘ F f| instead. We need
+  function extensionality either way, but this way it makes the
+  arguments later on a bit easier. Also, the dependent versions don't
+  work as pointfree as these ones}
+
+\subsubsection{Homotopy initial algebras}
+
+We call an algebra |(X , θ)| \emph{homotopy initial} if it has the
+property that for every algebra |(Y , ρ)|, |Alg-hom (X , θ) (Y , ρ)|
+is contractible, \ie:
+
+\begin{code}
+  is-initial : Alg -> Type
+  is-initial θ  :=  (ρ : Alg) → is-contr (Alg-hom θ ρ)
+                =   (ρ : Alg) → (f : Alg-hom θ ρ) × ((g : Alg-hom θ ρ) → f == g)
+\end{code}
+
+\subsubsection{Equality of algebra morphisms}
+
+As we see in the definition of homotopy initiality, we need to be able
+to talk about equality of algebra morphisms. Given algebras |(X , θ)|
+and |(Y , ρ)| and morphisms |(f , f-β₀)| and |(g , g-β₀)| between
+them, we know that, by equality on Σ-types, the following holds:
+
+\begin{code}
+   (f , f-β₀) == (g , g-β₀)
+≃  (p : f == g) 
+×  (p-β₀ : transport (λ h → (x : F X) → h (θ x) == ρ (F h x)) f-β₀ == g-β₀)
+\end{code}
+
+We not only need to show that the functions |f| and |g| are equal, but
+also that their β-laws are in some sense compatible with eachother,
+respecting the equality |f == g|.
+
+As it turns out, the above is equivalent to something which is more
+convenient in subsequent proofs:
+
+
+\begin{code}
+   transport (λ h → (x : F X) → h (θ x) == ρ (F h x)) p f-β₀ == g-β₀
+
+≃ { transport over Π-types } 
+
+   (λ x → transport (λ h → h (θ x) == ρ (F h x)) p (f-β₀ x)) == g-β₀
+
+≃ { function extensionality }
+
+   ((x : A) → transport (λ h → h (θ x) == ρ (F h x)) p (f-β₀ x) == g-β₀ x)
+
+≃ { transporting over equalities }
+
+   ! (ap (λ h → h (θ x)) p) ∙ f-β₀ x ∙ ap (λ h → ρ (F h x)) p == g-β₀ x
+
+≃ { path algebra }
+  
+  f-β₀ x ∙ ap (λ h → ρ (F h x)) p == ap (λ h → h (θ x)) p ∙ g-β₀ x
+
+\end{code}
+
+The last equation tells us that showing that two algebra morphisms are
+equal is somewhat like giving an algebra morphism from the witness of
+the β-law for |f| to that of |g|, as we can see if we draw the
+corresponding diagram:
+
+\todoi{comm diag}
+
+
+
+\subsection{Initiality implies induction}
+
+The induction principle tells us that for a family |B : W -> Type| and
+a motive |m : (x : F W) → □ F B x → B (c x)|, we get a dependent
+function |ind : (x : W) -> B x| along with a computation rule.
+
+Note that |m|, along with |c|, can be seen as a morphism between the
+families |(W , B)| and |(F W , □ F B)|.
+
+Another way to say this is that given a function |p : B -> W| for some
+|B : Type| and that we want |θ : F B -> B| such that |θ|, along with
+|c|, becomes a morphism |Fp -> p| in the arrow category. This is
+equivalent to asking for an algebra |(B , θ)| along with an algebra
+morphism |(B , θ) -> (W , c)|.
+
+
+
+\subsection{Induction implies initiality}
+
+
+\section{Homotopy initiality for restricted \onehits}
+
+
 
 \end{document}

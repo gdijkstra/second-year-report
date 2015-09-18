@@ -1,5 +1,21 @@
 \documentclass[a4paper,10pt]{article}
 
+\usepackage{color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+
+
+%% Encoding, font stuff
+\usepackage[utf8x]{inputenc}
+\usepackage{autofe}
+\usepackage{ucs}
+\usepackage[greek,english]{babel}
+\usepackage{bbm}
+
+%% Symbols and whatever
+\usepackage{amsmath,amsthm,amssymb,amsfonts,stmaryrd}
+
+% Format file based on agda.fmt as included in lhs2TeX distribution.
+
 %% ODER: format ==         = "\mathrel{==}"
 %% ODER: format /=         = "\neq "
 %
@@ -259,18 +275,45 @@
 \makeatother
 \EndFmtInput
 %
+%
+\ReadOnlyOnce{note.fmt}%
 
 
-\usepackage{color}
-\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\providecommand\mathbbm{\mathbb}
+
+% Path composition from The Book.
+\newcommand{\ct}{%
+  \mathchoice{\mathbin{\raisebox{0.5ex}{$\displaystyle\centerdot$}}}%
+             {\mathbin{\raisebox{0.5ex}{$\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
+             {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
+}
+
+\DeclareUnicodeCharacter{737}{\textsuperscript{l}}
+\DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
+\DeclareUnicodeCharacter{8759}{::}
+\DeclareUnicodeCharacter{9669}{\ensuremath{\triangleleft}}
+\DeclareUnicodeCharacter{9665}{\ensuremath{\triangleleft}}
+\DeclareUnicodeCharacter{8799}{\ensuremath{\stackrel{\scriptscriptstyle ?}{=}}}
+\DeclareUnicodeCharacter{10214}{\ensuremath{\llbracket}}
+\DeclareUnicodeCharacter{10215}{\ensuremath{\rrbracket}}
+\DeclareUnicodeCharacter{946}{\ensuremath{\beta}}
+\DeclareUnicodeCharacter{8729}{\ensuremath{\ct}}
+% TODO: This is in general not a good idea.
+\providecommand\textepsilon{$\epsilon$}
+\providecommand\textmu{$\mu$}
+\providecommand\textbeta{$\beta$}
+\providecommand\texttheta{$\theta$}
 
 
-%% Encoding, font stuff
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%Actually, varsyms should not occur in Agda output.
 
-%% Symbols and whatever
-\usepackage{amsmath,amsthm,amssymb,stmaryrd}
+\renewcommand\Varid[1]{\mathord{\textsf{#1}}}
+\let\Conid\Varid
+\newcommand\Keyword[1]{\textsf{\textbf{#1}}}
+\EndFmtInput
+
+
 
 %% Layout stuff and other related goodies.
 \usepackage[parfill]{parskip}
@@ -327,14 +370,12 @@
 \newcommand{\ie}{i.e.\xspace}
 \newcommand{\eg}{e.g.\xspace}
 \newcommand{\Type}{\mbox{Type}}
-
-% Path composition from The Book.
-\newcommand{\ct}{%
-  \mathchoice{\mathbin{\raisebox{0.5ex}{$\displaystyle\centerdot$}}}%
-             {\mathbin{\raisebox{0.5ex}{$\centerdot$}}}%
-             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
-             {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
-}
+\newcommand{\wtypes}{$W$-types\xspace}
+\newcommand{\wtype}{$W$-type\xspace}
+\newcommand{\ronehit}{restricted \onehit\xspace}
+\newcommand{\ronehits}{restricted \onehits\xspace}
+\newcommand{\Ronehit}{Restricted \onehit\xspace}
+\newcommand{\Ronehits}{Restricted \onehits\xspace}
 
 \title{Notes on \onehits}
 
@@ -345,5 +386,241 @@
 \begin{document}
 
 \maketitle
+
+\section{Introduction}
+
+\section{Describing \hits}
+
+
+\section{\Ronehits}
+
+
+
+\section{Homotopy initiality for \wtypes}
+
+In type theory, a data type is described by its introduction rule (the
+constructors) and its elimination rule (the induction principle) along
+with a computation rule describing how these two rules interact.
+
+\todoi{Natural numbers example?}
+
+\subsection{Induction principle}
+
+Given a functor \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} given as a container \ensuremath{\Conid{F}\;:\equiv\;\Conid{S}\;\Varid{◁}\;\Conid{P}}, the \wtype \ensuremath{\Conid{W}} is defined as having the following
+introduction rule / constructor:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{W}\;\to \;\Conid{W}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+as well as an elimination rule / induction principle:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{ind}\;\mathbin{:}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{W})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\to \;{}\<[8]%
+\>[8]{}\Conid{B}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+with computation rule:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{ind-β₀}\;\mathbin{:}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\to \;{}\<[8]%
+\>[8]{}\Varid{ind}\;\Conid{B}\;\Varid{m}\;(\Varid{c}\;\Varid{x})\;=\;\Varid{m}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;(\Varid{ind}\;\Conid{B}\;\Varid{m})\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\subsection{Algebras}
+
+The type of \emph{\ensuremath{\Conid{F}}-algebras}, or simply \emph{algebras}, can be
+defined as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Alg}\;:\equiv\;(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;\Conid{F}\;\Conid{X}\;\to \;\Conid{X}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where the type morphisms is defined as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Alg-hom}\;\mathbin{:}\;\Conid{Alg}\;\to \;\Conid{Alg}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{Alg-hom}\;(\Conid{X},\Varid{θ})\;(\Conid{Y},\Varid{ρ})\;:\equiv\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{f}\;\mathbin{:}\;\Conid{X}\;\to \;\Conid{Y})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{f-β₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\to \;\Varid{f}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{f}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The witness of commutativity has suggestively been named \ensuremath{\Varid{f-β₀}} as
+this gives us the \ensuremath{\Varid{β}}-rule for the recursion and induction principles.
+
+\todoi{Something about having \ensuremath{\Varid{f₀}\;\mathbin{:}\;\Varid{f}\;\Varid{∘}\;\Varid{θ}\;\equiv\;\Varid{ρ}\;\Varid{∘}\;\Conid{F}\;\Varid{f}} instead. We need
+  function extensionality either way, but this way it makes the
+  arguments later on a bit easier. Also, the dependent versions don't
+  work as pointfree as these ones}
+
+\subsubsection{Homotopy initial algebras}
+
+We call an algebra \ensuremath{(\Conid{X},\Varid{θ})} \emph{homotopy initial} if it has the
+property that for every algebra \ensuremath{(\Conid{Y},\Varid{ρ})}, \ensuremath{\Conid{Alg-hom}\;(\Conid{X},\Varid{θ})\;(\Conid{Y},\Varid{ρ})}
+is contractible, \ie:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{21}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{is-initial}\;\mathbin{:}\;\Conid{Alg}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Varid{is-initial}\;\Varid{θ}\;{}\<[17]%
+\>[17]{}:\equiv\;{}\<[21]%
+\>[21]{}(\Varid{ρ}\;\mathbin{:}\;\Conid{Alg})\;\Varid{→}\;\Varid{is-contr}\;(\Conid{Alg-hom}\;\Varid{θ}\;\Varid{ρ})\;{}\<[E]%
+\\
+\>[17]{}\equiv\;{}\<[21]%
+\>[21]{}(\Varid{ρ}\;\mathbin{:}\;\Conid{Alg})\;\Varid{→}\;(\Varid{f}\;\mathbin{:}\;\Conid{Alg-hom}\;\Varid{θ}\;\Varid{ρ})\;\Varid{×}\;((\Varid{g}\;\mathbin{:}\;\Conid{Alg-hom}\;\Varid{θ}\;\Varid{ρ})\;\Varid{→}\;\Varid{f}\;=\;\Varid{g}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\subsubsection{Equality of algebra morphisms}
+
+As we see in the definition of homotopy initiality, we need to be able
+to talk about equality of algebra morphisms. Given algebras \ensuremath{(\Conid{X},\Varid{θ})}
+and \ensuremath{(\Conid{Y},\Varid{ρ})} and morphisms \ensuremath{(\Varid{f},\Varid{f-β₀})} and \ensuremath{(\Varid{g},\Varid{g-β₀})} between
+them, we know that, by equality on Σ-types, the following holds:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[4]{}(\Varid{f},\Varid{f-β₀})\;=\;(\Varid{g},\Varid{g-β₀}){}\<[E]%
+\\
+\>[B]{}\Varid{≃}\;{}\<[4]%
+\>[4]{}(\Varid{p}\;\mathbin{:}\;\Varid{f}\;=\;\Varid{g}){}\<[E]%
+\\
+\>[B]{}\Varid{×}\;{}\<[4]%
+\>[4]{}(\Varid{p-β₀}\;\mathbin{:}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{f-β₀}\;=\;\Varid{g-β₀}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We not only need to show that the functions \ensuremath{\Varid{f}} and \ensuremath{\Varid{g}} are equal, but
+also that their β-laws are in some sense compatible with eachother,
+respecting the equality \ensuremath{\Varid{f}\;=\;\Varid{g}}.
+
+As it turns out, the above is equivalent to something which is more
+convenient in subsequent proofs:
+
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[4]{}\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;\Varid{f-β₀}\;=\;\Varid{g-β₀}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{transport}\;\Varid{over}\;\Conid{Π-types}\mskip1.5mu\}\;{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\hsindent{4}{}\<[4]%
+\>[4]{}(\Varid{λ}\;\Varid{x}\;\Varid{→}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;(\Varid{f-β₀}\;\Varid{x}))\;=\;\Varid{g-β₀}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{function}\;\Varid{extensionality}\mskip1.5mu\}\;{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\hsindent{4}{}\<[4]%
+\>[4]{}((\Varid{x}\;\mathbin{:}\;\Conid{A})\;\Varid{→}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;(\Varid{f-β₀}\;\Varid{x})\;=\;\Varid{g-β₀}\;\Varid{x}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{transporting}\;\Varid{over}\;\Varid{equalities}\mskip1.5mu\}\;{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\hsindent{4}{}\<[4]%
+\>[4]{}\mathbin{!}\;(\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p})\;\Varid{∙}\;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{path}\;\Varid{algebra}\mskip1.5mu\}\;{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The last equation tells us that showing that two algebra morphisms are
+equal is somewhat like giving an algebra morphism from the witness of
+the β-law for \ensuremath{\Varid{f}} to that of \ensuremath{\Varid{g}}, as we can see if we draw the
+corresponding diagram:
+
+\todoi{comm diag}
+
+
+
+\subsection{Initiality implies induction}
+
+The induction principle tells us that for a family \ensuremath{\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type}} and
+a motive \ensuremath{\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x})}, we get a dependent
+function \ensuremath{\Varid{ind}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{W})\;\to \;\Conid{B}\;\Varid{x}} along with a computation rule.
+
+Note that \ensuremath{\Varid{m}}, along with \ensuremath{\Varid{c}}, can be seen as a morphism between the
+families \ensuremath{(\Conid{W},\Conid{B})} and \ensuremath{(\Conid{F}\;\Conid{W},\Varid{□}\;\Conid{F}\;\Conid{B})}.
+
+Another way to say this is that given a function \ensuremath{\Varid{p}\;\mathbin{:}\;\Conid{B}\;\to \;\Conid{W}} for some
+\ensuremath{\Conid{B}\;\mathbin{:}\;\Conid{Type}} and that we want \ensuremath{\Varid{θ}\;\mathbin{:}\;\Conid{F}\;\Conid{B}\;\to \;\Conid{B}} such that \ensuremath{\Varid{θ}}, along with
+\ensuremath{\Varid{c}}, becomes a morphism \ensuremath{\Conid{Fp}\;\to \;\Varid{p}} in the arrow category. This is
+equivalent to asking for an algebra \ensuremath{(\Conid{B},\Varid{θ})} along with an algebra
+morphism \ensuremath{(\Conid{B},\Varid{θ})\;\to \;(\Conid{W},\Varid{c})}.
+
+
+
+\subsection{Induction implies initiality}
+
+
+\section{Homotopy initiality for restricted \onehits}
+
+
 
 \end{document}
