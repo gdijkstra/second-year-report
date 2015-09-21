@@ -10,6 +10,7 @@
 \usepackage{ucs}
 \usepackage[greek,english]{babel}
 \usepackage{bbm}
+\usepackage{bbding}
 
 %% Symbols and whatever
 \usepackage{amsmath,amsthm,amssymb,amsfonts,stmaryrd}
@@ -299,6 +300,10 @@
 \DeclareUnicodeCharacter{10215}{\ensuremath{\rrbracket}}
 \DeclareUnicodeCharacter{946}{\ensuremath{\beta}}
 \DeclareUnicodeCharacter{8729}{\ensuremath{\ct}}
+\DeclareUnicodeCharacter{10218}{\ensuremath{ \{ }}
+\DeclareUnicodeCharacter{10219}{\ensuremath{ \} }}
+\DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
+
 % TODO: This is in general not a good idea.
 \providecommand\textepsilon{$\epsilon$}
 \providecommand\textmu{$\mu$}
@@ -549,7 +554,7 @@ them, we know that, by equality on Σ-types, the following holds:
 \>[4]{}(\Varid{p}\;\mathbin{:}\;\Varid{f}\;=\;\Varid{g}){}\<[E]%
 \\
 \>[B]{}\Varid{×}\;{}\<[4]%
-\>[4]{}(\Varid{p-β₀}\;\mathbin{:}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{f-β₀}\;=\;\Varid{g-β₀}){}\<[E]%
+\>[4]{}(\Varid{p-β₀}\;\mathbin{:}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\mathbin{\circ}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{f-β₀}\;=\;\Varid{g-β₀}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -614,13 +619,267 @@ Another way to say this is that given a function \ensuremath{\Varid{p}\;\mathbin
 equivalent to asking for an algebra \ensuremath{(\Conid{B},\Varid{θ})} along with an algebra
 morphism \ensuremath{(\Conid{B},\Varid{θ})\;\to \;(\Conid{W},\Varid{c})}.
 
+\todoi{Give arguments why section induction is correct}
 
+\todoi{Show that initiality implies section induction}
 
 \subsection{Induction implies initiality}
 
+We want to show that, given \ensuremath{\Conid{T}\;\mathbin{:}\;\Conid{Type}} and \ensuremath{\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{T}\;\to \;\Conid{T}} that
+satisfies the induction principle, the algebra \ensuremath{(\Conid{T},\Varid{c})} is initial,
+\ie for any algebra \ensuremath{(\Conid{X},\Varid{θ})}, \ensuremath{\Conid{Alg-hom}\;(\Conid{T},\Varid{c})\;(\Conid{X},\Varid{θ})\;\Varid{≃}\;\Varid{1}}. We will
+first show that we have an algebra morphism \ensuremath{\Varid{f}\;\mathbin{:}\;(\Conid{T},\Varid{c})\;\to \;(\Conid{X},\Varid{θ})}
+and will then show that this algebra morphism is unique.
 
-\section{Homotopy initiality for restricted \onehits}
+\subsubsection{Existence}
 
+We can use the induction principle to produce the algebra morphism we want:
 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{f}\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{X}{}\<[E]%
+\\
+\>[3]{}\Varid{f}\;:\equiv\;\Varid{ind}\;(\Varid{λ}\;\Varid{x}\;\to \;\Conid{X})\;(\Varid{λ}\;(\Varid{s},\anonymous )\;\Varid{t}\;\to \;\Varid{θ}\;(\Varid{s},\Varid{t})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The computation rule is then given directly by the computation rule
+for the induction rule:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{f₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;\to \;\Varid{f}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{θ}\;(\Conid{F}\;\Varid{f}\;\Varid{x}){}\<[E]%
+\\
+\>[3]{}\Varid{f₀}\;:\equiv\;\Varid{ind-β}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\subsubsection{Uniqueness}
+
+Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;\mathbin{:}\;(\Conid{T},\Varid{c})\;\to \;(\Conid{X},\Varid{θ})}, we need to show that \ensuremath{(\Varid{f},\Varid{f₀})\;=\;(\Varid{g},\Varid{g₀})}. Showing that the \ensuremath{\Varid{f}\;=\;\Varid{g}} can be done by induction, using the motive \ensuremath{\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x}}. The induction step is then proven as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{6}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{step}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{⟦}\;\Conid{F}\;\Varid{⟧₀}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Varid{f=g-B}\;\Varid{x}\;\Varid{→}\;\Varid{f=g-B}\;(\Varid{c}\;\Varid{x}){}\<[E]%
+\\
+\>[3]{}\Varid{step}\;\Varid{x}\;\Varid{u}\;:\equiv\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{f}\;(\Varid{c}\;\Varid{x})\;{}\<[E]%
+\\
+\>[5]{}\hsindent{1}{}\<[6]%
+\>[6]{}\Varid{=⟪}\;\Varid{f₀}\;\Varid{x}\;\Varid{⟫}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{θ}\;(\Varid{⟦}\;\Conid{F}\;\Varid{⟧₁}\;\Varid{f}\;\Varid{x})\;{}\<[E]%
+\\
+\>[5]{}\hsindent{1}{}\<[6]%
+\>[6]{}\Varid{=⟪}\;\Varid{ap}\;\Varid{θ}\;(\Varid{ind-hyp}\;\Varid{x}\;\Varid{u})\;\Varid{⟫}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{θ}\;(\Varid{⟦}\;\Conid{F}\;\Varid{⟧₁}\;\Varid{g}\;\Varid{x})\;{}\<[E]%
+\\
+\>[5]{}\hsindent{1}{}\<[6]%
+\>[6]{}\Varid{=⟪}\;\mathbin{!}\;(\Varid{g₀}\;\Varid{x})\;\Varid{⟫}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{g}\;(\Varid{c}\;\Varid{x})\;\Varid{∎}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\todoi{Explain \ensuremath{\Varid{ind-hyp}}}
+
+We can define the witness of \ensuremath{\Varid{f}\;=\;\Varid{g}} as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{p}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x}{}\<[E]%
+\\
+\>[3]{}\Varid{p}\;:\equiv\;\Varid{ind}\;(\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{step}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+which comes with the computation rule:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{p-β₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{p}\;(\Varid{c}\;\Varid{x})\;=\;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;\Varid{θ}\;(\Varid{ind-hyp}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;\Varid{p}\;\Varid{x}))\;\Varid{∙}\;\mathbin{!}\;(\Varid{g-β₀}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\todoi{say that \ensuremath{\Varid{λ=}} is fun ext}
+
+We now need to show that our witness \ensuremath{\Varid{p}} satisfies the ``computation
+rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}}. Let \ensuremath{\Varid{x}\;\mathbin{:}\;\Conid{FT}}, then we can calculate:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{θ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;(\Varid{λ=}\;\Varid{p})\;{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{ap}\;\Varid{magic}\mskip1.5mu\}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;\Varid{θ}\;(\Varid{ind-hyp}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;\Varid{p}\;\Varid{x}))\;{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{symmetry}\;\Varid{is}\;\Varid{involutive}\mskip1.5mu\}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;\Varid{θ}\;(\Varid{ind-hyp}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;\Varid{p}\;\Varid{x}))\;\Varid{∙}\;\mathbin{!}\;(\Varid{g-β₀}\;\Varid{x})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}\;{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{computation}\;\Varid{rule}\;\Varid{for}\;\Varid{p}\mskip1.5mu\}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Varid{p}\;(\Varid{c}\;\Varid{x})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}\;{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{computation}\;\Varid{rule}\;\Varid{for}\;\Varid{λ=}\mskip1.5mu\}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{c}\;\Varid{x}))\;(\Varid{λ=}\;\Varid{p})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We have now established initiality of \ensuremath{(\Conid{T},\Varid{c})}.
+
+\section{Homotopy initiality for \ronehits}
+
+To establish initiality for \ronehits, we proceed along the same lines
+as we have previously for ordinary \wtypes. We first define the
+induction principle and the algebras, and show that induction implies
+initiality and the other way around.
+
+\subsection{Induction principle}
+
+To get the induction principle of \ronehits, we need to take that of
+the ordinary \wtypes and extend it with the new (path) constructor: we
+have to add a method to \ensuremath{\Varid{ind}} and the appropriate computation rule for
+that.
+
+Consider the method for the \zeroconstructor:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₀}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{B}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We can read this as showing that if for all subterms of \ensuremath{\Varid{c₀}\;\Varid{x}} \ensuremath{\Conid{B}}
+holds, \ensuremath{\Conid{B}} also holds for \ensuremath{\Varid{c₀}\;\Varid{x}} itself. Since we are dealing with a
+\zeroconstructor, we don't have any issues with the target of the
+constructor: the target functor is the identity functor. For the
+motive of the \oneconstructor, we want something like:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₁}\;\Conid{B}\;\Varid{x}\;\to \;\Varid{□}\;\Conid{G}\;(\Varid{c₁}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We need to figure out what the lifting of \ensuremath{\Conid{B}} to the target functor
+\ensuremath{\Conid{G}} is.
+
+\subsection{Algebras}
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Alg}\;:\equiv\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{θ₀}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X}\;\to \;\Conid{X})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{θ₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\ensuremath{\Varid{θ₀}} is an \ensuremath{\Conid{F₀}}-algebra and \ensuremath{\Varid{θ₁}} can be seen as a dependent dialgebra
+by defining the functor \ensuremath{\Conid{G₁}}:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{G₁}\;\mathbin{:}\;\Varid{∫}\;\Conid{F₀-Algebra}\;\Conid{F₁}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{G₁}\;((\Conid{X},\Varid{θ}),\Varid{x})\;:\equiv\;(\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Its hom-types can be defined as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{36}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{42}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{50}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Alg-hom}\;\mathbin{:}\;\Conid{Alg}\;\to \;\Conid{Alg}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{Alg-hom}\;(\Conid{X},\Varid{θ})\;(\Conid{Y},\Varid{ρ})\;:\equiv\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{f}\;\mathbin{:}\;\Conid{X}\;\to \;\Conid{Y})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{f-β₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;{}\<[36]%
+\>[36]{}\Varid{f}\;{}\<[42]%
+\>[42]{}(\Varid{θ₀}\;\Varid{x})\;{}\<[50]%
+\>[50]{}=\;\Varid{ρ₀}\;(\Conid{F₀}\;\Varid{f}\;\Varid{x}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{f-β₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Conid{G₁}\;\Varid{x}\;{}\<[36]%
+\>[36]{}\Varid{f},\Varid{f₀}\;{}\<[42]%
+\>[42]{}(\Varid{θ₁}\;\Varid{x})\;{}\<[50]%
+\>[50]{}=\;\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{f}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Initiality for these algebras is defined in the same way as before.
+
+\subsubsection{Equality of algebra morphisms}
+
+\todoi{todo}
+
+\subsection{Initiality implies induction}
+
+\subsection{Induction implies initiality}
+
+\todoi{todo}
+
+\subsubsection{Existence}
+
+\subsubsection{Uniqueness}
 
 \end{document}

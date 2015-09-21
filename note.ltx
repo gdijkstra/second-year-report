@@ -10,6 +10,7 @@
 \usepackage{ucs}
 \usepackage[greek,english]{babel}
 \usepackage{bbm}
+\usepackage{bbding}
 
 %% Symbols and whatever
 \usepackage{amsmath,amsthm,amssymb,amsfonts,stmaryrd}
@@ -184,7 +185,7 @@ them, we know that, by equality on Σ-types, the following holds:
 \begin{code}
    (f , f-β₀) == (g , g-β₀)
 ≃  (p : f == g) 
-×  (p-β₀ : transport (λ h → (x : F X) → h (θ x) == ρ (F h x)) f-β₀ == g-β₀)
+×  (p-β₀ : transport (λ h . (x : F X) → h (θ x) == ρ (F h x)) f-β₀ == g-β₀)
 \end{code}
 
 We not only need to show that the functions |f| and |g| are equal, but
@@ -240,13 +241,171 @@ Another way to say this is that given a function |p : B -> W| for some
 equivalent to asking for an algebra |(B , θ)| along with an algebra
 morphism |(B , θ) -> (W , c)|.
 
+\todoi{Give arguments why section induction is correct}
 
+\todoi{Show that initiality implies section induction}
 
 \subsection{Induction implies initiality}
 
+We want to show that, given |T : Type| and |c : F T -> T| that
+satisfies the induction principle, the algebra |(T , c)| is initial,
+\ie for any algebra |(X , θ)|, |Alg-hom (T , c) (X , θ) ≃ 1|. We will
+first show that we have an algebra morphism |f : (T , c) -> (X , θ)|
+and will then show that this algebra morphism is unique.
 
-\section{Homotopy initiality for restricted \onehits}
+\subsubsection{Existence}
 
+We can use the induction principle to produce the algebra morphism we want:
 
+\begin{code}
+  f : T -> X
+  f := ind (λ x -> X) (λ (s , _) t -> θ (s , t))
+\end{code}
+
+The computation rule is then given directly by the computation rule
+for the induction rule:
+
+\begin{code}
+  f₀ : (x : F T) -> f (θ x) == θ (F f x)
+  f₀ := ind-β
+\end{code}
+
+\subsubsection{Uniqueness}
+
+Assuming that we have an algebra morphism |(g , g₀) : (T , c) -> (X ,
+θ)|, we need to show that |(f , f₀) == (g , g₀)|. Showing that the |f
+== g| can be done by induction, using the motive |λ x -> f x == g
+x|. The induction step is then proven as follows:
+
+\begin{code}
+  step : (x : ⟦ F ⟧₀ T) → □ F f=g-B x → f=g-B (c x)
+  step x u :=
+    f (c x)
+     =⟪ f₀ x ⟫
+    θ (⟦ F ⟧₁ f x)
+     =⟪ ap θ (ind-hyp x u) ⟫
+    θ (⟦ F ⟧₁ g x)
+     =⟪ ! (g₀ x) ⟫
+    g (c x) ∎
+\end{code}
+
+\todoi{Explain |ind-hyp|}
+
+We can define the witness of |f == g| as follows:
+
+\begin{code}
+  p : (x : T) -> f x == g x
+  p := ind (λ x -> f x == g x) step
+\end{code}
+
+which comes with the computation rule:
+
+\begin{code}
+  p-β₀ : (x : FT) -> p (c x) == f-β₀ x ∙ ap θ (ind-hyp x (□-lift F p x)) ∙ ! (g-β₀ x)
+\end{code}
+
+\todoi{say that |λ=| is fun ext}
+
+We now need to show that our witness |p| satisfies the ``computation
+rule'' |(x : FT) -> f-β₀ x ∙ ap (λ h → ρ (F h x)) p == ap (λ h → h (θ
+x)) p ∙ g-β₀ x|. Let |x : FT|, then we can calculate:
+
+\begin{code}
+  f-β₀ x ∙ ap (λ h → θ (F h x)) (λ= p)
+
+   == { ap magic }
+
+  f-β₀ x ∙ ap θ (ind-hyp x (□-lift F p x))
+
+   == { symmetry is involutive }
+
+  f-β₀ x ∙ ap θ (ind-hyp x (□-lift F p x)) ∙ ! (g-β₀ x) ∙ g-β₀ x
+
+   == { computation rule for p }
+
+  p (c x) ∙ g-β₀ x
+
+   == { computation rule for λ= }
+
+  ap (λ h → h (c x)) (λ= p) ∙ g-β₀ x   
+\end{code}
+
+We have now established initiality of |(T , c)|.
+
+\section{Homotopy initiality for \ronehits}
+
+To establish initiality for \ronehits, we proceed along the same lines
+as we have previously for ordinary \wtypes. We first define the
+induction principle and the algebras, and show that induction implies
+initiality and the other way around.
+
+\subsection{Induction principle}
+
+To get the induction principle of \ronehits, we need to take that of
+the ordinary \wtypes and extend it with the new (path) constructor: we
+have to add a method to |ind| and the appropriate computation rule for
+that.
+
+Consider the method for the \zeroconstructor:
+
+\begin{code}
+  m₀ : (x : F₀ X) -> □ F₀ B x -> B (c₀ x)
+\end{code}
+
+We can read this as showing that if for all subterms of |c₀ x| |B|
+holds, |B| also holds for |c₀ x| itself. Since we are dealing with a
+\zeroconstructor, we don't have any issues with the target of the
+constructor: the target functor is the identity functor. For the
+motive of the \oneconstructor, we want something like:
+
+\begin{code}
+  m₁ : (x : F₁ X) -> □ F₁ B x -> □ G (c₁ x)
+\end{code}
+
+We need to figure out what the lifting of |B| to the target functor
+|G| is.
+
+\subsection{Algebras}
+
+\begin{code}
+  Alg :=  
+       (X : Type)
+    ×  (θ₀ : F₀ X -> X) 
+    ×  (θ₁ : (x : F₁ X) -> l (θ₀ * x) == r (θ₀ * x))
+\end{code}
+
+|θ₀| is an |F₀|-algebra and |θ₁| can be seen as a dependent dialgebra
+by defining the functor |G₁|:
+
+\begin{code}
+  G₁ : ∫ F₀-Algebra F₁ -> Type
+  G₁ ((X , θ) , x) := (l (θ₀ * x) == r (θ₀ * x))
+\end{code}
+
+Its hom-types can be defined as follows:
+
+\begin{code}
+  Alg-hom : Alg -> Alg -> Type
+  Alg-hom (X , θ) (Y , ρ) :=
+       (f : X -> Y)
+    ×  (f-β₀ : (x : F₀ X) ->       f     (θ₀ x)  == ρ₀ (F₀ f x))
+    ×  (f-β₁ : (x : F₁ X) -> G₁ x  f,f₀  (θ₁ x)  == ρ₁ (F₁ f x))
+\end{code}
+
+Initiality for these algebras is defined in the same way as before.
+
+\subsubsection{Equality of algebra morphisms}
+
+\todoi{todo}
+
+\subsection{Initiality implies induction}
+
+\subsection{Induction implies initiality}
+
+\todoi{todo}
+
+\subsubsection{Existence}
+
+\subsubsection{Uniqueness}
 
 \end{document}
