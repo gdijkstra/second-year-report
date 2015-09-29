@@ -1,0 +1,40 @@
+* Introduction
+** TODO
+say something about how inductive typse are defined by their
+introduction / elim and comp rule. Semantically we can understand them
+as initial algebras of some functor. we want to formulate a class of
+hits s.t. we can define its intro / elim and comp rule and the
+category of algebras and show that one implies the other, internally.
+
+* Describing higher inductive types
+** TODO HITs as a sequence of monads
+reference to lumsdaine/shulman
+* Restricted 1-HITs
+** TODO Mention that it's difficult to formalise the general case: coherence etc.
+** TODO mention that we can restrict ourselves to having two constructors
+** TODO with extra condition, we don't need any generalised containers
+** TODO show simplification calculation
+** TODO give intuition for 1-hits free monad stuff: extension of w-types.
+** TODO formally introduce desc of restricted 1-hit
+** TODO examples: circle, truncation
+* Algebras
+** TODO define cat. of algebras for endofunctor, all with the stuff with equality of morphisms
+** TODO define homotopy initiality: we don't require things to be strictly equal, but up only to equality.
+** TODO define cat of algebras for 1-hit descs, all with the equality of morphisms
+** TODO mention that homotopy initiality is defined similarly
+* Induction
+understand how initiality relates to induction
+
+induction principle for w-types and all the stuff about containers
+into category of families.
+
+derive induction principle of w-types
+
+talk about induction principle of 1-hits
+** TODO think on paper how to approach this
+
+* Induction implies homotopy initiality of W-types
+** w-types
+explain calculation
+** restricted 1-hits
+explain something

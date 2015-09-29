@@ -93,51 +93,219 @@
 
 \section{Describing \hits}
 
+If we define an ordinary inductive type, we start out by writing down
+a list of constructors, \eg:
+
+\begin{code}
+  data T : Type where
+    c0  : F0 T -> T
+    c1  : F1 T -> T
+        vdots
+    ck  : Fk T -> T
+\end{code}
+
+where all |Fi : Type -> Type| are strictly positive
+functors. Equivalently, we can define an inductive type with a single
+constructor:
+
+\begin{code}
+  data T : Type where
+    c : F T -> T
+\end{code}
+
+where |F X := F0 X + F1 X + hdots + Fk X|, so a single strictly
+positive functor is all we need to describe an \oit.
+
+In the case of \hits, the situation is more involved. Consider for
+example the circle data type:
+
+\begin{code}
+  data S1 : Type where
+    base : S1
+    loop : base == base
+\end{code}
+
+There are two things that are different from our previous
+situation. Firstly, the result type of |loop| is not |S1|, but a path
+space of |S1|: constructors are no longer algebras of functor, but a
+kind of \emph{dialgebra}: the arguments as well as the result type of
+a constructor may vary. Secondly, the |loop| constructor refers to the
+previous constructor |base|.
+
+The result type of a constructor can also depend on the value of its
+arguments, as we see in the definition of propositional truncation as
+a \hit:
+
+\begin{code}
+  data // A // : Type where
+    [_] : A -> // A //
+    trunc : (x y : // A //) -> x == y
+\end{code}
+
+Constructors of a \hit are \emph{dependent dialgebras}. In general, a
+higher inductive type looks as follows:
+
+\begin{code}
+  data T : Type where
+    c0    : (x : F0 T)              -> G0 T x
+    c1    : (x : F1 T c0)           -> G1 T c0 x
+    c2    : (x : F2 T c0 c1)        -> G2 T c0 c1 x
+          vdots
+    ck+1  : (x : Fk T c0 hdots ck)  -> Gk T c0 hdots ck x
+\end{code}
+
+We will refer to the |Fi| functors as \emph{argument} functors and the
+|Gi| functors as \emph{target} functors. The types of the argument
+functors are:
+
+\begin{code}
+F0   : Type          -> Type
+F1   : (F0, G0)-alg  -> Type       
+F2   : (F1, G1)-alg  -> Type       
+Fk+1 : (Fk, Gk)-alg  -> Type
+\end{code}
+
+where |(F0, G0)-alg)| is the category whose objects are dependent
+dialgebras |(X : Type) × (θ : (x : F0 X) -> G0 X x)|. The category
+|(F(i+1),G(i+1)-alg|has as objects: |(X : (Fi, Gi)-alg) × (θ : (x :
+F(i+1) X) -> G(i+1) X x)|. The target functors also take the value of
+the arguments as an argument, so they have the following types:
+
+\begin{code}
+G0    : int Type          F0      -> Type
+G1    : int (F0, G0)-alg  F1      -> Type       
+G2    : int (F1, G1)-alg  F2      -> Type       
+Gk+1  : int (Fk, Gk)-alg  F(k+1)  -> Type
+\end{code}
+
+We see that the general shape of a constructor is a dependent dialgebra:
+
+\begin{code}
+  c : (x : F X) -> G (X , x)
+\end{code}
+
+where |C : Cat|, |F : C -> Type| and |G : int C F -> Type|, where |C|
+is |Type| or some category of dependent dialgebras.
+
+When describing \hits, we do not allow for any target functor |G|: it
+must either return the type we are defining or a (possibly iterated)
+path space of that type.
+
+A \emph{\zeroconstructor} or \emph{point constructor} is a dialgebra:
+
+\begin{code}
+  c : (x : F X) -> U X
+\end{code}
+
+where |C : Cat|, |F : C -> Type| and |U : C -> Type| its forgetful
+functor.
+
+A \emph{\oneconstructor} is a dependent dialgebra of which the target
+functor returns a path space:
+
+\begin{code}
+  c : (x : F X) -> Eq0 X x
+\end{code}
+
+where |C : Cat|, |F, U : C -> Type|, and |Eq0 : int C F -> Type| is the functor:
+
+\begin{code}
+  Eq0 (X , x) := (l0 X x == r0 X x)
+\end{code}
+
+where |l0, r0 : F -> U| are natural transformations.
+
+For higher path constructors, we have to specify a tower of natural
+transformations, specifying the end points at every level. To specify
+an |(n+1)|-constructor, we need to give the natural transformations:
+
+\begin{code}
+  l0, r0  : F -> U
+  l1, r1  : 1 -> Eq0
+  l2, r2  : 1 -> Eq1
+          vdots
+  ln, rn  : 1 -> Eqn-1
+\end{code}
+
+where |Eqi X x := (li X x == ri X x)|. |Eqn| is then the target
+functor we are interested in.
+
+\subsection{Strict positivity}
+
+Apart from the restrictions on targets, we also want all functors
+involved to be strictly positive. In the case of \oits, we also have
+this restriction. An example of an inductive type which constructor is
+not strictly positive is the following:
+
+\begin{code}
+  data Term : Type where
+    lam : (Term -> Term) -> Term
+\end{code}
+
+Using the type |Term|, we can find inhabitants of the empty type. We
+therefore only consider inductive types defined by strictly positive
+functors, \ie containers. Containers however only describe functors
+|Type -> Type|. An example of that shows that we need a notion of
+strict positivity for any functor into |Type| is that of the ``initial
+field''. If we write down the axioms of an algebraic structure as
+constructors, the inductive type we get is then the initial object in
+the category of that algebraic structure, \ie  we can define a type |T|
+with the monoid axioms as constructors:
+
+\begin{code}
+  data T : Type where
+    uip : (x y : T) (p q : x == y) -> p == q
+    _∙_ : T -> T -> T
+    assoc : (x y z : T) -> (x ∙ y) ∙ z == x ∙ (y ∙ z)
+    e : T
+    e-unit-l : (x : T) -> e ∙ x == x
+    e-unit-r : (x : T) -> x ∙ e == x
+\end{code}
+
+|T| is equivalent to the unit type, which is the initial object in the
+category of monoids. If we now were to write down the axioms of a
+field, we run into trouble: there is no initial object in the category
+of fields. The culprit is the inverse operation, which has the type:
+
+\begin{code}
+  inv : (x : T) -> (x == 0 -> ⊥) -> T
+\end{code}
+
+The constructor |0| occurs negatively in this constructor.
+
+To generalise the notion of strict positivity, we can generalise the
+notion of containers to not only describe functors |Type -> Type|, but
+functors \emph{into} |Type| from any |C : Cat|. A \emph{generalised
+  container} is given by:
+
+\begin{code}
+  S : Type
+  P : S -> / C /
+\end{code}
+
+Its extension is then defined as:
+
+\begin{code}
+  ⟦ S ◁ P ⟧ : C -> Type
+  ⟦ S ◁ P ⟧ X := (s : S) × C(P s, X)
+\end{code}
+
+with the action on morphisms defined as:
+
+\begin{code}
+  ⟦ F ⟧ : C(X , Y) -> ⟦ F ⟧ X -> ⟦ F ⟧ Y
+  ⟦ F ⟧ f (s , t) := (s , f ∘ t)
+\end{code}
+
+
+\subsection{\Hits as a sequence of monads}
+
 
 \section{\Ronehits}
 
+\todoi{coherence and other reasons why things are difficult}
 
-
-\section{Homotopy initiality for \wtypes}
-
-In type theory, a data type is described by its introduction rule (the
-constructors) and its elimination rule (the induction principle) along
-with a computation rule describing how these two rules interact.
-
-\todoi{Natural numbers example?}
-
-\subsection{Induction principle}
-
-Given a functor |F : Type -> Type| given as a container |F := S
-◁ P|, the \wtype |W| is defined as having the following
-introduction rule / constructor:
-
-\begin{code}
-  c : F W -> W
-\end{code}
-
-as well as an elimination rule / induction principle:
-
-\begin{code}
-  ind :   
-       (B : W -> Type)
-       (m : (x : F W) → □ F B x → B (c x))
-       (x : W) 
-   ->  B x
-
-\end{code}
-
-with computation rule:
-
-\begin{code}
-  ind-β₀ :
-       (B : W -> Type) 
-       (m : (x : F W) → □ F B x → B (c x))
-       (x : F W)
-   ->  ind B m (c x) == m x (□-lift F (ind B m) x)
-\end{code}
-
-\subsection{Algebras}
+\section{Algebras}
 
 The type of \emph{|F|-algebras}, or simply \emph{algebras}, can be
 defined as follows:
@@ -163,7 +331,7 @@ this gives us the |β|-rule for the recursion and induction principles.
   arguments later on a bit easier. Also, the dependent versions don't
   work as pointfree as these ones}
 
-\subsubsection{Homotopy initial algebras}
+\subsection{Homotopy initial algebras}
 
 We call an algebra |(X , θ)| \emph{homotopy initial} if it has the
 property that for every algebra |(Y , ρ)|, |Alg-hom (X , θ) (Y , ρ)|
@@ -224,7 +392,64 @@ corresponding diagram:
 
 \todoi{comm diag}
 
+\subsection{Algebras for \ronehit descriptions}
 
+\begin{code}
+  Alg :=  
+       (X : Type)
+    ×  (θ₀ : F₀ X -> X) 
+    ×  (θ₁ : (x : F₁ X) -> l (θ₀ * x) == r (θ₀ * x))
+\end{code}
+
+|θ₀| is an |F₀|-algebra and |θ₁| can be seen as a dependent dialgebra
+by defining the functor |G₁|:
+
+\begin{code}
+  G₁ : ∫ F₀-Algebra F₁ -> Type
+  G₁ ((X , θ) , x) := (l (θ₀ * x) == r (θ₀ * x))
+\end{code}
+
+Its hom-types can be defined as follows:
+
+\begin{code}
+  Alg-hom : Alg -> Alg -> Type
+  Alg-hom (X , θ) (Y , ρ) :=
+       (f : X -> Y)
+    ×  (f-β₀ : (x : F₀ X) ->       f     (θ₀ x)  == ρ₀ (F₀ f x))
+    ×  (f-β₁ : (x : F₁ X) -> G₁ x  f,f₀  (θ₁ x)  == ρ₁ (F₁ f x))
+\end{code}
+
+
+\section{Induction}
+
+Given a functor |F : Type -> Type| given as a container |F := S
+◁ P|, the \wtype |W| is defined as having the following
+introduction rule / constructor:
+
+\begin{code}
+  c : F W -> W
+\end{code}
+
+as well as an elimination rule / induction principle:
+
+\begin{code}
+  ind :   
+       (B : W -> Type)
+       (m : (x : F W) → □ F B x → B (c x))
+       (x : W) 
+   ->  B x
+
+\end{code}
+
+with computation rule:
+
+\begin{code}
+  ind-β₀ :
+       (B : W -> Type) 
+       (m : (x : F W) → □ F B x → B (c x))
+       (x : F W)
+   ->  ind B m (c x) == m x (□-lift F (ind B m) x)
+\end{code}
 
 \subsection{Initiality implies induction}
 
@@ -245,13 +470,41 @@ morphism |(B , θ) -> (W , c)|.
 
 \todoi{Show that initiality implies section induction}
 
-\subsection{Induction implies initiality}
+\subsection{Induction principle for \ronehits}
+
+To get the induction principle of \ronehits, we need to take that of
+the ordinary \wtypes and extend it with the new (path) constructor: we
+have to add a method to |ind| and the appropriate computation rule for
+that.
+
+Consider the method for the \zeroconstructor:
+
+\begin{code}
+  m₀ : (x : F₀ X) -> □ F₀ B x -> B (c₀ x)
+\end{code}
+
+We can read this as showing that if for all subterms of |c₀ x| |B|
+holds, |B| also holds for |c₀ x| itself. Since we are dealing with a
+\zeroconstructor, we don't have any issues with the target of the
+constructor: the target functor is the identity functor. For the
+motive of the \oneconstructor, we want something like:
+
+\begin{code}
+  m₁ : (x : F₁ X) -> □ F₁ B x -> □ G (c₁ x)
+\end{code}
+
+We need to figure out what the lifting of |B| to the target functor
+|G| is.
+
+\section{Induction implies homotopy initiality}
 
 We want to show that, given |T : Type| and |c : F T -> T| that
 satisfies the induction principle, the algebra |(T , c)| is initial,
 \ie for any algebra |(X , θ)|, |Alg-hom (T , c) (X , θ) ≃ 1|. We will
 first show that we have an algebra morphism |f : (T , c) -> (X , θ)|
 and will then show that this algebra morphism is unique.
+
+\subsection{W-types}
 
 \subsubsection{Existence}
 
@@ -332,77 +585,7 @@ x)) p ∙ g-β₀ x|. Let |x : FT|, then we can calculate:
 
 We have now established initiality of |(T , c)|.
 
-\section{Homotopy initiality for \ronehits}
-
-To establish initiality for \ronehits, we proceed along the same lines
-as we have previously for ordinary \wtypes. We first define the
-induction principle and the algebras, and show that induction implies
-initiality and the other way around.
-
-\subsection{Induction principle}
-
-To get the induction principle of \ronehits, we need to take that of
-the ordinary \wtypes and extend it with the new (path) constructor: we
-have to add a method to |ind| and the appropriate computation rule for
-that.
-
-Consider the method for the \zeroconstructor:
-
-\begin{code}
-  m₀ : (x : F₀ X) -> □ F₀ B x -> B (c₀ x)
-\end{code}
-
-We can read this as showing that if for all subterms of |c₀ x| |B|
-holds, |B| also holds for |c₀ x| itself. Since we are dealing with a
-\zeroconstructor, we don't have any issues with the target of the
-constructor: the target functor is the identity functor. For the
-motive of the \oneconstructor, we want something like:
-
-\begin{code}
-  m₁ : (x : F₁ X) -> □ F₁ B x -> □ G (c₁ x)
-\end{code}
-
-We need to figure out what the lifting of |B| to the target functor
-|G| is.
-
-\subsection{Algebras}
-
-\begin{code}
-  Alg :=  
-       (X : Type)
-    ×  (θ₀ : F₀ X -> X) 
-    ×  (θ₁ : (x : F₁ X) -> l (θ₀ * x) == r (θ₀ * x))
-\end{code}
-
-|θ₀| is an |F₀|-algebra and |θ₁| can be seen as a dependent dialgebra
-by defining the functor |G₁|:
-
-\begin{code}
-  G₁ : ∫ F₀-Algebra F₁ -> Type
-  G₁ ((X , θ) , x) := (l (θ₀ * x) == r (θ₀ * x))
-\end{code}
-
-Its hom-types can be defined as follows:
-
-\begin{code}
-  Alg-hom : Alg -> Alg -> Type
-  Alg-hom (X , θ) (Y , ρ) :=
-       (f : X -> Y)
-    ×  (f-β₀ : (x : F₀ X) ->       f     (θ₀ x)  == ρ₀ (F₀ f x))
-    ×  (f-β₁ : (x : F₁ X) -> G₁ x  f,f₀  (θ₁ x)  == ρ₁ (F₁ f x))
-\end{code}
-
-Initiality for these algebras is defined in the same way as before.
-
-\subsubsection{Equality of algebra morphisms}
-
-\todoi{todo}
-
-\subsection{Initiality implies induction}
-
-\subsection{Induction implies initiality}
-
-\todoi{todo}
+\subsection{\Ronehits}
 
 \subsubsection{Existence}
 

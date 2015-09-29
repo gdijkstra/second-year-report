@@ -56,3 +56,5 @@
 %format = = "\equiv"
 %format := = ":\equiv"
 %format == = "="
+%format int = "\int"
+%format vdots = "\vdots"

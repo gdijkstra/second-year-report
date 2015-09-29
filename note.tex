@@ -396,83 +396,391 @@
 
 \section{Describing \hits}
 
+If we define an ordinary inductive type, we start out by writing down
+a list of constructors, \eg:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c0}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Conid{F0}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c1}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Conid{F1}\;\Conid{T}\;\to \;\Conid{T}\;{}\<[E]%
+\\
+\>[9]{}\vdots{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{ck}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Conid{Fk}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where all \ensuremath{\Conid{Fi}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} are strictly positive
+functors. Equivalently, we can define an inductive type with a single
+constructor:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Conid{F}\;\Conid{X}\;:\equiv\;\Conid{F0}\;\Conid{X}\;\Varid{+}\;\Conid{F1}\;\Conid{X}\;\Varid{+}\;\Varid{hdots}\;\Varid{+}\;\Conid{Fk}\;\Conid{X}}, so a single strictly
+positive functor is all we need to describe an \oit.
+
+In the case of \hits, the situation is more involved. Consider for
+example the circle data type:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{S1}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{base}\;\mathbin{:}\;\Conid{S1}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{loop}\;\mathbin{:}\;\Varid{base}\;=\;\Varid{base}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+There are two things that are different from our previous
+situation. Firstly, the result type of \ensuremath{\Varid{loop}} is not \ensuremath{\Conid{S1}}, but a path
+space of \ensuremath{\Conid{S1}}: constructors are no longer algebras of functor, but a
+kind of \emph{dialgebra}: the arguments as well as the result type of
+a constructor may vary. Secondly, the \ensuremath{\Varid{loop}} constructor refers to the
+previous constructor \ensuremath{\Varid{base}}.
+
+The result type of a constructor can also depend on the value of its
+arguments, as we see in the definition of propositional truncation as
+a \hit:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\mathbin{//}\;\Conid{A}\;\mathbin{//}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}[\mskip1.5mu \anonymous \mskip1.5mu]\;\mathbin{:}\;\Conid{A}\;\to \;\mathbin{//}\;\Conid{A}\;\mathbin{//}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{trunc}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\mathbin{:}\;\mathbin{//}\;\Conid{A}\;\mathbin{//})\;\to \;\Varid{x}\;=\;\Varid{y}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Constructors of a \hit are \emph{dependent dialgebras}. In general, a
+higher inductive type looks as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{37}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c0}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F0}\;\Conid{T})\;{}\<[37]%
+\>[37]{}\to \;\Conid{G0}\;\Conid{T}\;\Varid{x}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c1}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F1}\;\Conid{T}\;\Varid{c0})\;{}\<[37]%
+\>[37]{}\to \;\Conid{G1}\;\Conid{T}\;\Varid{c0}\;\Varid{x}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c2}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F2}\;\Conid{T}\;\Varid{c0}\;\Varid{c1})\;{}\<[37]%
+\>[37]{}\to \;\Conid{G2}\;\Conid{T}\;\Varid{c0}\;\Varid{c1}\;\Varid{x}\;{}\<[E]%
+\\
+\>[11]{}\vdots{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{ck+1}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{Fk}\;\Conid{T}\;\Varid{c0}\;\Varid{hdots}\;\Varid{ck})\;{}\<[37]%
+\>[37]{}\to \;\Conid{Gk}\;\Conid{T}\;\Varid{c0}\;\Varid{hdots}\;\Varid{ck}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We will refer to the \ensuremath{\Conid{Fi}} functors as \emph{argument} functors and the
+\ensuremath{\Conid{Gi}} functors as \emph{target} functors. The types of the argument
+functors are:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{6}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Conid{F0}\;{}\<[6]%
+\>[6]{}\mathbin{:}\;\Conid{Type}\;{}\<[22]%
+\>[22]{}\to \;\Conid{Type}{}\<[E]%
+\\
+\>[B]{}\Conid{F1}\;{}\<[6]%
+\>[6]{}\mathbin{:}\;(\Conid{F0},\Conid{G0})\;\Varid{-alg}\;{}\<[22]%
+\>[22]{}\to \;\Conid{Type}{}\<[E]%
+\\
+\>[B]{}\Conid{F2}\;{}\<[6]%
+\>[6]{}\mathbin{:}\;(\Conid{F1},\Conid{G1})\;\Varid{-alg}\;{}\<[22]%
+\>[22]{}\to \;\Conid{Type}{}\<[E]%
+\\
+\>[B]{}\Conid{Fk+1}\;\mathbin{:}\;(\Conid{Fk},\Conid{Gk})\;\Varid{-alg}\;{}\<[22]%
+\>[22]{}\to \;\Conid{Type}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{(\Conid{F0},\Conid{G0})\;\Varid{-alg})} is the category whose objects are dependent
+dialgebras \ensuremath{(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F0}\;\Conid{X})\;\to \;\Conid{G0}\;\Conid{X}\;\Varid{x})}. The category
+\ensuremath{(\Conid{F}\;(\Varid{i+1}),\Conid{G}\;(\Varid{i+1})\;\Varid{-alg}}has as objects: \ensuremath{(\Conid{X}\;\mathbin{:}\;(\Conid{Fi},\Conid{Gi})\;\Varid{-alg})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;(\Varid{i+1})\;\Conid{X})\;\to \;\Conid{G}\;(\Varid{i+1})\;\Conid{X}\;\Varid{x})}. The target functors also take the value of
+the arguments as an argument, so they have the following types:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{27}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{35}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Conid{G0}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;\Conid{Type}\;{}\<[27]%
+\>[27]{}\Conid{F0}\;{}\<[35]%
+\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\\
+\>[B]{}\Conid{G1}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;(\Conid{F0},\Conid{G0})\;\Varid{-alg}\;{}\<[27]%
+\>[27]{}\Conid{F1}\;{}\<[35]%
+\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\\
+\>[B]{}\Conid{G2}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;(\Conid{F1},\Conid{G1})\;\Varid{-alg}\;{}\<[27]%
+\>[27]{}\Conid{F2}\;{}\<[35]%
+\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\\
+\>[B]{}\Conid{Gk+1}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;(\Conid{Fk},\Conid{Gk})\;\Varid{-alg}\;{}\<[27]%
+\>[27]{}\Conid{F}\;(\Varid{k+1})\;{}\<[35]%
+\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We see that the general shape of a constructor is a dependent dialgebra:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{c}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\to \;\Conid{G}\;(\Conid{X},\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{G}\;\mathbin{:}\;\int\;\Conid{C}\;\Conid{F}\;\to \;\Conid{Type}}, where \ensuremath{\Conid{C}}
+is \ensuremath{\Conid{Type}} or some category of dependent dialgebras.
+
+When describing \hits, we do not allow for any target functor \ensuremath{\Conid{G}}: it
+must either return the type we are defining or a (possibly iterated)
+path space of that type.
+
+A \emph{\zeroconstructor} or \emph{point constructor} is a dialgebra:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{c}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\to \;\Conid{U}\;\Conid{X}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{U}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} its forgetful
+functor.
+
+A \emph{\oneconstructor} is a dependent dialgebra of which the target
+functor returns a path space:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{c}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\to \;\Conid{Eq0}\;\Conid{X}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F},\Conid{U}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}}, and \ensuremath{\Conid{Eq0}\;\mathbin{:}\;\int\;\Conid{C}\;\Conid{F}\;\to \;\Conid{Type}} is the functor:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Eq0}\;(\Conid{X},\Varid{x})\;:\equiv\;(\Varid{l0}\;\Conid{X}\;\Varid{x}\;=\;\Varid{r0}\;\Conid{X}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Varid{l0},\Varid{r0}\;\mathbin{:}\;\Conid{F}\;\to \;\Conid{U}} are natural transformations.
+
+For higher path constructors, we have to specify a tower of natural
+transformations, specifying the end points at every level. To specify
+an \ensuremath{(\Varid{n+1})}-constructor, we need to give the natural transformations:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{l0},\Varid{r0}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Conid{F}\;\to \;\Conid{U}{}\<[E]%
+\\
+\>[3]{}\Varid{l1},\Varid{r1}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eq0}{}\<[E]%
+\\
+\>[3]{}\Varid{l2},\Varid{r2}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eq1}\;{}\<[E]%
+\\
+\>[11]{}\vdots{}\<[E]%
+\\
+\>[3]{}\Varid{ln},\Varid{rn}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eqn-1}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Conid{Eqi}\;\Conid{X}\;\Varid{x}\;:\equiv\;(\Varid{li}\;\Conid{X}\;\Varid{x}\;=\;\Varid{ri}\;\Conid{X}\;\Varid{x})}. \ensuremath{\Conid{Eqn}} is then the target
+functor we are interested in.
+
+\subsection{Strict positivity}
+
+Apart from the restrictions on targets, we also want all functors
+involved to be strictly positive. In the case of \oits, we also have
+this restriction. An example of an inductive type which constructor is
+not strictly positive is the following:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{Term}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{lam}\;\mathbin{:}\;(\Conid{Term}\;\to \;\Conid{Term})\;\to \;\Conid{Term}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Using the type \ensuremath{\Conid{Term}}, we can find inhabitants of the empty type. We
+therefore only consider inductive types defined by strictly positive
+functors, \ie containers. Containers however only describe functors
+\ensuremath{\Conid{Type}\;\to \;\Conid{Type}}. An example of that shows that we need a notion of
+strict positivity for any functor into \ensuremath{\Conid{Type}} is that of the ``initial
+field''. If we write down the axioms of an algebraic structure as
+constructors, the inductive type we get is then the initial object in
+the category of that algebraic structure, \ie  we can define a type \ensuremath{\Conid{T}}
+with the monoid axioms as constructors:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{uip}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\mathbin{:}\;\Conid{T})\;(\Varid{p}\;\Varid{q}\;\mathbin{:}\;\Varid{x}\;=\;\Varid{y})\;\to \;\Varid{p}\;=\;\Varid{q}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{\char95 ∙\char95 }\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{assoc}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\Varid{z}\;\mathbin{:}\;\Conid{T})\;\to \;(\Varid{x}\;\Varid{∙}\;\Varid{y})\;\Varid{∙}\;\Varid{z}\;=\;\Varid{x}\;\Varid{∙}\;(\Varid{y}\;\Varid{∙}\;\Varid{z}){}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{e}\;\mathbin{:}\;\Conid{T}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{e-unit-l}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;\Varid{e}\;\Varid{∙}\;\Varid{x}\;=\;\Varid{x}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{e-unit-r}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;\Varid{x}\;\Varid{∙}\;\Varid{e}\;=\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\ensuremath{\Conid{T}} is equivalent to the unit type, which is the initial object in the
+category of monoids. If we now were to write down the axioms of a
+field, we run into trouble: there is no initial object in the category
+of fields. The culprit is the inverse operation, which has the type:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{inv}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;(\Varid{x}\;=\;\Varid{0}\;\to \;\Varid{⊥})\;\to \;\Conid{T}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The constructor \ensuremath{\Varid{0}} occurs negatively in this constructor.
+
+To generalise the notion of strict positivity, we can generalise the
+notion of containers to not only describe functors \ensuremath{\Conid{Type}\;\to \;\Conid{Type}}, but
+functors \emph{into} \ensuremath{\Conid{Type}} from any \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}. A \emph{generalised
+  container} is given by:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{S}\;\mathbin{:}\;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{P}\;\mathbin{:}\;\Conid{S}\;\to \;\mathbin{/}\;\Conid{C}\;\mathbin{/}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Its extension is then defined as:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;:\equiv\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;\Conid{C}\;(\Conid{P}\;\Varid{s},\Conid{X}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+with the action on morphisms defined as:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\mathbin{:}\;\Conid{C}\;(\Conid{X},\Conid{Y})\;\to \;\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\Conid{Y}{}\<[E]%
+\\
+\>[3]{}\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\Varid{f}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{s},\Varid{f}\;\Varid{∘}\;\Varid{t}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+
+\subsection{\Hits as a sequence of monads}
+
 
 \section{\Ronehits}
 
+\todoi{coherence and other reasons why things are difficult}
 
-
-\section{Homotopy initiality for \wtypes}
-
-In type theory, a data type is described by its introduction rule (the
-constructors) and its elimination rule (the induction principle) along
-with a computation rule describing how these two rules interact.
-
-\todoi{Natural numbers example?}
-
-\subsection{Induction principle}
-
-Given a functor \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} given as a container \ensuremath{\Conid{F}\;:\equiv\;\Conid{S}\;\Varid{◁}\;\Conid{P}}, the \wtype \ensuremath{\Conid{W}} is defined as having the following
-introduction rule / constructor:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{W}\;\to \;\Conid{W}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-as well as an elimination rule / induction principle:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{ind}\;\mathbin{:}\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{W})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\to \;{}\<[8]%
-\>[8]{}\Conid{B}\;\Varid{x}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-with computation rule:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{ind-β₀}\;\mathbin{:}\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\to \;{}\<[8]%
-\>[8]{}\Varid{ind}\;\Conid{B}\;\Varid{m}\;(\Varid{c}\;\Varid{x})\;=\;\Varid{m}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;(\Varid{ind}\;\Conid{B}\;\Varid{m})\;\Varid{x}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-\subsection{Algebras}
+\section{Algebras}
 
 The type of \emph{\ensuremath{\Conid{F}}-algebras}, or simply \emph{algebras}, can be
 defined as follows:
@@ -514,7 +822,7 @@ this gives us the \ensuremath{\Varid{β}}-rule for the recursion and induction p
   arguments later on a bit easier. Also, the dependent versions don't
   work as pointfree as these ones}
 
-\subsubsection{Homotopy initial algebras}
+\subsection{Homotopy initial algebras}
 
 We call an algebra \ensuremath{(\Conid{X},\Varid{θ})} \emph{homotopy initial} if it has the
 property that for every algebra \ensuremath{(\Conid{Y},\Varid{ρ})}, \ensuremath{\Conid{Alg-hom}\;(\Conid{X},\Varid{θ})\;(\Conid{Y},\Varid{ρ})}
@@ -602,7 +910,139 @@ corresponding diagram:
 
 \todoi{comm diag}
 
+\subsection{Algebras for \ronehit descriptions}
 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Alg}\;:\equiv\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{θ₀}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X}\;\to \;\Conid{X})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{θ₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\ensuremath{\Varid{θ₀}} is an \ensuremath{\Conid{F₀}}-algebra and \ensuremath{\Varid{θ₁}} can be seen as a dependent dialgebra
+by defining the functor \ensuremath{\Conid{G₁}}:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{G₁}\;\mathbin{:}\;\Varid{∫}\;\Conid{F₀-Algebra}\;\Conid{F₁}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{G₁}\;((\Conid{X},\Varid{θ}),\Varid{x})\;:\equiv\;(\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Its hom-types can be defined as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{36}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{42}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{50}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{Alg-hom}\;\mathbin{:}\;\Conid{Alg}\;\to \;\Conid{Alg}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{Alg-hom}\;(\Conid{X},\Varid{θ})\;(\Conid{Y},\Varid{ρ})\;:\equiv\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{f}\;\mathbin{:}\;\Conid{X}\;\to \;\Conid{Y})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{f-β₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;{}\<[36]%
+\>[36]{}\Varid{f}\;{}\<[42]%
+\>[42]{}(\Varid{θ₀}\;\Varid{x})\;{}\<[50]%
+\>[50]{}=\;\Varid{ρ₀}\;(\Conid{F₀}\;\Varid{f}\;\Varid{x}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{×}\;{}\<[8]%
+\>[8]{}(\Varid{f-β₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Conid{G₁}\;\Varid{x}\;{}\<[36]%
+\>[36]{}\Varid{f},\Varid{f₀}\;{}\<[42]%
+\>[42]{}(\Varid{θ₁}\;\Varid{x})\;{}\<[50]%
+\>[50]{}=\;\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{f}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+
+\section{Induction}
+
+Given a functor \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} given as a container \ensuremath{\Conid{F}\;:\equiv\;\Conid{S}\;\Varid{◁}\;\Conid{P}}, the \wtype \ensuremath{\Conid{W}} is defined as having the following
+introduction rule / constructor:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{W}\;\to \;\Conid{W}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+as well as an elimination rule / induction principle:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{ind}\;\mathbin{:}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{W})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\to \;{}\<[8]%
+\>[8]{}\Conid{B}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+with computation rule:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{ind-β₀}\;\mathbin{:}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{5}{}\<[8]%
+\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\to \;{}\<[8]%
+\>[8]{}\Varid{ind}\;\Conid{B}\;\Varid{m}\;(\Varid{c}\;\Varid{x})\;=\;\Varid{m}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;(\Varid{ind}\;\Conid{B}\;\Varid{m})\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
 
 \subsection{Initiality implies induction}
 
@@ -623,13 +1063,49 @@ morphism \ensuremath{(\Conid{B},\Varid{θ})\;\to \;(\Conid{W},\Varid{c})}.
 
 \todoi{Show that initiality implies section induction}
 
-\subsection{Induction implies initiality}
+\subsection{Induction principle for \ronehits}
+
+To get the induction principle of \ronehits, we need to take that of
+the ordinary \wtypes and extend it with the new (path) constructor: we
+have to add a method to \ensuremath{\Varid{ind}} and the appropriate computation rule for
+that.
+
+Consider the method for the \zeroconstructor:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₀}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{B}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We can read this as showing that if for all subterms of \ensuremath{\Varid{c₀}\;\Varid{x}} \ensuremath{\Conid{B}}
+holds, \ensuremath{\Conid{B}} also holds for \ensuremath{\Varid{c₀}\;\Varid{x}} itself. Since we are dealing with a
+\zeroconstructor, we don't have any issues with the target of the
+constructor: the target functor is the identity functor. For the
+motive of the \oneconstructor, we want something like:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₁}\;\Conid{B}\;\Varid{x}\;\to \;\Varid{□}\;\Conid{G}\;(\Varid{c₁}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We need to figure out what the lifting of \ensuremath{\Conid{B}} to the target functor
+\ensuremath{\Conid{G}} is.
+
+\section{Induction implies homotopy initiality}
 
 We want to show that, given \ensuremath{\Conid{T}\;\mathbin{:}\;\Conid{Type}} and \ensuremath{\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{T}\;\to \;\Conid{T}} that
 satisfies the induction principle, the algebra \ensuremath{(\Conid{T},\Varid{c})} is initial,
 \ie for any algebra \ensuremath{(\Conid{X},\Varid{θ})}, \ensuremath{\Conid{Alg-hom}\;(\Conid{T},\Varid{c})\;(\Conid{X},\Varid{θ})\;\Varid{≃}\;\Varid{1}}. We will
 first show that we have an algebra morphism \ensuremath{\Varid{f}\;\mathbin{:}\;(\Conid{T},\Varid{c})\;\to \;(\Conid{X},\Varid{θ})}
 and will then show that this algebra morphism is unique.
+
+\subsection{W-types}
 
 \subsubsection{Existence}
 
@@ -755,128 +1231,7 @@ rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;
 
 We have now established initiality of \ensuremath{(\Conid{T},\Varid{c})}.
 
-\section{Homotopy initiality for \ronehits}
-
-To establish initiality for \ronehits, we proceed along the same lines
-as we have previously for ordinary \wtypes. We first define the
-induction principle and the algebras, and show that induction implies
-initiality and the other way around.
-
-\subsection{Induction principle}
-
-To get the induction principle of \ronehits, we need to take that of
-the ordinary \wtypes and extend it with the new (path) constructor: we
-have to add a method to \ensuremath{\Varid{ind}} and the appropriate computation rule for
-that.
-
-Consider the method for the \zeroconstructor:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₀}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{B}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-We can read this as showing that if for all subterms of \ensuremath{\Varid{c₀}\;\Varid{x}} \ensuremath{\Conid{B}}
-holds, \ensuremath{\Conid{B}} also holds for \ensuremath{\Varid{c₀}\;\Varid{x}} itself. Since we are dealing with a
-\zeroconstructor, we don't have any issues with the target of the
-constructor: the target functor is the identity functor. For the
-motive of the \oneconstructor, we want something like:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₁}\;\Conid{B}\;\Varid{x}\;\to \;\Varid{□}\;\Conid{G}\;(\Varid{c₁}\;\Varid{x}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-We need to figure out what the lifting of \ensuremath{\Conid{B}} to the target functor
-\ensuremath{\Conid{G}} is.
-
-\subsection{Algebras}
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Conid{Alg}\;:\equiv\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{×}\;{}\<[8]%
-\>[8]{}(\Varid{θ₀}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X}\;\to \;\Conid{X})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{×}\;{}\<[8]%
-\>[8]{}(\Varid{θ₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-\ensuremath{\Varid{θ₀}} is an \ensuremath{\Conid{F₀}}-algebra and \ensuremath{\Varid{θ₁}} can be seen as a dependent dialgebra
-by defining the functor \ensuremath{\Conid{G₁}}:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Conid{G₁}\;\mathbin{:}\;\Varid{∫}\;\Conid{F₀-Algebra}\;\Conid{F₁}\;\to \;\Conid{Type}{}\<[E]%
-\\
-\>[3]{}\Conid{G₁}\;((\Conid{X},\Varid{θ}),\Varid{x})\;:\equiv\;(\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-Its hom-types can be defined as follows:
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{36}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{42}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{50}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Conid{Alg-hom}\;\mathbin{:}\;\Conid{Alg}\;\to \;\Conid{Alg}\;\to \;\Conid{Type}{}\<[E]%
-\\
-\>[3]{}\Conid{Alg-hom}\;(\Conid{X},\Varid{θ})\;(\Conid{Y},\Varid{ρ})\;:\equiv\;{}\<[E]%
-\\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{f}\;\mathbin{:}\;\Conid{X}\;\to \;\Conid{Y})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{×}\;{}\<[8]%
-\>[8]{}(\Varid{f-β₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;{}\<[36]%
-\>[36]{}\Varid{f}\;{}\<[42]%
-\>[42]{}(\Varid{θ₀}\;\Varid{x})\;{}\<[50]%
-\>[50]{}=\;\Varid{ρ₀}\;(\Conid{F₀}\;\Varid{f}\;\Varid{x}))\;{}\<[E]%
-\\
-\>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{×}\;{}\<[8]%
-\>[8]{}(\Varid{f-β₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Conid{G₁}\;\Varid{x}\;{}\<[36]%
-\>[36]{}\Varid{f},\Varid{f₀}\;{}\<[42]%
-\>[42]{}(\Varid{θ₁}\;\Varid{x})\;{}\<[50]%
-\>[50]{}=\;\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{f}\;\Varid{x})){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-Initiality for these algebras is defined in the same way as before.
-
-\subsubsection{Equality of algebra morphisms}
-
-\todoi{todo}
-
-\subsection{Initiality implies induction}
-
-\subsection{Induction implies initiality}
-
-\todoi{todo}
+\subsection{\Ronehits}
 
 \subsubsection{Existence}
 
