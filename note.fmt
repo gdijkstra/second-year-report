@@ -32,7 +32,7 @@
 \DeclareUnicodeCharacter{10218}{\ensuremath{ \{ }}
 \DeclareUnicodeCharacter{10219}{\ensuremath{ \} }}
 \DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
-
+\DeclareUnicodeCharacter{7496}{\ensuremath{^d}}
 % TODO: This is in general not a good idea.
 \providecommand\textepsilon{$\epsilon$}
 \providecommand\textmu{$\mu$}
@@ -53,8 +53,10 @@
 %endif
 %endif
 
+%format . = "."
 %format = = "\equiv"
 %format := = ":\equiv"
 %format == = "="
 %format int = "\int"
 %format vdots = "\vdots"
+

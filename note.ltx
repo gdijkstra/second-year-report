@@ -37,6 +37,12 @@
 % Bibliography stuff
 \usepackage[autostyle]{csquotes}
 
+%% Tikz setup
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing} % for snake lines
+\usetikzlibrary{matrix}
+
+
 %% Commands
 \newcommand{\todoi}[1]{\todo[inline]{#1}}
 \newcommand{\withoutk}{\xspace\verb+--without-K+\xspace}
@@ -185,7 +191,8 @@ We see that the general shape of a constructor is a dependent dialgebra:
 \end{code}
 
 where |C : Cat|, |F : C -> Type| and |G : int C F -> Type|, where |C|
-is |Type| or some category of dependent dialgebras.
+is |Type| or some category of dependent dialgebras, ``containing'' all
+the previous constructors.
 
 When describing \hits, we do not allow for any target functor |G|: it
 must either return the type we are defining or a (possibly iterated)
@@ -293,19 +300,149 @@ Its extension is then defined as:
 with the action on morphisms defined as:
 
 \begin{code}
-  ⟦ F ⟧ : C(X , Y) -> ⟦ F ⟧ X -> ⟦ F ⟧ Y
-  ⟦ F ⟧ f (s , t) := (s , f ∘ t)
+  ⟦ S ◁ P ⟧ : C(X , Y) -> ⟦ S ◁ P ⟧ X -> ⟦ S ◁ P ⟧ Y
+  ⟦ S ◁ P ⟧ f (s , t) := (s , f ∘ t)
 \end{code}
 
+Just as with ordinary containers, we can define container morphisms
+for generalised containers in the standard way: for containers |S ◁ P|
+and |T ◁ Q|, a container morphism |S ◁ P -> T ◁ Q| is comprised of:
+
+\begin{code}
+  f : S -> T
+  g : (a : S) -> C(Q (f a) , P a)
+\end{code}
+
+with its action of objects defined as:
+
+\begin{code}
+  ⟦ (f , g) ⟧ : (X : / C /) -> ⟦ S ◁ P ⟧ X -> ⟦ T ◁ Q ⟧ X
+  ⟦ (f , g) ⟧ X (s , t) := (f s , t ∘ (g s))
+\end{code}
 
 \subsection{\Hits as a sequence of monads}
+
+Given a strictly positive functor |F : Type -> Type|, we can consider
+its category of algebras |F-alg|. |F-alg| has a forgetful functor |U :
+F-alg -> Type|, which has a left adjoint |L : Type -> F-alg| that maps
+a type to its free |F|-algebra. Note that plugging in the initial
+object in |Type|, \ie the empty type into |L| gives us the initial
+object in |F-alg|, as left adjoints preserve colimits. The monad |UL|
+is called the \emph{free monad} of |F|, also denoted as |F *|. This
+monad has the property that the category of |F|-algebras is equivalent
+to the category of monad algebras of |F *|. \Hits can be contrasted to
+\oits as being characterised by a more general class of monads than
+just free monads.
+
+\todoi{Explain more of how we can then specify this}
 
 
 \section{\Ronehits}
 
-\todoi{coherence and other reasons why things are difficult}
+Instead of considering a \hit with arbitrarily many constructors, we
+can restrict ourselves to having two constructors: a \zeroconstructor
+followed by a \oneconstructor. The data we need to supply for this is:
+
+\begin{code}
+  F₀ : Type -> Type
+  F₁ : F₀-alg -> Type
+\end{code}
+
+with the target of the \oneconstructor given by:
+
+\begin{code}
+  G : int (F₀-alg) F₁ -> Type
+  G X θ x := (l X θ x == r X θ x)
+\end{code}
+
+for natural transformations |l, r : F₁ -> U| where |U : F₀-alg ->
+Type| the forgetful functor. If |F₁| factors through |U|, \ie the
+arguments of the \oneconstructor do not refer to the \zeroconstructor,
+then can simplify the situation even further. Suppose |F₁ == F₁' ∘ U|
+for some |F₁' : Type -> Type|, natural transformations |F₁ -> U| can
+be given by natural transformations |F₁' -> F₀ *|, where |F₀ *| is the
+free monad of |F₀|. Recall that |U| has a left adjoint |L| such that
+|F₀ * == UL|. Since |U| has a left adjoint, it is representable, for
+any |X : Type|:
+
+\begin{code}
+  U X  == 1 -> U X
+       == F₀-alg(L1 , U X)
+\end{code}
+
+If |F₁' = S ◁ P|, then we can characterise natural transformations |F₁
+-> U| as container morphisms. We can calculate the container
+representation of the composition |F₁' ∘ U| as follows: suppose |X :
+Type|, then:
+
+\begin{code}
+  F₁' (U X)  == F₁' (F₀-alg(L1 , X))
+             == (s : S) × (P s -> F₀-alg(L1 , X))
+             == (s : S) × (P s -> 1 -> U X)
+             == (s : S) × (P s -> U X)
+             == (s : S) × (F₀-alg(L (P s) , X))
+\end{code}
+
+So the container representation of |F₁' ∘ U| is |S ◁ L ∘ P|. Using
+this we can derive the following:
+
+\begin{code}
+  F₁ -> U
+   == { definition of F₁ }
+  F₁' ∘ U -> U
+   == { container morphisms }
+  (s : S) -> U (L (P s))
+   == { definition of F * }
+  (s : S) -> F₀ * (P s)
+   == { container morphisms }
+  F₁' -> F₀ *
+\end{code}
+
+The data we need to describe a \ronehit consists of:
+
+\begin{code}
+  F₀ : Type -> Type
+  F₁ : Type -> Type
+  l, r : F₁ -> F₀ *
+\end{code}
+
+where |F₀, F₁| are given as container and |l, r| as container
+morphisms. Given these data, the \ronehit then looks as follows:
+
+\begin{code}
+  data T : Type where
+    c₀ : F₀ T -> T
+    c₁ : (x : F₁ T) -> c₀ * (l x) == c₀ * (r x)
+\end{code}
+
+where |c₀ * : F₀ * T -> T| is the lifting of the |F₀|-algebra |c₀ : F₀
+T -> T| to a (monad) |F₀ *|-algebra.
+
+The advantage of restricting ourselves to the above situation is that
+we can give the description of a \hit using only ordinary containers
+and container morphisms. This avoids dealing with the coherence
+problems that stem from defining categories of algebras, needed to
+give the generalised containers for the constructors.
+
+Many \hits we see ``in the wild'' can be captured by this approach,
+such as the circle and |n|-truncation.
+
+One limitation however is that it does not handle ``nested'' \hits
+directly. The following example is not expressible, as the functor |//
+_ // : Type -> Type| is not a container:
+
+\begin{code}
+  data T : Type where
+    c : // T // -> T
+\end{code}
 
 \section{Algebras}
+
+Before we set out to show that induction implies homotopy initiality
+and vice versa, we need to define exactly what we mean when we talk
+about these concepts. First we will define the relevant concepts for
+ordinary |F|-algebras and later give the definitions of algebras for
+\ronehits.
 
 The type of \emph{|F|-algebras}, or simply \emph{algebras}, can be
 defined as follows:
@@ -314,7 +451,8 @@ defined as follows:
   Alg := (X : Type) × (θ : F X -> X)
 \end{code}
 
-where the type morphisms is defined as follows:
+where the type of algebra morphisms is defined as functions between
+the carriers such that it respects both algebra structures:
 
 \begin{code}
   Alg-hom : Alg -> Alg -> Type
@@ -324,12 +462,8 @@ where the type morphisms is defined as follows:
 \end{code}
 
 The witness of commutativity has suggestively been named |f-β₀| as
-this gives us the |β|-rule for the recursion and induction principles.
-
-\todoi{Something about having |f₀ : f ∘ θ = ρ ∘ F f| instead. We need
-  function extensionality either way, but this way it makes the
-  arguments later on a bit easier. Also, the dependent versions don't
-  work as pointfree as these ones}
+this corresponds the computation rule for the recursion and induction
+principles.
 
 \subsection{Homotopy initial algebras}
 
@@ -342,6 +476,10 @@ is contractible, \ie:
   is-initial θ  :=  (ρ : Alg) → is-contr (Alg-hom θ ρ)
                 =   (ρ : Alg) → (f : Alg-hom θ ρ) × ((g : Alg-hom θ ρ) → f == g)
 \end{code}
+
+Note that this definition does not refer to how |Alg| and |Alg-hom|
+are defined exactly, so this definition also holds for the algebras
+for \ronehits.
 
 \subsubsection{Equality of algebra morphisms}
 
@@ -362,7 +500,6 @@ respecting the equality |f == g|.
 
 As it turns out, the above is equivalent to something which is more
 convenient in subsequent proofs:
-
 
 \begin{code}
    transport (λ h → (x : F X) → h (θ x) == ρ (F h x)) p f-β₀ == g-β₀
@@ -386,13 +523,31 @@ convenient in subsequent proofs:
 \end{code}
 
 The last equation tells us that showing that two algebra morphisms are
-equal is somewhat like giving an algebra morphism from the witness of
+equal is somewhat like giving a dialgebra morphism from the witness of
 the β-law for |f| to that of |g|, as we can see if we draw the
 corresponding diagram:
 
-\todoi{comm diag}
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { |f (θ x)| & & |ρ (F f x)| \\
+   |g (θ x)| & & |ρ (F g x)| \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {|f-β₀ x|} (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {|ap (λ h → ρ (F h x)) p|} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {|ap (λ h → h (θ x)) p|} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {|g-β₀ x|} (m-2-3);
+  \end{tikzpicture}
+\end{center}
 
 \subsection{Algebras for \ronehit descriptions}
+
+For algebras of \ronehits, the structure starts out similar to the
+above with an added function for the \oneconstructor. 
 
 \begin{code}
   Alg :=  
@@ -401,13 +556,15 @@ corresponding diagram:
     ×  (θ₁ : (x : F₁ X) -> l (θ₀ * x) == r (θ₀ * x))
 \end{code}
 
-|θ₀| is an |F₀|-algebra and |θ₁| can be seen as a dependent dialgebra
-by defining the functor |G₁|:
+Recall that |θ₀| is an |F₀|-algebra and |θ₁| is a dependent dialgebra
+by defining the target functor |G|:
 
 \begin{code}
-  G₁ : ∫ F₀-Algebra F₁ -> Type
-  G₁ ((X , θ) , x) := (l (θ₀ * x) == r (θ₀ * x))
+  G : ∫ F₀-alg F₁ -> Type
+  G ((X , θ) , x) := (l (θ₀ * x) == r (θ₀ * x))
 \end{code}
+
+\todoi{action on morphisms of |G|}
 
 Its hom-types can be defined as follows:
 
@@ -416,85 +573,190 @@ Its hom-types can be defined as follows:
   Alg-hom (X , θ) (Y , ρ) :=
        (f : X -> Y)
     ×  (f-β₀ : (x : F₀ X) ->       f     (θ₀ x)  == ρ₀ (F₀ f x))
-    ×  (f-β₁ : (x : F₁ X) -> G₁ x  f,f₀  (θ₁ x)  == ρ₁ (F₁ f x))
+    ×  (f-β₁ : (x : F₁ X) ->  G x  f,f₀  (θ₁ x)  == ρ₁ (F₁ f x))
 \end{code}
+
+
+
+\subsubsection{Equality of algebra morphisms}
+
+As we saw previously, we also need to consider what equalities of
+algebra morphisms look like.
+
+\todoi{equality of algebra morphisms}
+
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { |f (θ₀ x)| & & |ρ₀ (F₀ f x)| \\
+   |g (θ₀ x)| & & |ρ₀ (F₀ g x)| \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {|f-β₀ x|} (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {|ap (λ h → ρ₀ (F h x)) p|} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {|ap (λ h → h (θ₀ x)) p|} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {|g-β₀ x|} (m-2-3);
+  \end{tikzpicture}
+\end{center}
+
+along with
+
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { |G x  f,f₀  (θ₁ x)| & & |ρ₁ (F₁ f x)| \\
+   |G x  g,g₀  (θ₁ x)| & & |ρ₁ (F₁ g x)| \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {|f-β₁ x|} (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {|ap (λ h,h₀ → ρ₁ (F h x)) p,p₀|} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {|ap (λ h,h₀ → G x  h,h₀  (θ₁ x) p,p₀|} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {|g-β₁ x|} (m-2-3);
+  \end{tikzpicture}
+\end{center}
 
 
 \section{Induction}
 
-Given a functor |F : Type -> Type| given as a container |F := S
-◁ P|, the \wtype |W| is defined as having the following
-introduction rule / constructor:
+Now we know what the algebras for \ronehits look like, characterising
+\ronehits as an initial algebra tells us what the constructors look
+like and gives us a recursion principle with its computation
+rule. However, it does not immediately reveal to us what the induction
+principle looks like.
+
+Let us first look at the induction principle for natural numbers:
 
 \begin{code}
-  c : F W -> W
+  Nat-ind : 
+        (P : Nat -> Type)
+        (m-zero : P zero)
+        (m-succ : (n : Nat) -> P n -> P (succ n))
+    ->  (n : Nat) -> P n
 \end{code}
 
-as well as an elimination rule / induction principle:
+In order to show that the predicate |P| holds for every |n : Nat|, we
+have to give a method for every constructor, which shows that |P|
+holds for that constructor, given that it holds for all its subterms.
+
+Generalising this to an inductive type |T|, given by a container |F :
+Type -> Type| and constructor |c : F T -> T|, we get:
 
 \begin{code}
-  ind :   
-       (B : W -> Type)
-       (m : (x : F W) → □ F B x → B (c x))
-       (x : W) 
-   ->  B x
-
+  ind :
+        (P : T -> Type)
+        (m : (x : F T) -> □ F B x -> B (c x))
+    ->  (x : T) -> P x 
 \end{code}
 
 with computation rule:
 
 \begin{code}
-  ind-β₀ :
-       (B : W -> Type) 
-       (m : (x : F W) → □ F B x → B (c x))
-       (x : F W)
-   ->  ind B m (c x) == m x (□-lift F (ind B m) x)
+  ind-β :
+        (P : T -> Type)
+        (m : (x : F T) -> □ F B x -> B (c x))
+        (x : F T)
+    ->  ind P m (c x) == m x (□-lift F B (ind P m) x)
 \end{code}
 
-\subsection{Initiality implies induction}
+The modality |□| lifts the predicate |P| on |T| to a predicate on |F
+T|:
 
-The induction principle tells us that for a family |B : W -> Type| and
-a motive |m : (x : F W) → □ F B x → B (c x)|, we get a dependent
-function |ind : (x : W) -> B x| along with a computation rule.
+\begin{code}
+  □ F P : F T -> Type
+  □ F P (s , t) := (p : Pos s) -> B (t p)
+\end{code}
 
-Note that |m|, along with |c|, can be seen as a morphism between the
-families |(W , B)| and |(F W , □ F B)|.
+where |Pos| is the position type of the container |F|. The type |□ F B
+x| can be interpreted as: the predicate |P| holds for all of the
+subterms of |c x : T|. |□-lift| lifts dependent functions:
 
-Another way to say this is that given a function |p : B -> W| for some
-|B : Type| and that we want |θ : F B -> B| such that |θ|, along with
-|c|, becomes a morphism |Fp -> p| in the arrow category. This is
-equivalent to asking for an algebra |(B , θ)| along with an algebra
-morphism |(B , θ) -> (W , c)|.
+\begin{code}
+  □-lift : ((x : A) -> B x) -> (x : F A) -> □ F B x
+\end{code}
 
-\todoi{Give arguments why section induction is correct}
+The induction principle gives us a dependent function |(x : T) -> P t|
+for a family |P : T -> Type|. Equivalently, we can ask for a section
+|σ : B -> T| of a function |p : T -> B| for some |B : Type|. For any
+algebra |(B , θ)|, initiality gives us an algebra morphism |σ : (T, c)
+-> (B, θ)|. We can ask ourselves what extra conditions we need to
+impose on the algebra |(B , θ)| in order for |σ| to be a section of
+|p|. If |p| turns out to be an algebra morphism |(B, θ) -> (T, c)|,
+then the following diagram commutes:
 
-\todoi{Show that initiality implies section induction}
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { |FT| & & |T| \\
+   |FB| & & |B| \\ 
+   |FT| & & |T| \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {|c|}  (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {|σ|}  (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {|Fσ|} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {|θ|}  (m-2-3);
+  \path[->] (m-2-3) edge[decorate] node[auto]       {|p|}  (m-3-3);
+  \path[->] (m-2-1) edge[decorate] node[auto,swap]  {|Fp|} (m-3-1);
+  \path[->] (m-3-1) edge[decorate] node[auto]       {|c|}  (m-3-3);
+  \end{tikzpicture}
+\end{center}
+
+|p ∘ σ| is an algebra morphism |(T, c) -> (T, c)|. Since |id| is also
+an algebra morphism |(T, c) -> (T, c)|, by uniqueness we can conclude
+that |p ∘ σ == id|, so |σ| is indeed a section.
+
+By choosing |B := Σ T P| and |p := π₀|, we can derive the induction
+principle mentioned above, observing that |F (Σ T P) ≃ Σ (FT) (□ F P)|.
 
 \subsection{Induction principle for \ronehits}
 
-To get the induction principle of \ronehits, we need to take that of
-the ordinary \wtypes and extend it with the new (path) constructor: we
-have to add a method to |ind| and the appropriate computation rule for
-that.
-
-Consider the method for the \zeroconstructor:
+An induction principle for \ronehits can be derived using the method
+mentioned previously: the data for induction should be an algebra
+structure on |Σ T P| such that |π₀| is an algebra morphism |(Σ T P ,
+π₀ , G π₀) -> (T , c₀ , c₁)|. We have to produce the methods:
 
 \begin{code}
-  m₀ : (x : F₀ X) -> □ F₀ B x -> B (c₀ x)
+  m₀ : F₀ (Σ T P) -> Σ T P
+  m₁ : (x : F₁ (Σ T P)) -> G (Σ T P , m₀) x
 \end{code}
 
-We can read this as showing that if for all subterms of |c₀ x| |B|
-holds, |B| also holds for |c₀ x| itself. Since we are dealing with a
-\zeroconstructor, we don't have any issues with the target of the
-constructor: the target functor is the identity functor. For the
-motive of the \oneconstructor, we want something like:
+subject to the equations:
 
 \begin{code}
-  m₁ : (x : F₁ X) -> □ F₁ B x -> □ G (c₁ x)
+  m-β₀ : (x : F₀ (Σ T P)) -> π₀ (m₀ x) == c₀ (F₀ π₀ x)
+  m-β₁ : (x : F₁ (Σ T P)) -> G (π₀ , m-β₀) (m₁ x) == c₁ (F₁ π₀ x)
 \end{code}
 
-We need to figure out what the lifting of |B| to the target functor
-|G| is.
+From this we can make derive the methods for the induction principle:
+
+\begin{code}
+  m₀ : (x : F₀ T) -> □ F₀ x -> P (c₀ x)
+  m₁ : (x : F₁ T) (y : □ F₁ x) -> m₀ *ᵈ (lᵈ x y) == m₀ *ᵈ (rᵈ x y) [ P ↓ c₁ x ]
+\end{code}
+
+where:
+
+\begin{code}
+  lᵈ, rᵈ  : {A : Type0} {B : A -> Type0} 
+          -> (x : F₁ A) -> □ F₁ B x -> Σ (F₀ *) (□ (F₀ *) B)
+\end{code}
+
+and
+
+\begin{code}
+  m₀ *ᵈ : (x : Σ (F₀ *) -> (□ (F₀ *) x) -> P (c₀ (π₀ x))
+\end{code}
+
+are the liftings of their non-dependent counterparts.
 
 \section{Induction implies homotopy initiality}
 
@@ -531,7 +793,7 @@ Assuming that we have an algebra morphism |(g , g₀) : (T , c) -> (X ,
 x|. The induction step is then proven as follows:
 
 \begin{code}
-  step : (x : ⟦ F ⟧₀ T) → □ F f=g-B x → f=g-B (c x)
+  step : (x : ⟦ F ⟧₀ T) → □ F (λ x -> f x == g x) x → f=g-B (c x)
   step x u :=
     f (c x)
      =⟪ f₀ x ⟫
@@ -542,9 +804,8 @@ x|. The induction step is then proven as follows:
     g (c x) ∎
 \end{code}
 
-\todoi{Explain |ind-hyp|}
-
-We can define the witness of |f == g| as follows:
+where |ind-hyp : (x : F T) → □ F (λ x -> f x == g x) x → F f x == F g
+x|. We can define the witness of |f == g| as follows:
 
 \begin{code}
   p : (x : T) -> f x == g x
@@ -557,14 +818,12 @@ which comes with the computation rule:
   p-β₀ : (x : FT) -> p (c x) == f-β₀ x ∙ ap θ (ind-hyp x (□-lift F p x)) ∙ ! (g-β₀ x)
 \end{code}
 
-\todoi{say that |λ=| is fun ext}
-
 We now need to show that our witness |p| satisfies the ``computation
 rule'' |(x : FT) -> f-β₀ x ∙ ap (λ h → ρ (F h x)) p == ap (λ h → h (θ
 x)) p ∙ g-β₀ x|. Let |x : FT|, then we can calculate:
 
 \begin{code}
-  f-β₀ x ∙ ap (λ h → θ (F h x)) (λ= p)
+  f-β₀ x ∙ ap (λ h → θ (F h x)) (fun-ext p)
 
    == { ap magic }
 
@@ -578,9 +837,9 @@ x)) p ∙ g-β₀ x|. Let |x : FT|, then we can calculate:
 
   p (c x) ∙ g-β₀ x
 
-   == { computation rule for λ= }
+   == { computation rule for fun-ext }
 
-  ap (λ h → h (c x)) (λ= p) ∙ g-β₀ x   
+  ap (λ h → h (c x)) (fun-ext p) ∙ g-β₀ x   
 \end{code}
 
 We have now established initiality of |(T , c)|.

@@ -303,7 +303,7 @@
 \DeclareUnicodeCharacter{10218}{\ensuremath{ \{ }}
 \DeclareUnicodeCharacter{10219}{\ensuremath{ \} }}
 \DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
-
+\DeclareUnicodeCharacter{7496}{\ensuremath{^d}}
 % TODO: This is in general not a good idea.
 \providecommand\textepsilon{$\epsilon$}
 \providecommand\textmu{$\mu$}
@@ -317,6 +317,7 @@
 \let\Conid\Varid
 \newcommand\Keyword[1]{\textsf{\textbf{#1}}}
 \EndFmtInput
+
 
 
 
@@ -339,6 +340,12 @@
 
 % Bibliography stuff
 \usepackage[autostyle]{csquotes}
+
+%% Tikz setup
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing} % for snake lines
+\usetikzlibrary{matrix}
+
 
 %% Commands
 \newcommand{\todoi}[1]{\todo[inline]{#1}}
@@ -592,7 +599,8 @@ We see that the general shape of a constructor is a dependent dialgebra:
 \end{hscode}\resethooks
 
 where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{G}\;\mathbin{:}\;\int\;\Conid{C}\;\Conid{F}\;\to \;\Conid{Type}}, where \ensuremath{\Conid{C}}
-is \ensuremath{\Conid{Type}} or some category of dependent dialgebras.
+is \ensuremath{\Conid{Type}} or some category of dependent dialgebras, ``containing'' all
+the previous constructors.
 
 When describing \hits, we do not allow for any target functor \ensuremath{\Conid{G}}: it
 must either return the type we are defining or a (possibly iterated)
@@ -766,21 +774,221 @@ with the action on morphisms defined as:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\mathbin{:}\;\Conid{C}\;(\Conid{X},\Conid{Y})\;\to \;\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\Conid{Y}{}\<[E]%
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\mathbin{:}\;\Conid{C}\;(\Conid{X},\Conid{Y})\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{Y}{}\<[E]%
 \\
-\>[3]{}\Varid{⟦}\;\Conid{F}\;\Varid{⟧}\;\Varid{f}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{s},\Varid{f}\;\Varid{∘}\;\Varid{t}){}\<[E]%
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Varid{f}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{s},\Varid{f}\;\Varid{∘}\;\Varid{t}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
+Just as with ordinary containers, we can define container morphisms
+for generalised containers in the standard way: for containers \ensuremath{\Conid{S}\;\Varid{◁}\;\Conid{P}}
+and \ensuremath{\Conid{T}\;\Varid{◁}\;\Conid{Q}}, a container morphism \ensuremath{\Conid{S}\;\Varid{◁}\;\Conid{P}\;\to \;\Conid{T}\;\Varid{◁}\;\Conid{Q}} is comprised of:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{f}\;\mathbin{:}\;\Conid{S}\;\to \;\Conid{T}{}\<[E]%
+\\
+\>[3]{}\Varid{g}\;\mathbin{:}\;(\Varid{a}\;\mathbin{:}\;\Conid{S})\;\to \;\Conid{C}\;(\Conid{Q}\;(\Varid{f}\;\Varid{a}),\Conid{P}\;\Varid{a}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+with its action of objects defined as:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{⟦}\;(\Varid{f},\Varid{g})\;\Varid{⟧}\;\mathbin{:}\;(\Conid{X}\;\mathbin{:}\;\mathbin{/}\;\Conid{C}\;\mathbin{/})\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{T}\;\Varid{◁}\;\Conid{Q}\;\Varid{⟧}\;\Conid{X}{}\<[E]%
+\\
+\>[3]{}\Varid{⟦}\;(\Varid{f},\Varid{g})\;\Varid{⟧}\;\Conid{X}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{f}\;\Varid{s},\Varid{t}\;\Varid{∘}\;(\Varid{g}\;\Varid{s})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
 
 \subsection{\Hits as a sequence of monads}
+
+Given a strictly positive functor \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}}, we can consider
+its category of algebras \ensuremath{\Conid{F-alg}}. \ensuremath{\Conid{F-alg}} has a forgetful functor \ensuremath{\Conid{U}\;\mathbin{:}\;\Conid{F-alg}\;\to \;\Conid{Type}}, which has a left adjoint \ensuremath{\Conid{L}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{F-alg}} that maps
+a type to its free \ensuremath{\Conid{F}}-algebra. Note that plugging in the initial
+object in \ensuremath{\Conid{Type}}, \ie the empty type into \ensuremath{\Conid{L}} gives us the initial
+object in \ensuremath{\Conid{F-alg}}, as left adjoints preserve colimits. The monad \ensuremath{\Conid{UL}}
+is called the \emph{free monad} of \ensuremath{\Conid{F}}, also denoted as \ensuremath{\Conid{F}\;\Varid{*}}. This
+monad has the property that the category of \ensuremath{\Conid{F}}-algebras is equivalent
+to the category of monad algebras of \ensuremath{\Conid{F}\;\Varid{*}}. \Hits can be contrasted to
+\oits as being characterised by a more general class of monads than
+just free monads.
+
+\todoi{Explain more of how we can then specify this}
 
 
 \section{\Ronehits}
 
-\todoi{coherence and other reasons why things are difficult}
+Instead of considering a \hit with arbitrarily many constructors, we
+can restrict ourselves to having two constructors: a \zeroconstructor
+followed by a \oneconstructor. The data we need to supply for this is:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{F₀}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{F₁}\;\mathbin{:}\;\Conid{F₀-alg}\;\to \;\Conid{Type}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+with the target of the \oneconstructor given by:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{G}\;\mathbin{:}\;\int\;(\Conid{F₀-alg})\;\Conid{F₁}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{G}\;\Conid{X}\;\Varid{θ}\;\Varid{x}\;:\equiv\;(\Varid{l}\;\Conid{X}\;\Varid{θ}\;\Varid{x}\;=\;\Varid{r}\;\Conid{X}\;\Varid{θ}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+for natural transformations \ensuremath{\Varid{l},\Varid{r}\;\mathbin{:}\;\Conid{F₁}\;\to \;\Conid{U}} where \ensuremath{\Conid{U}\;\mathbin{:}\;\Conid{F₀-alg}\;\to \;\Conid{Type}} the forgetful functor. If \ensuremath{\Conid{F₁}} factors through \ensuremath{\Conid{U}}, \ie the
+arguments of the \oneconstructor do not refer to the \zeroconstructor,
+then can simplify the situation even further. Suppose \ensuremath{\Conid{F₁}\;=\;\Conid{F₁'}\;\Varid{∘}\;\Conid{U}}
+for some \ensuremath{\Conid{F₁'}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}}, natural transformations \ensuremath{\Conid{F₁}\;\to \;\Conid{U}} can
+be given by natural transformations \ensuremath{\Conid{F₁'}\;\to \;\Conid{F₀}\;\Varid{*}}, where \ensuremath{\Conid{F₀}\;\Varid{*}} is the
+free monad of \ensuremath{\Conid{F₀}}. Recall that \ensuremath{\Conid{U}} has a left adjoint \ensuremath{\Conid{L}} such that
+\ensuremath{\Conid{F₀}\;\Varid{*}\;=\;\Conid{UL}}. Since \ensuremath{\Conid{U}} has a left adjoint, it is representable, for
+any \ensuremath{\Conid{X}\;\mathbin{:}\;\Conid{Type}}:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{U}\;\Conid{X}\;{}\<[8]%
+\>[8]{}=\;\Varid{1}\;\to \;\Conid{U}\;\Conid{X}\;{}\<[E]%
+\\
+\>[8]{}=\;\Conid{F₀-alg}\;(\Conid{L1},\Conid{U}\;\Conid{X}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+If \ensuremath{\Conid{F₁'}\;\equiv\;\Conid{S}\;\Varid{◁}\;\Conid{P}}, then we can characterise natural transformations \ensuremath{\Conid{F₁}\;\to \;\Conid{U}} as container morphisms. We can calculate the container
+representation of the composition \ensuremath{\Conid{F₁'}\;\Varid{∘}\;\Conid{U}} as follows: suppose \ensuremath{\Conid{X}\;\mathbin{:}\;\Conid{Type}}, then:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{F₁'}\;(\Conid{U}\;\Conid{X})\;{}\<[14]%
+\>[14]{}=\;\Conid{F₁'}\;(\Conid{F₀-alg}\;(\Conid{L1},\Conid{X}))\;{}\<[E]%
+\\
+\>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{P}\;\Varid{s}\;\to \;\Conid{F₀-alg}\;(\Conid{L1},\Conid{X}))\;{}\<[E]%
+\\
+\>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{P}\;\Varid{s}\;\to \;\Varid{1}\;\to \;\Conid{U}\;\Conid{X})\;{}\<[E]%
+\\
+\>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{P}\;\Varid{s}\;\to \;\Conid{U}\;\Conid{X})\;{}\<[E]%
+\\
+\>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{F₀-alg}\;(\Conid{L}\;(\Conid{P}\;\Varid{s}),\Conid{X})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+So the container representation of \ensuremath{\Conid{F₁'}\;\Varid{∘}\;\Conid{U}} is \ensuremath{\Conid{S}\;\Varid{◁}\;\Conid{L}\;\Varid{∘}\;\Conid{P}}. Using
+this we can derive the following:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{F₁}\;\to \;\Conid{U}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{definition}\;\Varid{of}\;\Conid{F₁}\mskip1.5mu\}{}\<[E]%
+\\
+\>[3]{}\Conid{F₁'}\;\Varid{∘}\;\Conid{U}\;\to \;\Conid{U}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{container}\;\Varid{morphisms}\mskip1.5mu\}{}\<[E]%
+\\
+\>[3]{}(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\to \;\Conid{U}\;(\Conid{L}\;(\Conid{P}\;\Varid{s}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{definition}\;\Varid{of}\;\Conid{F}\;\Varid{*}\mskip1.5mu\}{}\<[E]%
+\\
+\>[3]{}(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\to \;\Conid{F₀}\;\Varid{*}\;(\Conid{P}\;\Varid{s})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{container}\;\Varid{morphisms}\mskip1.5mu\}{}\<[E]%
+\\
+\>[3]{}\Conid{F₁'}\;\to \;\Conid{F₀}\;\Varid{*}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The data we need to describe a \ronehit consists of:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Conid{F₀}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Conid{F₁}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Varid{l},\Varid{r}\;\mathbin{:}\;\Conid{F₁}\;\to \;\Conid{F₀}\;\Varid{*}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Conid{F₀},\Conid{F₁}} are given as container and \ensuremath{\Varid{l},\Varid{r}} as container
+morphisms. Given these data, the \ronehit then looks as follows:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c₀}\;\mathbin{:}\;\Conid{F₀}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{T})\;\to \;\Varid{c₀}\;\Varid{*}\;(\Varid{l}\;\Varid{x})\;=\;\Varid{c₀}\;\Varid{*}\;(\Varid{r}\;\Varid{x}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where \ensuremath{\Varid{c₀}\;\Varid{*}\;\mathbin{:}\;\Conid{F₀}\;\Varid{*}\;\Conid{T}\;\to \;\Conid{T}} is the lifting of the \ensuremath{\Conid{F₀}}-algebra \ensuremath{\Varid{c₀}\;\mathbin{:}\;\Conid{F₀}\;\Conid{T}\;\to \;\Conid{T}} to a (monad) \ensuremath{\Conid{F₀}\;\Varid{*}}-algebra.
+
+The advantage of restricting ourselves to the above situation is that
+we can give the description of a \hit using only ordinary containers
+and container morphisms. This avoids dealing with the coherence
+problems that stem from defining categories of algebras, needed to
+give the generalised containers for the constructors.
+
+Many \hits we see ``in the wild'' can be captured by this approach,
+such as the circle and \ensuremath{\Varid{n}}-truncation.
+
+One limitation however is that it does not handle ``nested'' \hits
+directly. The following example is not expressible, as the functor \ensuremath{\mathbin{//}\;\anonymous \;\mathbin{//}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} is not a container:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c}\;\mathbin{:}\;\mathbin{//}\;\Conid{T}\;\mathbin{//}\;\to \;\Conid{T}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
 
 \section{Algebras}
+
+Before we set out to show that induction implies homotopy initiality
+and vice versa, we need to define exactly what we mean when we talk
+about these concepts. First we will define the relevant concepts for
+ordinary \ensuremath{\Conid{F}}-algebras and later give the definitions of algebras for
+\ronehits.
 
 The type of \emph{\ensuremath{\Conid{F}}-algebras}, or simply \emph{algebras}, can be
 defined as follows:
@@ -793,7 +1001,8 @@ defined as follows:
 \ColumnHook
 \end{hscode}\resethooks
 
-where the type morphisms is defined as follows:
+where the type of algebra morphisms is defined as functions between
+the carriers such that it respects both algebra structures:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -815,12 +1024,8 @@ where the type morphisms is defined as follows:
 \end{hscode}\resethooks
 
 The witness of commutativity has suggestively been named \ensuremath{\Varid{f-β₀}} as
-this gives us the \ensuremath{\Varid{β}}-rule for the recursion and induction principles.
-
-\todoi{Something about having \ensuremath{\Varid{f₀}\;\mathbin{:}\;\Varid{f}\;\Varid{∘}\;\Varid{θ}\;\equiv\;\Varid{ρ}\;\Varid{∘}\;\Conid{F}\;\Varid{f}} instead. We need
-  function extensionality either way, but this way it makes the
-  arguments later on a bit easier. Also, the dependent versions don't
-  work as pointfree as these ones}
+this corresponds the computation rule for the recursion and induction
+principles.
 
 \subsection{Homotopy initial algebras}
 
@@ -845,6 +1050,10 @@ is contractible, \ie:
 \ColumnHook
 \end{hscode}\resethooks
 
+Note that this definition does not refer to how \ensuremath{\Conid{Alg}} and \ensuremath{\Conid{Alg-hom}}
+are defined exactly, so this definition also holds for the algebras
+for \ronehits.
+
 \subsubsection{Equality of algebra morphisms}
 
 As we see in the definition of homotopy initiality, we need to be able
@@ -862,7 +1071,7 @@ them, we know that, by equality on Σ-types, the following holds:
 \>[4]{}(\Varid{p}\;\mathbin{:}\;\Varid{f}\;=\;\Varid{g}){}\<[E]%
 \\
 \>[B]{}\Varid{×}\;{}\<[4]%
-\>[4]{}(\Varid{p-β₀}\;\mathbin{:}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\mathbin{\circ}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{f-β₀}\;=\;\Varid{g-β₀}){}\<[E]%
+\>[4]{}(\Varid{p-β₀}\;\mathbin{:}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;.\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{f-β₀}\;=\;\Varid{g-β₀}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -872,7 +1081,6 @@ respecting the equality \ensuremath{\Varid{f}\;=\;\Varid{g}}.
 
 As it turns out, the above is equivalent to something which is more
 convenient in subsequent proofs:
-
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -904,13 +1112,31 @@ convenient in subsequent proofs:
 \end{hscode}\resethooks
 
 The last equation tells us that showing that two algebra morphisms are
-equal is somewhat like giving an algebra morphism from the witness of
+equal is somewhat like giving a dialgebra morphism from the witness of
 the β-law for \ensuremath{\Varid{f}} to that of \ensuremath{\Varid{g}}, as we can see if we draw the
 corresponding diagram:
 
-\todoi{comm diag}
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { \ensuremath{\Varid{f}\;(\Varid{θ}\;\Varid{x})} & & \ensuremath{\Varid{ρ}\;(\Conid{F}\;\Varid{f}\;\Varid{x})} \\
+   \ensuremath{\Varid{g}\;(\Varid{θ}\;\Varid{x})} & & \ensuremath{\Varid{ρ}\;(\Conid{F}\;\Varid{g}\;\Varid{x})} \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{f-β₀}\;\Varid{x}}} (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}}} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}}} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{g-β₀}\;\Varid{x}}} (m-2-3);
+  \end{tikzpicture}
+\end{center}
 
 \subsection{Algebras for \ronehit descriptions}
+
+For algebras of \ronehits, the structure starts out similar to the
+above with an added function for the \oneconstructor. 
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -933,18 +1159,20 @@ corresponding diagram:
 \ColumnHook
 \end{hscode}\resethooks
 
-\ensuremath{\Varid{θ₀}} is an \ensuremath{\Conid{F₀}}-algebra and \ensuremath{\Varid{θ₁}} can be seen as a dependent dialgebra
-by defining the functor \ensuremath{\Conid{G₁}}:
+Recall that \ensuremath{\Varid{θ₀}} is an \ensuremath{\Conid{F₀}}-algebra and \ensuremath{\Varid{θ₁}} is a dependent dialgebra
+by defining the target functor \ensuremath{\Conid{G}}:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Conid{G₁}\;\mathbin{:}\;\Varid{∫}\;\Conid{F₀-Algebra}\;\Conid{F₁}\;\to \;\Conid{Type}{}\<[E]%
+\>[3]{}\Conid{G}\;\mathbin{:}\;\Varid{∫}\;\Conid{F₀-alg}\;\Conid{F₁}\;\to \;\Conid{Type}{}\<[E]%
 \\
-\>[3]{}\Conid{G₁}\;((\Conid{X},\Varid{θ}),\Varid{x})\;:\equiv\;(\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
+\>[3]{}\Conid{G}\;((\Conid{X},\Varid{θ}),\Varid{x})\;:\equiv\;(\Varid{l}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})\;=\;\Varid{r}\;(\Varid{θ₀}\;\Varid{*}\;\Varid{x})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+\todoi{action on morphisms of \ensuremath{\Conid{G}}}
 
 Its hom-types can be defined as follows:
 
@@ -953,6 +1181,7 @@ Its hom-types can be defined as follows:
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{31}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{36}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{42}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{50}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -973,49 +1202,114 @@ Its hom-types can be defined as follows:
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
 \>[5]{}\Varid{×}\;{}\<[8]%
-\>[8]{}(\Varid{f-β₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Conid{G₁}\;\Varid{x}\;{}\<[36]%
+\>[8]{}(\Varid{f-β₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;{}\<[31]%
+\>[31]{}\Conid{G}\;\Varid{x}\;{}\<[36]%
 \>[36]{}\Varid{f},\Varid{f₀}\;{}\<[42]%
 \>[42]{}(\Varid{θ₁}\;\Varid{x})\;{}\<[50]%
 \>[50]{}=\;\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{f}\;\Varid{x})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { \ensuremath{\Varid{f}\;(\Varid{θ₀}\;\Varid{x})} & & \ensuremath{\Varid{ρ₀}\;(\Conid{F₀}\;\Varid{f}\;\Varid{x})} \\
+   \ensuremath{\Varid{g}\;(\Varid{θ₀}\;\Varid{x})} & & \ensuremath{\Varid{ρ₀}\;(\Conid{F₀}\;\Varid{g}\;\Varid{x})} \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{f-β₀}\;\Varid{x}}} (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ₀}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}}} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ₀}\;\Varid{x}))\;\Varid{p}}} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{g-β₀}\;\Varid{x}}} (m-2-3);
+  \end{tikzpicture}
+\end{center}
+
+along with
+
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { \ensuremath{\Conid{G}\;\Varid{x}\;\Varid{f},\Varid{f₀}\;(\Varid{θ₁}\;\Varid{x})} & & \ensuremath{\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{f}\;\Varid{x})} \\
+   \ensuremath{\Conid{G}\;\Varid{x}\;\Varid{g},\Varid{g₀}\;(\Varid{θ₁}\;\Varid{x})} & & \ensuremath{\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{g}\;\Varid{x})} \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{f-β₁}\;\Varid{x}}} (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h},\Varid{h₀}\;\Varid{→}\;\Varid{ρ₁}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p},\Varid{p₀}}} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h},\Varid{h₀}\;\Varid{→}\;\Conid{G}\;\Varid{x}\;\Varid{h},\Varid{h₀}\;(\Varid{θ₁}\;\Varid{x})\;\Varid{p},\Varid{p₀}}} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{g-β₁}\;\Varid{x}}} (m-2-3);
+  \end{tikzpicture}
+\end{center}
+
+
+\subsubsection{Equality of algebra morphisms}
+
+As we saw previously, we also need to consider what equalities of
+algebra morphisms look like.
+
+\todoi{equality of algebra morphisms}
 
 \section{Induction}
 
-Given a functor \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} given as a container \ensuremath{\Conid{F}\;:\equiv\;\Conid{S}\;\Varid{◁}\;\Conid{P}}, the \wtype \ensuremath{\Conid{W}} is defined as having the following
-introduction rule / constructor:
+Now we know what the algebras for \ronehits look like, characterising
+\ronehits as an initial algebra tells us what the constructors look
+like and gives us a recursion principle with its computation
+rule. However, it does not immediately reveal to us what the induction
+principle looks like.
+
+Let us first look at the induction principle for natural numbers:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{W}\;\to \;\Conid{W}{}\<[E]%
+\>[3]{}\Conid{Nat-ind}\;\mathbin{:}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Conid{P}\;\mathbin{:}\;\Conid{Nat}\;\to \;\Conid{Type})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Varid{m-zero}\;\mathbin{:}\;\Conid{P}\;\Varid{zero})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Varid{m-succ}\;\mathbin{:}\;(\Varid{n}\;\mathbin{:}\;\Conid{Nat})\;\to \;\Conid{P}\;\Varid{n}\;\to \;\Conid{P}\;(\Varid{succ}\;\Varid{n}))\;{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\to \;{}\<[9]%
+\>[9]{}(\Varid{n}\;\mathbin{:}\;\Conid{Nat})\;\to \;\Conid{P}\;\Varid{n}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-as well as an elimination rule / induction principle:
+In order to show that the predicate \ensuremath{\Conid{P}} holds for every \ensuremath{\Varid{n}\;\mathbin{:}\;\Conid{Nat}}, we
+have to give a method for every constructor, which shows that \ensuremath{\Conid{P}}
+holds for that constructor, given that it holds for all its subterms.
+
+Generalising this to an inductive type \ensuremath{\Conid{T}}, given by a container \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} and constructor \ensuremath{\Varid{c}\;\mathbin{:}\;\Conid{F}\;\Conid{T}\;\to \;\Conid{T}}, we get:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[3]{}\Varid{ind}\;\mathbin{:}\;{}\<[E]%
 \\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Conid{P}\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{Type})\;{}\<[E]%
 \\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;\to \;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
 \\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{W})\;{}\<[E]%
-\\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\to \;{}\<[8]%
-\>[8]{}\Conid{B}\;\Varid{x}{}\<[E]%
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\to \;{}\<[9]%
+\>[9]{}(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;\Conid{P}\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1024,78 +1318,150 @@ with computation rule:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{ind-β₀}\;\mathbin{:}\;{}\<[E]%
+\>[3]{}\Varid{ind-β}\;\mathbin{:}\;{}\<[E]%
 \\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type})\;{}\<[E]%
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Conid{P}\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{Type})\;{}\<[E]%
 \\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;\to \;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{B}\;(\Varid{c}\;\Varid{x}))\;{}\<[E]%
 \\
-\>[3]{}\hsindent{5}{}\<[8]%
-\>[8]{}(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;{}\<[E]%
+\>[3]{}\hsindent{6}{}\<[9]%
+\>[9]{}(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;{}\<[E]%
 \\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\to \;{}\<[8]%
-\>[8]{}\Varid{ind}\;\Conid{B}\;\Varid{m}\;(\Varid{c}\;\Varid{x})\;=\;\Varid{m}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;(\Varid{ind}\;\Conid{B}\;\Varid{m})\;\Varid{x}){}\<[E]%
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\to \;{}\<[9]%
+\>[9]{}\Varid{ind}\;\Conid{P}\;\Varid{m}\;(\Varid{c}\;\Varid{x})\;=\;\Varid{m}\;\Varid{x}\;(\Varid{□-lift}\;\Conid{F}\;\Conid{B}\;(\Varid{ind}\;\Conid{P}\;\Varid{m})\;\Varid{x}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-\subsection{Initiality implies induction}
+The modality \ensuremath{\Varid{□}} lifts the predicate \ensuremath{\Conid{P}} on \ensuremath{\Conid{T}} to a predicate on \ensuremath{\Conid{F}\;\Conid{T}}:
 
-The induction principle tells us that for a family \ensuremath{\Conid{B}\;\mathbin{:}\;\Conid{W}\;\to \;\Conid{Type}} and
-a motive \ensuremath{\Varid{m}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{W})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}\;\Varid{→}\;\Conid{B}\;(\Varid{c}\;\Varid{x})}, we get a dependent
-function \ensuremath{\Varid{ind}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{W})\;\to \;\Conid{B}\;\Varid{x}} along with a computation rule.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{□}\;\Conid{F}\;\Conid{P}\;\mathbin{:}\;\Conid{F}\;\Conid{T}\;\to \;\Conid{Type}{}\<[E]%
+\\
+\>[3]{}\Varid{□}\;\Conid{F}\;\Conid{P}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{p}\;\mathbin{:}\;\Conid{Pos}\;\Varid{s})\;\to \;\Conid{B}\;(\Varid{t}\;\Varid{p}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
 
-Note that \ensuremath{\Varid{m}}, along with \ensuremath{\Varid{c}}, can be seen as a morphism between the
-families \ensuremath{(\Conid{W},\Conid{B})} and \ensuremath{(\Conid{F}\;\Conid{W},\Varid{□}\;\Conid{F}\;\Conid{B})}.
+where \ensuremath{\Conid{Pos}} is the position type of the container \ensuremath{\Conid{F}}. The type \ensuremath{\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}} can be interpreted as: the predicate \ensuremath{\Conid{P}} holds for all of the
+subterms of \ensuremath{\Varid{c}\;\Varid{x}\;\mathbin{:}\;\Conid{T}}. \ensuremath{\Varid{□-lift}} lifts dependent functions:
 
-Another way to say this is that given a function \ensuremath{\Varid{p}\;\mathbin{:}\;\Conid{B}\;\to \;\Conid{W}} for some
-\ensuremath{\Conid{B}\;\mathbin{:}\;\Conid{Type}} and that we want \ensuremath{\Varid{θ}\;\mathbin{:}\;\Conid{F}\;\Conid{B}\;\to \;\Conid{B}} such that \ensuremath{\Varid{θ}}, along with
-\ensuremath{\Varid{c}}, becomes a morphism \ensuremath{\Conid{Fp}\;\to \;\Varid{p}} in the arrow category. This is
-equivalent to asking for an algebra \ensuremath{(\Conid{B},\Varid{θ})} along with an algebra
-morphism \ensuremath{(\Conid{B},\Varid{θ})\;\to \;(\Conid{W},\Varid{c})}.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{□-lift}\;\mathbin{:}\;((\Varid{x}\;\mathbin{:}\;\Conid{A})\;\to \;\Conid{B}\;\Varid{x})\;\to \;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{A})\;\to \;\Varid{□}\;\Conid{F}\;\Conid{B}\;\Varid{x}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
 
-\todoi{Give arguments why section induction is correct}
+The induction principle gives us a dependent function \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;\Conid{P}\;\Varid{t}}
+for a family \ensuremath{\Conid{P}\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{Type}}. Equivalently, we can ask for a section
+\ensuremath{\Varid{σ}\;\mathbin{:}\;\Conid{B}\;\to \;\Conid{T}} of a function \ensuremath{\Varid{p}\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{B}} for some \ensuremath{\Conid{B}\;\mathbin{:}\;\Conid{Type}}. For any
+algebra \ensuremath{(\Conid{B},\Varid{θ})}, initiality gives us an algebra morphism \ensuremath{\Varid{σ}\;\mathbin{:}\;(\Conid{T},\Varid{c})\;\to \;(\Conid{B},\Varid{θ})}. We can ask ourselves what extra conditions we need to
+impose on the algebra \ensuremath{(\Conid{B},\Varid{θ})} in order for \ensuremath{\Varid{σ}} to be a section of
+\ensuremath{\Varid{p}}. If \ensuremath{\Varid{p}} turns out to be an algebra morphism \ensuremath{(\Conid{B},\Varid{θ})\;\to \;(\Conid{T},\Varid{c})},
+then the following diagram commutes:
 
-\todoi{Show that initiality implies section induction}
+\begin{center}
+  \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
+    \matrix (m) [matrix of math nodes, 
+                row sep=4.5em,
+                column sep=3.5em,
+                text height=1.5ex,
+                text depth=0.25ex]
+ { \ensuremath{\Conid{FT}} & & \ensuremath{\Conid{T}} \\
+   \ensuremath{\Conid{FB}} & & \ensuremath{\Conid{B}} \\ 
+   \ensuremath{\Conid{FT}} & & \ensuremath{\Conid{T}} \\ };
+
+  \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{c}}}  (m-1-3);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{σ}}}  (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Conid{Fσ}}} (m-2-1);
+  \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{θ}}}  (m-2-3);
+  \path[->] (m-2-3) edge[decorate] node[auto]       {\ensuremath{\Varid{p}}}  (m-3-3);
+  \path[->] (m-2-1) edge[decorate] node[auto,swap]  {\ensuremath{\Conid{Fp}}} (m-3-1);
+  \path[->] (m-3-1) edge[decorate] node[auto]       {\ensuremath{\Varid{c}}}  (m-3-3);
+  \end{tikzpicture}
+\end{center}
+
+\ensuremath{\Varid{p}\;\Varid{∘}\;\Varid{σ}} is an algebra morphism \ensuremath{(\Conid{T},\Varid{c})\;\to \;(\Conid{T},\Varid{c})}. Since \ensuremath{\Varid{id}} is also
+an algebra morphism \ensuremath{(\Conid{T},\Varid{c})\;\to \;(\Conid{T},\Varid{c})}, by uniqueness we can conclude
+that \ensuremath{\Varid{p}\;\Varid{∘}\;\Varid{σ}\;=\;\Varid{id}}, so \ensuremath{\Varid{σ}} is indeed a section.
+
+By choosing \ensuremath{\Conid{B}\;:\equiv\;\Conid{Σ}\;\Conid{T}\;\Conid{P}} and \ensuremath{\Varid{p}\;:\equiv\;\Varid{π₀}}, we can derive the induction
+principle mentioned above, observing that \ensuremath{\Conid{F}\;(\Conid{Σ}\;\Conid{T}\;\Conid{P})\;\Varid{≃}\;\Conid{Σ}\;(\Conid{FT})\;(\Varid{□}\;\Conid{F}\;\Conid{P})}.
 
 \subsection{Induction principle for \ronehits}
 
-To get the induction principle of \ronehits, we need to take that of
-the ordinary \wtypes and extend it with the new (path) constructor: we
-have to add a method to \ensuremath{\Varid{ind}} and the appropriate computation rule for
-that.
-
-Consider the method for the \zeroconstructor:
+An induction principle for \ronehits can be derived using the method
+mentioned previously: the data for induction should be an algebra
+structure on \ensuremath{\Conid{Σ}\;\Conid{T}\;\Conid{P}} such that \ensuremath{\Varid{π₀}} is an algebra morphism \ensuremath{(\Conid{Σ}\;\Conid{T}\;\Conid{P},\Varid{π₀},\Conid{G}\;\Varid{π₀})\;\to \;(\Conid{T},\Varid{c₀},\Varid{c₁})}. We have to produce the methods:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₀}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{B}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
+\>[3]{}\Varid{m₀}\;\mathbin{:}\;\Conid{F₀}\;(\Conid{Σ}\;\Conid{T}\;\Conid{P})\;\to \;\Conid{Σ}\;\Conid{T}\;\Conid{P}{}\<[E]%
+\\
+\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;(\Conid{Σ}\;\Conid{T}\;\Conid{P}))\;\to \;\Conid{G}\;(\Conid{Σ}\;\Conid{T}\;\Conid{P},\Varid{m₀})\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-We can read this as showing that if for all subterms of \ensuremath{\Varid{c₀}\;\Varid{x}} \ensuremath{\Conid{B}}
-holds, \ensuremath{\Conid{B}} also holds for \ensuremath{\Varid{c₀}\;\Varid{x}} itself. Since we are dealing with a
-\zeroconstructor, we don't have any issues with the target of the
-constructor: the target functor is the identity functor. For the
-motive of the \oneconstructor, we want something like:
+subject to the equations:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{X})\;\to \;\Varid{□}\;\Conid{F₁}\;\Conid{B}\;\Varid{x}\;\to \;\Varid{□}\;\Conid{G}\;(\Varid{c₁}\;\Varid{x}){}\<[E]%
+\>[3]{}\Varid{m-β₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;(\Conid{Σ}\;\Conid{T}\;\Conid{P}))\;\to \;\Varid{π₀}\;(\Varid{m₀}\;\Varid{x})\;=\;\Varid{c₀}\;(\Conid{F₀}\;\Varid{π₀}\;\Varid{x}){}\<[E]%
+\\
+\>[3]{}\Varid{m-β₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;(\Conid{Σ}\;\Conid{T}\;\Conid{P}))\;\to \;\Conid{G}\;(\Varid{π₀},\Varid{m-β₀})\;(\Varid{m₁}\;\Varid{x})\;=\;\Varid{c₁}\;(\Conid{F₁}\;\Varid{π₀}\;\Varid{x}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-We need to figure out what the lifting of \ensuremath{\Conid{B}} to the target functor
-\ensuremath{\Conid{G}} is.
+From this we can make derive the methods for the induction principle:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{T})\;\to \;\Varid{□}\;\Conid{F₀}\;\Varid{x}\;\to \;\Conid{P}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
+\\
+\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{T})\;(\Varid{y}\;\mathbin{:}\;\Varid{□}\;\Conid{F₁}\;\Varid{x})\;\to \;\Varid{m₀}\;\Varid{*ᵈ}\;(\Varid{lᵈ}\;\Varid{x}\;\Varid{y})\;=\;\Varid{m₀}\;\Varid{*ᵈ}\;(\Varid{rᵈ}\;\Varid{x}\;\Varid{y})\;[\mskip1.5mu \Conid{P}\;\Varid{↓}\;\Varid{c₁}\;\Varid{x}\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+where:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{lᵈ},\Varid{rᵈ}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\{\mskip1.5mu \Conid{A}\;\mathbin{:}\;\Conid{Type0}\mskip1.5mu\}\;\{\mskip1.5mu \Conid{B}\;\mathbin{:}\;\Conid{A}\;\to \;\Conid{Type0}\mskip1.5mu\}\;{}\<[E]%
+\\
+\>[11]{}\to \;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{A})\;\to \;\Varid{□}\;\Conid{F₁}\;\Conid{B}\;\Varid{x}\;\to \;\Conid{Σ}\;(\Conid{F₀}\;\Varid{*})\;(\Varid{□}\;(\Conid{F₀}\;\Varid{*})\;\Conid{B}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+and
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{m₀}\;\Varid{*ᵈ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{Σ}\;(\Conid{F₀}\;\Varid{*})\;\to \;(\Varid{□}\;(\Conid{F₀}\;\Varid{*})\;\Varid{x})\;\to \;\Conid{P}\;(\Varid{c₀}\;(\Varid{π₀}\;\Varid{x})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+are the liftings of their non-dependent counterparts.
 
 \section{Induction implies homotopy initiality}
 
@@ -1144,7 +1510,7 @@ Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{6}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{step}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{⟦}\;\Conid{F}\;\Varid{⟧₀}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;\Varid{f=g-B}\;\Varid{x}\;\Varid{→}\;\Varid{f=g-B}\;(\Varid{c}\;\Varid{x}){}\<[E]%
+\>[3]{}\Varid{step}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{⟦}\;\Conid{F}\;\Varid{⟧₀}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;(\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{x}\;\Varid{→}\;\Varid{f=g-B}\;(\Varid{c}\;\Varid{x}){}\<[E]%
 \\
 \>[3]{}\Varid{step}\;\Varid{x}\;\Varid{u}\;:\equiv\;{}\<[E]%
 \\
@@ -1171,9 +1537,7 @@ Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;
 \ColumnHook
 \end{hscode}\resethooks
 
-\todoi{Explain \ensuremath{\Varid{ind-hyp}}}
-
-We can define the witness of \ensuremath{\Varid{f}\;=\;\Varid{g}} as follows:
+where \ensuremath{\Varid{ind-hyp}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;(\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{x}\;\Varid{→}\;\Conid{F}\;\Varid{f}\;\Varid{x}\;=\;\Conid{F}\;\Varid{g}\;\Varid{x}}. We can define the witness of \ensuremath{\Varid{f}\;=\;\Varid{g}} as follows:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1195,8 +1559,6 @@ which comes with the computation rule:
 \ColumnHook
 \end{hscode}\resethooks
 
-\todoi{say that \ensuremath{\Varid{λ=}} is fun ext}
-
 We now need to show that our witness \ensuremath{\Varid{p}} satisfies the ``computation
 rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}}. Let \ensuremath{\Varid{x}\;\mathbin{:}\;\Conid{FT}}, then we can calculate:
 
@@ -1205,7 +1567,7 @@ rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{4}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{θ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;(\Varid{λ=}\;\Varid{p})\;{}\<[E]%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{θ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;(\Varid{fun-ext}\;\Varid{p})\;{}\<[E]%
 \\[\blanklineskip]%
 \>[3]{}\hsindent{1}{}\<[4]%
 \>[4]{}=\;\{\mskip1.5mu \Varid{ap}\;\Varid{magic}\mskip1.5mu\}{}\<[E]%
@@ -1223,9 +1585,9 @@ rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;
 \>[3]{}\Varid{p}\;(\Varid{c}\;\Varid{x})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}\;{}\<[E]%
 \\[\blanklineskip]%
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}=\;\{\mskip1.5mu \Varid{computation}\;\Varid{rule}\;\Varid{for}\;\Varid{λ=}\mskip1.5mu\}{}\<[E]%
+\>[4]{}=\;\{\mskip1.5mu \Varid{computation}\;\Varid{rule}\;\Varid{for}\;\Varid{fun-ext}\mskip1.5mu\}{}\<[E]%
 \\[\blanklineskip]%
-\>[3]{}\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{c}\;\Varid{x}))\;(\Varid{λ=}\;\Varid{p})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\>[3]{}\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{c}\;\Varid{x}))\;(\Varid{fun-ext}\;\Varid{p})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
