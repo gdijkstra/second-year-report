@@ -321,6 +321,12 @@
 
 
 
+
+
+
+
+
+
 %% Layout stuff and other related goodies.
 \usepackage[parfill]{parskip}
 \usepackage{xspace}
@@ -415,22 +421,22 @@ a list of constructors, \eg:
 \>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{c0}\;{}\<[9]%
-\>[9]{}\mathbin{:}\;\Conid{F0}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\>[5]{}\Varid{c₀}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Conid{F₀}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{c1}\;{}\<[9]%
-\>[9]{}\mathbin{:}\;\Conid{F1}\;\Conid{T}\;\to \;\Conid{T}\;{}\<[E]%
+\>[5]{}\Varid{c₁}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Conid{F₁}\;\Conid{T}\;\to \;\Conid{T}\;{}\<[E]%
 \\
 \>[9]{}\vdots{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{ck}\;{}\<[9]%
-\>[9]{}\mathbin{:}\;\Conid{Fk}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\>[5]{}\Varid{c}_{\Varid{k}}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Varid{F}_{\Varid{k}}\;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-where all \ensuremath{\Conid{Fi}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} are strictly positive
+where all \ensuremath{\Varid{F}_{\Varid{i}}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} are strictly positive
 functors. Equivalently, we can define an inductive type with a single
 constructor:
 
@@ -446,7 +452,7 @@ constructor:
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Conid{F}\;\Conid{X}\;:\equiv\;\Conid{F0}\;\Conid{X}\;\Varid{+}\;\Conid{F1}\;\Conid{X}\;\Varid{+}\;\Varid{hdots}\;\Varid{+}\;\Conid{Fk}\;\Conid{X}}, so a single strictly
+where \ensuremath{\Conid{F}\;\Conid{X}\;:\equiv\;\Conid{F₀}\;\Conid{X}\;\Varid{+}\;\Conid{F₁}\;\Conid{X}\;\Varid{+}\;\hdots\;\Varid{+}\;\Varid{F}_{\Varid{k}}\;\Conid{X}}, so a single strictly
 positive functor is all we need to describe an \oit.
 
 In the case of \hits, the situation is more involved. Consider for
@@ -457,10 +463,10 @@ example the circle data type:
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Keyword{data}\;\Conid{S1}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\>[3]{}\Keyword{data}\;\Varid{S}^1\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{base}\;\mathbin{:}\;\Conid{S1}{}\<[E]%
+\>[5]{}\Varid{base}\;\mathbin{:}\;\Varid{S}^1{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
 \>[5]{}\Varid{loop}\;\mathbin{:}\;\Varid{base}\;=\;\Varid{base}{}\<[E]%
@@ -468,8 +474,8 @@ example the circle data type:
 \end{hscode}\resethooks
 
 There are two things that are different from our previous
-situation. Firstly, the result type of \ensuremath{\Varid{loop}} is not \ensuremath{\Conid{S1}}, but a path
-space of \ensuremath{\Conid{S1}}: constructors are no longer algebras of functor, but a
+situation. Firstly, the result type of \ensuremath{\Varid{loop}} is not \ensuremath{\Varid{S}^1}, but a path
+space of \ensuremath{\Varid{S}^1}: constructors are no longer algebras of functor, but a
 kind of \emph{dialgebra}: the arguments as well as the result type of
 a constructor may vary. Secondly, the \ensuremath{\Varid{loop}} constructor refers to the
 previous constructor \ensuremath{\Varid{base}}.
@@ -483,13 +489,13 @@ a \hit:
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Keyword{data}\;\mathbin{//}\;\Conid{A}\;\mathbin{//}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\>[3]{}\Keyword{data}\;||\;\Conid{A}\;||\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}[\mskip1.5mu \anonymous \mskip1.5mu]\;\mathbin{:}\;\Conid{A}\;\to \;\mathbin{//}\;\Conid{A}\;\mathbin{//}{}\<[E]%
+\>[5]{}[\mskip1.5mu \mathunderscore\mskip1.5mu]\;\mathbin{:}\;\Conid{A}\;\to \;||\;\Conid{A}\;||{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{trunc}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\mathbin{:}\;\mathbin{//}\;\Conid{A}\;\mathbin{//})\;\to \;\Varid{x}\;=\;\Varid{y}{}\<[E]%
+\>[5]{}\Varid{trunc}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\mathbin{:}\;||\;\Conid{A}\;||)\;\to \;\Varid{x}\;=\;\Varid{y}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -506,31 +512,31 @@ higher inductive type looks as follows:
 \>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{c0}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F0}\;\Conid{T})\;{}\<[37]%
-\>[37]{}\to \;\Conid{G0}\;\Conid{T}\;\Varid{x}{}\<[E]%
+\>[5]{}\Varid{c₀}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{T})\;{}\<[37]%
+\>[37]{}\to \;\Conid{G₀}\;\Conid{T}\;\Varid{x}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{c1}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F1}\;\Conid{T}\;\Varid{c0})\;{}\<[37]%
-\>[37]{}\to \;\Conid{G1}\;\Conid{T}\;\Varid{c0}\;\Varid{x}{}\<[E]%
+\>[5]{}\Varid{c₁}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{T}\;\Varid{c₀})\;{}\<[37]%
+\>[37]{}\to \;\Conid{G₁}\;\Conid{T}\;\Varid{c₀}\;\Varid{x}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{c2}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F2}\;\Conid{T}\;\Varid{c0}\;\Varid{c1})\;{}\<[37]%
-\>[37]{}\to \;\Conid{G2}\;\Conid{T}\;\Varid{c0}\;\Varid{c1}\;\Varid{x}\;{}\<[E]%
+\>[5]{}\Varid{c₂}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₂}\;\Conid{T}\;\Varid{c₀}\;\Varid{c₁})\;{}\<[37]%
+\>[37]{}\to \;\Conid{G₂}\;\Conid{T}\;\Varid{c₀}\;\Varid{c₁}\;\Varid{x}\;{}\<[E]%
 \\
 \>[11]{}\vdots{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{ck+1}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{Fk}\;\Conid{T}\;\Varid{c0}\;\Varid{hdots}\;\Varid{ck})\;{}\<[37]%
-\>[37]{}\to \;\Conid{Gk}\;\Conid{T}\;\Varid{c0}\;\Varid{hdots}\;\Varid{ck}\;\Varid{x}{}\<[E]%
+\>[5]{}\Varid{c}_{\Varid{k}+1}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{F}_{\Varid{k}}\;\Conid{T}\;\Varid{c₀}\;\hdots\;\Varid{c}_{\Varid{k}})\;{}\<[37]%
+\>[37]{}\to \;\Varid{G}_{\Varid{k}}\;\Conid{T}\;\Varid{c₀}\;\hdots\;\Varid{c}_{\Varid{k}}\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-We will refer to the \ensuremath{\Conid{Fi}} functors as \emph{argument} functors and the
-\ensuremath{\Conid{Gi}} functors as \emph{target} functors. The types of the argument
+We will refer to the \ensuremath{\Varid{F}_{\Varid{i}}} functors as \emph{argument} functors and the
+\ensuremath{\Varid{G}_{\Varid{i}}} functors as \emph{target} functors. The types of the argument
 functors are:
 
 \begin{hscode}\SaveRestoreHook
@@ -538,26 +544,26 @@ functors are:
 \column{6}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{22}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{F0}\;{}\<[6]%
+\>[B]{}\Conid{F₀}\;{}\<[6]%
 \>[6]{}\mathbin{:}\;\Conid{Type}\;{}\<[22]%
 \>[22]{}\to \;\Conid{Type}{}\<[E]%
 \\
-\>[B]{}\Conid{F1}\;{}\<[6]%
-\>[6]{}\mathbin{:}\;(\Conid{F0},\Conid{G0})\;\Varid{-alg}\;{}\<[22]%
+\>[B]{}\Conid{F₁}\;{}\<[6]%
+\>[6]{}\mathbin{:}\;(\Conid{F₀},\Conid{G₀})\;\Varid{-alg}\;{}\<[22]%
 \>[22]{}\to \;\Conid{Type}{}\<[E]%
 \\
-\>[B]{}\Conid{F2}\;{}\<[6]%
-\>[6]{}\mathbin{:}\;(\Conid{F1},\Conid{G1})\;\Varid{-alg}\;{}\<[22]%
+\>[B]{}\Conid{F₂}\;{}\<[6]%
+\>[6]{}\mathbin{:}\;(\Conid{F₁},\Conid{G₁})\;\Varid{-alg}\;{}\<[22]%
 \>[22]{}\to \;\Conid{Type}{}\<[E]%
 \\
-\>[B]{}\Conid{Fk+1}\;\mathbin{:}\;(\Conid{Fk},\Conid{Gk})\;\Varid{-alg}\;{}\<[22]%
+\>[B]{}\Varid{F}_{\Varid{k}+1}\;\mathbin{:}\;(\Varid{F}_{\Varid{k}},\Varid{G}_{\Varid{k}})\;\Varid{-alg}\;{}\<[22]%
 \>[22]{}\to \;\Conid{Type}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{(\Conid{F0},\Conid{G0})\;\Varid{-alg})} is the category whose objects are dependent
-dialgebras \ensuremath{(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F0}\;\Conid{X})\;\to \;\Conid{G0}\;\Conid{X}\;\Varid{x})}. The category
-\ensuremath{(\Conid{F}\;(\Varid{i+1}),\Conid{G}\;(\Varid{i+1})\;\Varid{-alg}}has as objects: \ensuremath{(\Conid{X}\;\mathbin{:}\;(\Conid{Fi},\Conid{Gi})\;\Varid{-alg})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;(\Varid{i+1})\;\Conid{X})\;\to \;\Conid{G}\;(\Varid{i+1})\;\Conid{X}\;\Varid{x})}. The target functors also take the value of
+where \ensuremath{(\Conid{F₀},\Conid{G₀})\;\Varid{-alg})} is the category whose objects are dependent
+dialgebras \ensuremath{(\Conid{X}\;\mathbin{:}\;\Conid{Type})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{X})\;\to \;\Conid{G₀}\;\Conid{X}\;\Varid{x})}. The category
+\ensuremath{(\Varid{F}_{\Varid{i}+1},\Varid{G}_{\Varid{i}+1})\;\Varid{-alg}} has as objects: \ensuremath{(\Conid{X}\;\mathbin{:}\;(\Varid{F}_{\Varid{i}},\Varid{G}_{\Varid{i}})\;\Varid{-alg})\;\Varid{×}\;(\Varid{θ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{F}_{\Varid{i}+1}\;\Conid{X})\;\to \;\Varid{G}_{\Varid{i}+1}\;\Conid{X}\;\Varid{x})}. The target functors also take the value of
 the arguments as an argument, so they have the following types:
 
 \begin{hscode}\SaveRestoreHook
@@ -566,24 +572,24 @@ the arguments as an argument, so they have the following types:
 \column{27}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{35}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{G0}\;{}\<[7]%
+\>[B]{}\Conid{G₀}\;{}\<[7]%
 \>[7]{}\mathbin{:}\;\int\;\Conid{Type}\;{}\<[27]%
-\>[27]{}\Conid{F0}\;{}\<[35]%
+\>[27]{}\Conid{F₀}\;{}\<[35]%
 \>[35]{}\to \;\Conid{Type}{}\<[E]%
 \\
-\>[B]{}\Conid{G1}\;{}\<[7]%
-\>[7]{}\mathbin{:}\;\int\;(\Conid{F0},\Conid{G0})\;\Varid{-alg}\;{}\<[27]%
-\>[27]{}\Conid{F1}\;{}\<[35]%
+\>[B]{}\Conid{G₁}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;(\Conid{F₀},\Conid{G₀})\;\Varid{-alg}\;{}\<[27]%
+\>[27]{}\Conid{F₁}\;{}\<[35]%
 \>[35]{}\to \;\Conid{Type}{}\<[E]%
 \\
-\>[B]{}\Conid{G2}\;{}\<[7]%
-\>[7]{}\mathbin{:}\;\int\;(\Conid{F1},\Conid{G1})\;\Varid{-alg}\;{}\<[27]%
-\>[27]{}\Conid{F2}\;{}\<[35]%
+\>[B]{}\Conid{G₂}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;(\Conid{F₁},\Conid{G₁})\;\Varid{-alg}\;{}\<[27]%
+\>[27]{}\Conid{F₂}\;{}\<[35]%
 \>[35]{}\to \;\Conid{Type}{}\<[E]%
 \\
-\>[B]{}\Conid{Gk+1}\;{}\<[7]%
-\>[7]{}\mathbin{:}\;\int\;(\Conid{Fk},\Conid{Gk})\;\Varid{-alg}\;{}\<[27]%
-\>[27]{}\Conid{F}\;(\Varid{k+1})\;{}\<[35]%
+\>[B]{}\Varid{G}_{\Varid{k}+1}\;{}\<[7]%
+\>[7]{}\mathbin{:}\;\int\;(\Varid{F}_{\Varid{k}},\Varid{G}_{\Varid{k}})\;\Varid{-alg}\;{}\<[27]%
+\>[27]{}\Conid{F}\;(\Varid{kp1})\;{}\<[35]%
 \>[35]{}\to \;\Conid{Type}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
@@ -598,7 +604,7 @@ We see that the general shape of a constructor is a dependent dialgebra:
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{G}\;\mathbin{:}\;\int\;\Conid{C}\;\Conid{F}\;\to \;\Conid{Type}}, where \ensuremath{\Conid{C}}
+where \ensuremath{\mathbb{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{G}\;\mathbin{:}\;\int\;\mathbb{C}\;\Conid{F}\;\to \;\Conid{Type}}, where \ensuremath{\mathbb{C}}
 is \ensuremath{\Conid{Type}} or some category of dependent dialgebras, ``containing'' all
 the previous constructors.
 
@@ -616,7 +622,7 @@ A \emph{\zeroconstructor} or \emph{point constructor} is a dialgebra:
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{U}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}} its forgetful
+where \ensuremath{\mathbb{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{U}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}} its forgetful
 functor.
 
 A \emph{\oneconstructor} is a dependent dialgebra of which the target
@@ -626,48 +632,48 @@ functor returns a path space:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{c}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\to \;\Conid{Eq0}\;\Conid{X}\;\Varid{x}{}\<[E]%
+\>[3]{}\Varid{c}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\to \;\Conid{Eq₀}\;\Conid{X}\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F},\Conid{U}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}}, and \ensuremath{\Conid{Eq0}\;\mathbin{:}\;\int\;\Conid{C}\;\Conid{F}\;\to \;\Conid{Type}} is the functor:
+where \ensuremath{\mathbb{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F},\Conid{U}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}}, and \ensuremath{\Conid{Eq₀}\;\mathbin{:}\;\int\;\mathbb{C}\;\Conid{F}\;\to \;\Conid{Type}} is the functor:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Conid{Eq0}\;(\Conid{X},\Varid{x})\;:\equiv\;(\Varid{l0}\;\Conid{X}\;\Varid{x}\;=\;\Varid{r0}\;\Conid{X}\;\Varid{x}){}\<[E]%
+\>[3]{}\Conid{Eq₀}\;(\Conid{X},\Varid{x})\;:\equiv\;(\Varid{l₀}\;\Conid{X}\;\Varid{x}\;=\;\Varid{r₀}\;\Conid{X}\;\Varid{x}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Varid{l0},\Varid{r0}\;\mathbin{:}\;\Conid{F}\;\to \;\Conid{U}} are natural transformations.
+where \ensuremath{\Varid{l₀},\Varid{r₀}\;\mathbin{:}\;\Conid{F}\;\to \;\Conid{U}} are natural transformations.
 
 For higher path constructors, we have to specify a tower of natural
 transformations, specifying the end points at every level. To specify
-an \ensuremath{(\Varid{n+1})}-constructor, we need to give the natural transformations:
+an \ensuremath{(\Varid{k+1})}-constructor, we need to give the natural transformations:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{11}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{l0},\Varid{r0}\;{}\<[11]%
+\>[3]{}\Varid{l₀},\Varid{r₀}\;{}\<[11]%
 \>[11]{}\mathbin{:}\;\Conid{F}\;\to \;\Conid{U}{}\<[E]%
 \\
-\>[3]{}\Varid{l1},\Varid{r1}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eq0}{}\<[E]%
+\>[3]{}\Varid{l₁},\Varid{r₁}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eq₀}{}\<[E]%
 \\
-\>[3]{}\Varid{l2},\Varid{r2}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eq1}\;{}\<[E]%
+\>[3]{}\Varid{l₂},\Varid{r₂}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eq₁}\;{}\<[E]%
 \\
 \>[11]{}\vdots{}\<[E]%
 \\
-\>[3]{}\Varid{ln},\Varid{rn}\;{}\<[11]%
-\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Conid{Eqn-1}{}\<[E]%
+\>[3]{}\Varid{l}_{\Varid{k}},\Varid{r}_{\Varid{k}}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;\Varid{1}\;\to \;\Varid{Eq}_{\Varid{k}-1}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Conid{Eqi}\;\Conid{X}\;\Varid{x}\;:\equiv\;(\Varid{li}\;\Conid{X}\;\Varid{x}\;=\;\Varid{ri}\;\Conid{X}\;\Varid{x})}. \ensuremath{\Conid{Eqn}} is then the target
+where \ensuremath{\Varid{Eq}_{\Varid{i}}\;\Conid{X}\;\Varid{x}\;:\equiv\;(\Varid{l}_{\Varid{i}}\;\Conid{X}\;\Varid{x}\;=\;\Varid{r}_{\Varid{i}}\;\Conid{X}\;\Varid{x})}. \ensuremath{\Conid{Eqn}} is then the target
 functor we are interested in.
 
 \subsection{Strict positivity}
@@ -710,7 +716,7 @@ with the monoid axioms as constructors:
 \>[5]{}\Varid{uip}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\mathbin{:}\;\Conid{T})\;(\Varid{p}\;\Varid{q}\;\mathbin{:}\;\Varid{x}\;=\;\Varid{y})\;\to \;\Varid{p}\;=\;\Varid{q}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{\char95 ∙\char95 }\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
+\>[5]{}\mathunderscore∙\mathunderscore\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{T}\;\to \;\Conid{T}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
 \>[5]{}\Varid{assoc}\;\mathbin{:}\;(\Varid{x}\;\Varid{y}\;\Varid{z}\;\mathbin{:}\;\Conid{T})\;\to \;(\Varid{x}\;\Varid{∙}\;\Varid{y})\;\Varid{∙}\;\Varid{z}\;=\;\Varid{x}\;\Varid{∙}\;(\Varid{y}\;\Varid{∙}\;\Varid{z}){}\<[E]%
@@ -743,7 +749,7 @@ The constructor \ensuremath{\Varid{0}} occurs negatively in this constructor.
 
 To generalise the notion of strict positivity, we can generalise the
 notion of containers to not only describe functors \ensuremath{\Conid{Type}\;\to \;\Conid{Type}}, but
-functors \emph{into} \ensuremath{\Conid{Type}} from any \ensuremath{\Conid{C}\;\mathbin{:}\;\Conid{Cat}}. A \emph{generalised
+functors \emph{into} \ensuremath{\Conid{Type}} from any \ensuremath{\mathbb{C}\;\mathbin{:}\;\Conid{Cat}}. A \emph{generalised
   container} is given by:
 
 \begin{hscode}\SaveRestoreHook
@@ -752,7 +758,7 @@ functors \emph{into} \ensuremath{\Conid{Type}} from any \ensuremath{\Conid{C}\;\
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[3]{}\Conid{S}\;\mathbin{:}\;\Conid{Type}{}\<[E]%
 \\
-\>[3]{}\Conid{P}\;\mathbin{:}\;\Conid{S}\;\to \;\mathbin{/}\;\Conid{C}\;\mathbin{/}{}\<[E]%
+\>[3]{}\Conid{P}\;\mathbin{:}\;\Conid{S}\;\to \;|\;\mathbb{C}\;|{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -762,9 +768,9 @@ Its extension is then defined as:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\mathbin{:}\;\Conid{C}\;\to \;\Conid{Type}{}\<[E]%
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}{}\<[E]%
 \\
-\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;:\equiv\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;\Conid{C}\;(\Conid{P}\;\Varid{s},\Conid{X}){}\<[E]%
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;:\equiv\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;\mathbb{C}\;(\Conid{P}\;\Varid{s},\Conid{X}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -774,7 +780,7 @@ with the action on morphisms defined as:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\mathbin{:}\;\Conid{C}\;(\Conid{X},\Conid{Y})\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{Y}{}\<[E]%
+\>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\mathbin{:}\;\mathbb{C}\;(\Conid{X},\Conid{Y})\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{Y}{}\<[E]%
 \\
 \>[3]{}\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Varid{f}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{s},\Varid{f}\;\Varid{∘}\;\Varid{t}){}\<[E]%
 \ColumnHook
@@ -790,7 +796,7 @@ and \ensuremath{\Conid{T}\;\Varid{◁}\;\Conid{Q}}, a container morphism \ensure
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[3]{}\Varid{f}\;\mathbin{:}\;\Conid{S}\;\to \;\Conid{T}{}\<[E]%
 \\
-\>[3]{}\Varid{g}\;\mathbin{:}\;(\Varid{a}\;\mathbin{:}\;\Conid{S})\;\to \;\Conid{C}\;(\Conid{Q}\;(\Varid{f}\;\Varid{a}),\Conid{P}\;\Varid{a}){}\<[E]%
+\>[3]{}\Varid{g}\;\mathbin{:}\;(\Varid{a}\;\mathbin{:}\;\Conid{S})\;\to \;\mathbb{C}\;(\Conid{Q}\;(\Varid{f}\;\Varid{a}),\Conid{P}\;\Varid{a}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -800,7 +806,7 @@ with its action of objects defined as:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{⟦}\;(\Varid{f},\Varid{g})\;\Varid{⟧}\;\mathbin{:}\;(\Conid{X}\;\mathbin{:}\;\mathbin{/}\;\Conid{C}\;\mathbin{/})\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{T}\;\Varid{◁}\;\Conid{Q}\;\Varid{⟧}\;\Conid{X}{}\<[E]%
+\>[3]{}\Varid{⟦}\;(\Varid{f},\Varid{g})\;\Varid{⟧}\;\mathbin{:}\;(\Conid{X}\;\mathbin{:}\;|\;\mathbb{C}\;|)\;\to \;\Varid{⟦}\;\Conid{S}\;\Varid{◁}\;\Conid{P}\;\Varid{⟧}\;\Conid{X}\;\to \;\Varid{⟦}\;\Conid{T}\;\Varid{◁}\;\Conid{Q}\;\Varid{⟧}\;\Conid{X}{}\<[E]%
 \\
 \>[3]{}\Varid{⟦}\;(\Varid{f},\Varid{g})\;\Varid{⟧}\;\Conid{X}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{f}\;\Varid{s},\Varid{t}\;\Varid{∘}\;(\Varid{g}\;\Varid{s})){}\<[E]%
 \ColumnHook
@@ -867,7 +873,7 @@ any \ensuremath{\Conid{X}\;\mathbin{:}\;\Conid{Type}}:
 \>[3]{}\Conid{U}\;\Conid{X}\;{}\<[8]%
 \>[8]{}=\;\Varid{1}\;\to \;\Conid{U}\;\Conid{X}\;{}\<[E]%
 \\
-\>[8]{}=\;\Conid{F₀-alg}\;(\Conid{L1},\Conid{U}\;\Conid{X}){}\<[E]%
+\>[8]{}=\;\Conid{F₀-alg}\;(\Conid{L₁},\Conid{U}\;\Conid{X}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -880,9 +886,9 @@ representation of the composition \ensuremath{\Conid{F₁'}\;\Varid{∘}\;\Conid
 \column{14}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[3]{}\Conid{F₁'}\;(\Conid{U}\;\Conid{X})\;{}\<[14]%
-\>[14]{}=\;\Conid{F₁'}\;(\Conid{F₀-alg}\;(\Conid{L1},\Conid{X}))\;{}\<[E]%
+\>[14]{}=\;\Conid{F₁'}\;(\Conid{F₀-alg}\;(\Conid{L₁},\Conid{X}))\;{}\<[E]%
 \\
-\>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{P}\;\Varid{s}\;\to \;\Conid{F₀-alg}\;(\Conid{L1},\Conid{X}))\;{}\<[E]%
+\>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{P}\;\Varid{s}\;\to \;\Conid{F₀-alg}\;(\Conid{L₁},\Conid{X}))\;{}\<[E]%
 \\
 \>[14]{}=\;(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\Varid{×}\;(\Conid{P}\;\Varid{s}\;\to \;\Varid{1}\;\to \;\Conid{U}\;\Conid{X})\;{}\<[E]%
 \\
@@ -968,7 +974,7 @@ Many \hits we see ``in the wild'' can be captured by this approach,
 such as the circle and \ensuremath{\Varid{n}}-truncation.
 
 One limitation however is that it does not handle ``nested'' \hits
-directly. The following example is not expressible, as the functor \ensuremath{\mathbin{//}\;\anonymous \;\mathbin{//}\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} is not a container:
+directly. The following example is not expressible, as the functor \ensuremath{||\;\mathunderscore\;||\;\mathbin{:}\;\Conid{Type}\;\to \;\Conid{Type}} is not a container:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -978,7 +984,7 @@ directly. The following example is not expressible, as the functor \ensuremath{\
 \>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
 \\
 \>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{c}\;\mathbin{:}\;\mathbin{//}\;\Conid{T}\;\mathbin{//}\;\to \;\Conid{T}{}\<[E]%
+\>[5]{}\Varid{c}\;\mathbin{:}\;||\;\Conid{T}\;||\;\to \;\Conid{T}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1087,27 +1093,27 @@ convenient in subsequent proofs:
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{4}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[4]{}\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;\Varid{f-β₀}\;=\;\Varid{g-β₀}{}\<[E]%
+\>[4]{}\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;.\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{X})\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;\Varid{f-β₀}\;=\;\Varid{g-β₀}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{transport}\;\Varid{over}\;\Conid{Π-types}\mskip1.5mu\}\;{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\hsindent{4}{}\<[4]%
-\>[4]{}(\Varid{λ}\;\Varid{x}\;\Varid{→}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;(\Varid{f-β₀}\;\Varid{x}))\;=\;\Varid{g-β₀}{}\<[E]%
+\>[4]{}(\Varid{λ}\;\Varid{x}\;.\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;(\Varid{f-β₀}\;\Varid{x}))\;=\;\Varid{g-β₀}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{function}\;\Varid{extensionality}\mskip1.5mu\}\;{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\hsindent{4}{}\<[4]%
-\>[4]{}((\Varid{x}\;\mathbin{:}\;\Conid{A})\;\Varid{→}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;(\Varid{f-β₀}\;\Varid{x})\;=\;\Varid{g-β₀}\;\Varid{x}){}\<[E]%
+\>[4]{}((\Varid{x}\;\mathbin{:}\;\Conid{A})\;\Varid{→}\;\Varid{transport}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ}\;\Varid{x})\;=\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;(\Varid{f-β₀}\;\Varid{x})\;=\;\Varid{g-β₀}\;\Varid{x}){}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{transporting}\;\Varid{over}\;\Varid{equalities}\mskip1.5mu\}\;{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\hsindent{4}{}\<[4]%
-\>[4]{}\mathbin{!}\;(\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p})\;\Varid{∙}\;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\>[4]{}\mathbin{!}\;(\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p})\;\Varid{∙}\;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{≃}\;\{\mskip1.5mu \Varid{path}\;\Varid{algebra}\mskip1.5mu\}\;{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1127,8 +1133,8 @@ corresponding diagram:
    \ensuremath{\Varid{g}\;(\Varid{θ}\;\Varid{x})} & & \ensuremath{\Varid{ρ}\;(\Conid{F}\;\Varid{g}\;\Varid{x})} \\ };
 
   \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{f-β₀}\;\Varid{x}}} (m-1-3);
-  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}}} (m-2-3);
-  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}}} (m-2-1);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}}} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}}} (m-2-1);
   \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{g-β₀}\;\Varid{x}}} (m-2-3);
   \end{tikzpicture}
 \end{center}
@@ -1210,6 +1216,15 @@ Its hom-types can be defined as follows:
 \ColumnHook
 \end{hscode}\resethooks
 
+
+
+\subsubsection{Equality of algebra morphisms}
+
+As we saw previously, we also need to consider what equalities of
+algebra morphisms look like.
+
+\todoi{equality of algebra morphisms}
+
 \begin{center}
   \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}]
     \matrix (m) [matrix of math nodes, 
@@ -1221,8 +1236,8 @@ Its hom-types can be defined as follows:
    \ensuremath{\Varid{g}\;(\Varid{θ₀}\;\Varid{x})} & & \ensuremath{\Varid{ρ₀}\;(\Conid{F₀}\;\Varid{g}\;\Varid{x})} \\ };
 
   \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{f-β₀}\;\Varid{x}}} (m-1-3);
-  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ₀}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}}} (m-2-3);
-  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ₀}\;\Varid{x}))\;\Varid{p}}} (m-2-1);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{ρ₀}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}}} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ₀}\;\Varid{x}))\;\Varid{p}}} (m-2-1);
   \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{g-β₀}\;\Varid{x}}} (m-2-3);
   \end{tikzpicture}
 \end{center}
@@ -1240,19 +1255,12 @@ along with
    \ensuremath{\Conid{G}\;\Varid{x}\;\Varid{g},\Varid{g₀}\;(\Varid{θ₁}\;\Varid{x})} & & \ensuremath{\Varid{ρ₁}\;(\Conid{F₁}\;\Varid{g}\;\Varid{x})} \\ };
 
   \path[->] (m-1-1) edge[decorate] node[auto]       {\ensuremath{\Varid{f-β₁}\;\Varid{x}}} (m-1-3);
-  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h},\Varid{h₀}\;\Varid{→}\;\Varid{ρ₁}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p},\Varid{p₀}}} (m-2-3);
-  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;\Varid{h},\Varid{h₀}\;\Varid{→}\;\Conid{G}\;\Varid{x}\;\Varid{h},\Varid{h₀}\;(\Varid{θ₁}\;\Varid{x})\;\Varid{p},\Varid{p₀}}} (m-2-1);
+  \path[->] (m-1-3) edge[decorate] node[auto]       {\ensuremath{\Varid{ap}\;(\Varid{λ}\;(\Varid{h},\Varid{h₀})\;.\;\Varid{ρ₁}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;(\Varid{p},\Varid{p₀})}} (m-2-3);
+  \path[->] (m-1-1) edge[decorate] node[auto,swap]  {\ensuremath{\Varid{ap}\;(\Varid{λ}\;(\Varid{h},\Varid{h₀})\;.\;\Conid{G}\;\Varid{x}\;(\Varid{h},\Varid{h₀})\;(\Varid{θ₁}\;\Varid{x})\;(\Varid{p},\Varid{p₀})}} (m-2-1);
   \path[->] (m-2-1) edge[decorate] node[auto]       {\ensuremath{\Varid{g-β₁}\;\Varid{x}}} (m-2-3);
   \end{tikzpicture}
 \end{center}
 
-
-\subsubsection{Equality of algebra morphisms}
-
-As we saw previously, we also need to consider what equalities of
-algebra morphisms look like.
-
-\todoi{equality of algebra morphisms}
 
 \section{Induction}
 
@@ -1431,9 +1439,9 @@ From this we can make derive the methods for the induction principle:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{T})\;\to \;\Varid{□}\;\Conid{F₀}\;\Varid{x}\;\to \;\Conid{P}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
+\>[3]{}\Varid{m₀}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₀}\;\Conid{T})\;\to \;\Varid{□}\;\Conid{F₀}\;\Conid{P}\;\Varid{x}\;\to \;\Conid{P}\;(\Varid{c₀}\;\Varid{x}){}\<[E]%
 \\
-\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{T})\;(\Varid{y}\;\mathbin{:}\;\Varid{□}\;\Conid{F₁}\;\Varid{x})\;\to \;\Varid{m₀}\;\Varid{*ᵈ}\;(\Varid{lᵈ}\;\Varid{x}\;\Varid{y})\;=\;\Varid{m₀}\;\Varid{*ᵈ}\;(\Varid{rᵈ}\;\Varid{x}\;\Varid{y})\;[\mskip1.5mu \Conid{P}\;\Varid{↓}\;\Varid{c₁}\;\Varid{x}\mskip1.5mu]{}\<[E]%
+\>[3]{}\Varid{m₁}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F₁}\;\Conid{T})\;(\Varid{y}\;\mathbin{:}\;\Varid{□}\;\Conid{F₁}\;\Conid{P}\;\Varid{x})\;\to \;\Varid{m₀}\;\Varid{*ᵈ}\;(\Varid{lᵈ}\;\Varid{x}\;\Varid{y})\;=\;\Varid{m₀}\;\Varid{*ᵈ}\;(\Varid{rᵈ}\;\Varid{x}\;\Varid{y})\;[\mskip1.5mu \Conid{P}\;\Varid{↓}\;\Varid{c₁}\;\Varid{x}\mskip1.5mu]{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1457,7 +1465,7 @@ and
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{m₀}\;\Varid{*ᵈ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{Σ}\;(\Conid{F₀}\;\Varid{*})\;\to \;(\Varid{□}\;(\Conid{F₀}\;\Varid{*})\;\Varid{x})\;\to \;\Conid{P}\;(\Varid{c₀}\;(\Varid{π₀}\;\Varid{x})){}\<[E]%
+\>[3]{}\Varid{m₀}\;\Varid{*ᵈ}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{Σ}\;(\Conid{F₀}\;\Varid{*}))\;\Varid{×}\;\Varid{□}\;(\Conid{F₀}\;\Varid{*})\;\Conid{P}\;\Varid{x}\;\to \;\Conid{P}\;(\Varid{c₀}\;(\Varid{π₀}\;\Varid{x})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1483,7 +1491,7 @@ We can use the induction principle to produce the algebra morphism we want:
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[3]{}\Varid{f}\;\mathbin{:}\;\Conid{T}\;\to \;\Conid{X}{}\<[E]%
 \\
-\>[3]{}\Varid{f}\;:\equiv\;\Varid{ind}\;(\Varid{λ}\;\Varid{x}\;\to \;\Conid{X})\;(\Varid{λ}\;(\Varid{s},\anonymous )\;\Varid{t}\;\to \;\Varid{θ}\;(\Varid{s},\Varid{t})){}\<[E]%
+\>[3]{}\Varid{f}\;:\equiv\;\Varid{ind}\;(\Varid{λ}\;\Varid{x}\;.\;\Conid{X})\;(\Varid{λ}\;(\Varid{s},\mathunderscore)\;\Varid{t}\;.\;\Varid{θ}\;(\Varid{s},\Varid{t})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1502,7 +1510,7 @@ for the induction rule:
 
 \subsubsection{Uniqueness}
 
-Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;\mathbin{:}\;(\Conid{T},\Varid{c})\;\to \;(\Conid{X},\Varid{θ})}, we need to show that \ensuremath{(\Varid{f},\Varid{f₀})\;=\;(\Varid{g},\Varid{g₀})}. Showing that the \ensuremath{\Varid{f}\;=\;\Varid{g}} can be done by induction, using the motive \ensuremath{\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x}}. The induction step is then proven as follows:
+Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;\mathbin{:}\;(\Conid{T},\Varid{c})\;\to \;(\Conid{X},\Varid{θ})}, we need to show that \ensuremath{(\Varid{f},\Varid{f₀})\;=\;(\Varid{g},\Varid{g₀})}. Showing that the \ensuremath{\Varid{f}\;=\;\Varid{g}} can be done by induction, using the motive \ensuremath{\Varid{λ}\;\Varid{x}\;.\;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x}}. The induction step is then proven as follows:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1510,7 +1518,7 @@ Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{6}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{step}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{⟦}\;\Conid{F}\;\Varid{⟧₀}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;(\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{x}\;\Varid{→}\;\Varid{f=g-B}\;(\Varid{c}\;\Varid{x}){}\<[E]%
+\>[3]{}\Varid{step}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Varid{⟦}\;\Conid{F}\;\Varid{⟧₀}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;(\Varid{λ}\;\Varid{x}\;.\;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{x}\;\Varid{→}\;\Varid{f=g-B}\;(\Varid{c}\;\Varid{x}){}\<[E]%
 \\
 \>[3]{}\Varid{step}\;\Varid{x}\;\Varid{u}\;:\equiv\;{}\<[E]%
 \\
@@ -1537,7 +1545,7 @@ Assuming that we have an algebra morphism \ensuremath{(\Varid{g},\Varid{g₀})\;
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Varid{ind-hyp}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;(\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{x}\;\Varid{→}\;\Conid{F}\;\Varid{f}\;\Varid{x}\;=\;\Conid{F}\;\Varid{g}\;\Varid{x}}. We can define the witness of \ensuremath{\Varid{f}\;=\;\Varid{g}} as follows:
+where \ensuremath{\Varid{ind-hyp}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{F}\;\Conid{T})\;\Varid{→}\;\Varid{□}\;\Conid{F}\;(\Varid{λ}\;\Varid{x}\;.\;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{x}\;\Varid{→}\;\Conid{F}\;\Varid{f}\;\Varid{x}\;=\;\Conid{F}\;\Varid{g}\;\Varid{x}}. We can define the witness of \ensuremath{\Varid{f}\;=\;\Varid{g}} as follows:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1545,7 +1553,7 @@ where \ensuremath{\Varid{ind-hyp}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[3]{}\Varid{p}\;\mathbin{:}\;(\Varid{x}\;\mathbin{:}\;\Conid{T})\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x}{}\<[E]%
 \\
-\>[3]{}\Varid{p}\;:\equiv\;\Varid{ind}\;(\Varid{λ}\;\Varid{x}\;\to \;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{step}{}\<[E]%
+\>[3]{}\Varid{p}\;:\equiv\;\Varid{ind}\;(\Varid{λ}\;\Varid{x}\;.\;\Varid{f}\;\Varid{x}\;=\;\Varid{g}\;\Varid{x})\;\Varid{step}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1560,14 +1568,14 @@ which comes with the computation rule:
 \end{hscode}\resethooks
 
 We now need to show that our witness \ensuremath{\Varid{p}} satisfies the ``computation
-rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}}. Let \ensuremath{\Varid{x}\;\mathbin{:}\;\Conid{FT}}, then we can calculate:
+rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{ρ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;\Varid{p}\;=\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{θ}\;\Varid{x}))\;\Varid{p}\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}}. Let \ensuremath{\Varid{x}\;\mathbin{:}\;\Conid{FT}}, then we can calculate:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{4}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{θ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;(\Varid{fun-ext}\;\Varid{p})\;{}\<[E]%
+\>[3]{}\Varid{f-β₀}\;\Varid{x}\;\Varid{∙}\;\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{θ}\;(\Conid{F}\;\Varid{h}\;\Varid{x}))\;(\Varid{fun-ext}\;\Varid{p})\;{}\<[E]%
 \\[\blanklineskip]%
 \>[3]{}\hsindent{1}{}\<[4]%
 \>[4]{}=\;\{\mskip1.5mu \Varid{ap}\;\Varid{magic}\mskip1.5mu\}{}\<[E]%
@@ -1587,7 +1595,7 @@ rule'' \ensuremath{(\Varid{x}\;\mathbin{:}\;\Conid{FT})\;\to \;\Varid{f-β₀}\;
 \>[3]{}\hsindent{1}{}\<[4]%
 \>[4]{}=\;\{\mskip1.5mu \Varid{computation}\;\Varid{rule}\;\Varid{for}\;\Varid{fun-ext}\mskip1.5mu\}{}\<[E]%
 \\[\blanklineskip]%
-\>[3]{}\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;\Varid{→}\;\Varid{h}\;(\Varid{c}\;\Varid{x}))\;(\Varid{fun-ext}\;\Varid{p})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
+\>[3]{}\Varid{ap}\;(\Varid{λ}\;\Varid{h}\;.\;\Varid{h}\;(\Varid{c}\;\Varid{x}))\;(\Varid{fun-ext}\;\Varid{p})\;\Varid{∙}\;\Varid{g-β₀}\;\Varid{x}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
