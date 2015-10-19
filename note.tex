@@ -5,9 +5,11 @@
 
 
 %% Encoding, font stuff
-\usepackage[utf8x]{inputenc}
+%\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
 \usepackage{autofe}
-\usepackage{ucs}
 \usepackage[greek,english]{babel}
 \usepackage{bbm}
 \usepackage{bbding}
@@ -290,6 +292,13 @@
              {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
 }
 
+\DeclareUnicodeCharacter{8320}{\ensuremath{_{0}}}
+\DeclareUnicodeCharacter{8321}{\ensuremath{_{1}}}
+\DeclareUnicodeCharacter{8322}{\ensuremath{_{2}}}
+\DeclareUnicodeCharacter{8323}{\ensuremath{_{3}}}
+\DeclareUnicodeCharacter{8324}{\ensuremath{_{4}}}
+%\DeclareUnicodeCharacter{949}{\ensuremath{\epsilon}}
+\DeclareUnicodeCharacter{183}{\ensuremath{\cdot}}
 \DeclareUnicodeCharacter{737}{\textsuperscript{l}}
 \DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
 \DeclareUnicodeCharacter{8759}{::}
@@ -305,6 +314,7 @@
 \DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
 \DeclareUnicodeCharacter{7496}{\ensuremath{^d}}
 % TODO: This is in general not a good idea.
+\providecommand\textgamma{$\epsilon$}
 \providecommand\textepsilon{$\epsilon$}
 \providecommand\textmu{$\mu$}
 \providecommand\textbeta{$\beta$}
@@ -317,6 +327,7 @@
 \let\Conid\Varid
 \newcommand\Keyword[1]{\textsf{\textbf{#1}}}
 \EndFmtInput
+
 
 
 
@@ -346,6 +357,20 @@
 
 % Bibliography stuff
 \usepackage[autostyle]{csquotes}
+
+\usepackage[
+    backend=biber,
+    bibstyle=numeric,
+    citestyle=authoryear,
+    natbib=true,
+    hyperref=true,
+    url=false, 
+    doi=true,
+    eprint=false
+]{biblatex}
+\addbibresource{refs.bib}
+
+\input{fixbib.tex}
 
 %% Tikz setup
 \usepackage{tikz}
@@ -385,21 +410,39 @@
 \newcommand{\zerovariables}{$0$-variables\xspace}
 \newcommand{\onevariables}{$1$-variables\xspace}
 \newcommand{\twovariables}{$2$-variables\xspace}
+\newcommand{\nhit}[1]{$#1$-HIT\xspace}
+\newcommand{\nhits}[1]{$#1$-HITs\xspace}
 \newcommand{\ie}{i.e.\xspace}
 \newcommand{\eg}{e.g.\xspace}
 \newcommand{\Type}{\mbox{Type}}
 \newcommand{\wtypes}{$W$-types\xspace}
 \newcommand{\wtype}{$W$-type\xspace}
-\newcommand{\ronehit}{restricted \onehit\xspace}
-\newcommand{\ronehits}{restricted \onehits\xspace}
-\newcommand{\Ronehit}{Restricted \onehit\xspace}
-\newcommand{\Ronehits}{Restricted \onehits\xspace}
+\newcommand{\ronehit}{restricted \onehit}
+\newcommand{\ronehits}{restricted \onehits}
+\newcommand{\Ronehit}{Restricted \onehit}
+\newcommand{\Ronehits}{Restricted \onehits}
 
-\title{Notes on \onehits}
+\title{Second year report}
 
 \author{Gabe Dijkstra}
 
 \date{}
+
+\input{binhex}
+\makeatletter
+\def\uc\text{\tt dclc\char35{}1\char35{}2\char35{}3\char123{}\char37{}~~~\char92{}ifnum\char92{}pdfstrcmp\char123{}\char35{}2\char125{}\char123{}mathletters\char125{}\char61{}\char92{}z}
+    \begingroup\edef\x{\endgroup
+      \noexpand\DeclareUnicodeCharacter{\hex{#1}}}\x{#3}%
+  \fi
+}
+\input{uni-3.def}
+\def\uc\text{\tt dclc\char35{}1\char35{}2\char35{}3\char123{}\char37{}~~~\char92{}ifnum\char92{}pdfstrcmp\char123{}\char35{}2\char125{}\char123{}default\char125{}\char61{}\char92{}z}
+    \begingroup\edef\x{\endgroup
+      \noexpand\DeclareUnicodeCharacter{\hex{#1}}}\x{#3}%
+  \fi
+}
+\input{uni-34.def}
+\makeatother
 
 \begin{document}
 
@@ -570,27 +613,27 @@ the arguments as an argument, so they have the following types:
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{7}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{27}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{35}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{33}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Conid{G₀}\;{}\<[7]%
 \>[7]{}\mathbin{:}\;\int\;\Conid{Type}\;{}\<[27]%
-\>[27]{}\Conid{F₀}\;{}\<[35]%
-\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\>[27]{}\Conid{F₀}\;{}\<[33]%
+\>[33]{}\to \;\Conid{Type}{}\<[E]%
 \\
 \>[B]{}\Conid{G₁}\;{}\<[7]%
 \>[7]{}\mathbin{:}\;\int\;(\Conid{F₀},\Conid{G₀})\;\Varid{-alg}\;{}\<[27]%
-\>[27]{}\Conid{F₁}\;{}\<[35]%
-\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\>[27]{}\Conid{F₁}\;{}\<[33]%
+\>[33]{}\to \;\Conid{Type}{}\<[E]%
 \\
 \>[B]{}\Conid{G₂}\;{}\<[7]%
 \>[7]{}\mathbin{:}\;\int\;(\Conid{F₁},\Conid{G₁})\;\Varid{-alg}\;{}\<[27]%
-\>[27]{}\Conid{F₂}\;{}\<[35]%
-\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\>[27]{}\Conid{F₂}\;{}\<[33]%
+\>[33]{}\to \;\Conid{Type}{}\<[E]%
 \\
 \>[B]{}\Varid{G}_{\Varid{k}+1}\;{}\<[7]%
 \>[7]{}\mathbin{:}\;\int\;(\Varid{F}_{\Varid{k}},\Varid{G}_{\Varid{k}})\;\Varid{-alg}\;{}\<[27]%
-\>[27]{}\Conid{F}\;(\Varid{kp1})\;{}\<[35]%
-\>[35]{}\to \;\Conid{Type}{}\<[E]%
+\>[27]{}\Varid{F}_{\Varid{k}+1}\;{}\<[33]%
+\>[33]{}\to \;\Conid{Type}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -604,13 +647,18 @@ We see that the general shape of a constructor is a dependent dialgebra:
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\mathbb{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{G}\;\mathbin{:}\;\int\;\mathbb{C}\;\Conid{F}\;\to \;\Conid{Type}}, where \ensuremath{\mathbb{C}}
-is \ensuremath{\Conid{Type}} or some category of dependent dialgebras, ``containing'' all
-the previous constructors.
+where \ensuremath{\mathbb{C}\;\mathbin{:}\;\Conid{Cat}}, \ensuremath{\Conid{F}\;\mathbin{:}\;\mathbb{C}\;\to \;\Conid{Type}} and \ensuremath{\Conid{G}\;\mathbin{:}\;\int\;\mathbb{C}\;\Conid{F}\;\to \;\Conid{Type}},
+where \ensuremath{\mathbb{C}} is \ensuremath{\Conid{Type}} or some category of dependent dialgebras,
+``containing'' all the previous constructors.
 
 When describing \hits, we do not allow for any target functor \ensuremath{\Conid{G}}: it
 must either return the type we are defining or a (possibly iterated)
-path space of that type.
+path space of that type. A constructor of which the target is an
+$n$-times iterated path space is called an \emph{$n$-constructor}. The
+$0$-times iterated path space of a type \ensuremath{\Conid{A}} is simply the type \ensuremath{\Conid{A}}
+itself, hence ordinary constructors are \zeroconstructors. We call a
+\hit an $n$-\hit if $n$ is the maximum iteration depth of its
+constructors.
 
 A \emph{\zeroconstructor} or \emph{point constructor} is a dialgebra:
 
@@ -673,8 +721,82 @@ an \ensuremath{(\Varid{k+1})}-constructor, we need to give the natural transform
 \ColumnHook
 \end{hscode}\resethooks
 
-where \ensuremath{\Varid{Eq}_{\Varid{i}}\;\Conid{X}\;\Varid{x}\;:\equiv\;(\Varid{l}_{\Varid{i}}\;\Conid{X}\;\Varid{x}\;=\;\Varid{r}_{\Varid{i}}\;\Conid{X}\;\Varid{x})}. \ensuremath{\Conid{Eqn}} is then the target
+where \ensuremath{\Varid{Eq}_{\Varid{i}}\;\Conid{X}\;\Varid{x}\;:\equiv\;(\Varid{l}_{\Varid{i}}\;\Conid{X}\;\Varid{x}\;=\;\Varid{r}_{\Varid{i}}\;\Conid{X}\;\Varid{x})}. \ensuremath{\Varid{Eq}_{\Varid{n}}} is then the target
 functor we are interested in.
+
+\subsection{$0$-\hits versus \oits}
+
+Even when we consider only \oneconstructors, the above scheme is more
+general than the schemes that are usually considered when talking
+about \oits: any constructor may refer to any previous
+constructor, \eg:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{T}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c₀}\;\mathbin{:}\;\Conid{T}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{c₁}\;\mathbin{:}\;\Varid{c₀}\;=\;\Varid{c₀}\;\to \;\Conid{T}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+In fact, Agda even allows such definitions.
+
+One variation of inductive types where one can refer to previous
+constructors are \emph{inductive-inductive} types. An
+inductive-inductive type is an inductive type \ensuremath{\Conid{A}} along with an
+inductive family \ensuremath{\Conid{B}\;\mathbin{:}\;\Conid{A}\;\to \;\Conid{Type}}, where the constructors of \ensuremath{\Conid{A}} may
+refer to \ensuremath{\Conid{B}} and where \ensuremath{\Conid{B}} may refer to \ensuremath{\Conid{A}} and its constructors.
+
+An example of an inductive-inductive definition is that of types and
+contexts:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Keyword{data}\;\Conid{Ctx}\;\mathbin{:}\;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{ε}\;{}\<[9]%
+\>[9]{}\mathbin{:}\;\Conid{Ctx}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\mathunderscore·\mathunderscore\;\mathbin{:}\;\Conid{Ctx}\;\to \;\Conid{Ty}\;\to \;\Conid{Ctx}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Keyword{data}\;\Conid{Ty}\;\mathbin{:}\;\Conid{Ctx}\;\to \;\Conid{Type}\;\Keyword{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{zero}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Conid{Γ}\;\mathbin{:}\;\Conid{Ctx})\;\to \;\Conid{Ty}\;\Conid{Γ}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{one}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Conid{Γ}\;\mathbin{:}\;\Conid{Ctx})\;\to \;\Conid{Ty}\;\Conid{Γ}{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{pi}\;{}\<[11]%
+\>[11]{}\mathbin{:}\;(\Conid{Γ}\;\mathbin{:}\;\Conid{Ctx})\;\to \;(\Varid{x}\;\mathbin{:}\;\Conid{Ty}\;\Conid{Γ})\;\to \;\Conid{Ty}\;(\Conid{Γ}\;\Varid{·}\;\Varid{x})\;\to \;\Conid{Ty}\;\Conid{Γ}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+We can generalise our scheme of \hits to also support mutual
+definitions, such as the above. Instead of considering target functors
+mapping into \ensuremath{\Conid{Type}}, it can be an arbitrary base category. This
+construction is described in \textcite{Capriotti2014ii}.
+
+\emph{Higher} inductive-inductive types also turn out to be useful
+when formalising type theory in type
+theory \parencite{Altenkirch2015}.
 
 \subsection{Strict positivity}
 
@@ -697,13 +819,13 @@ not strictly positive is the following:
 
 Using the type \ensuremath{\Conid{Term}}, we can find inhabitants of the empty type. We
 therefore only consider inductive types defined by strictly positive
-functors, \ie containers. Containers however only describe functors
-\ensuremath{\Conid{Type}\;\to \;\Conid{Type}}. An example of that shows that we need a notion of
-strict positivity for any functor into \ensuremath{\Conid{Type}} is that of the ``initial
-field''. If we write down the axioms of an algebraic structure as
-constructors, the inductive type we get is then the initial object in
-the category of that algebraic structure, \ie  we can define a type \ensuremath{\Conid{T}}
-with the monoid axioms as constructors:
+functors, \ie containers \parencite{Abbott2005}. Containers however
+only describe functors \ensuremath{\Conid{Type}\;\to \;\Conid{Type}}. An example of that shows that
+we need a notion of strict positivity for any functor into \ensuremath{\Conid{Type}} is
+that of the ``initial field''. If we write down the axioms of an
+algebraic structure as constructors, the inductive type we get is then
+the initial object in the category of that algebraic structure, \ie we
+can define a type \ensuremath{\Conid{T}} with the monoid axioms as constructors:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -746,6 +868,8 @@ of fields. The culprit is the inverse operation, which has the type:
 \end{hscode}\resethooks
 
 The constructor \ensuremath{\Varid{0}} occurs negatively in this constructor.
+
+\subsubsection{Generalised containers}
 
 To generalise the notion of strict positivity, we can generalise the
 notion of containers to not only describe functors \ensuremath{\Conid{Type}\;\to \;\Conid{Type}}, but
@@ -811,6 +935,56 @@ with its action of objects defined as:
 \>[3]{}\Varid{⟦}\;(\Varid{f},\Varid{g})\;\Varid{⟧}\;\Conid{X}\;(\Varid{s},\Varid{t})\;:\equiv\;(\Varid{f}\;\Varid{s},\Varid{t}\;\Varid{∘}\;(\Varid{g}\;\Varid{s})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+Equivalently, container morphisms \ensuremath{\Conid{S}\;\Varid{◁}\;\Conid{P}\;\to \;\Conid{T}\;\Varid{◁}\;\Conid{Q}} are sections of the
+form:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}(\Varid{s}\;\mathbin{:}\;\Conid{S})\;\to \;\Varid{⟦}\;\Conid{T}\;\Varid{◁}\;\Conid{Q}\;\Varid{⟧}\;(\Conid{P}\;\Varid{s}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Generalised containers are essentially the same as \emph{familially
+  representable functors} \parencite{Carboni1995}.
+
+\subsection{Coherence issues}
+
+Even though the above definition of strictly positive functors \ensuremath{\mathbb{C}\;\to \;\Conid{Type}} looks as something that is easily formalisable, we have not
+explained how to formalise the notion of category. 
+
+mention typical situation where we have a type of objects and a set of
+morphisms (precategory). If we also have that isomorphism in category
+coincides with equality of objects, then this is called a
+category. (AKS) In such a category the type of objects is a $1$-type,
+so this is unsuitable for our purposes.
+
+Instead of talking about ordinary category, we want to talk about
+$(\infty, 1)$-categories. As of yet, no one has found a practical way
+to formalise these in type theory, so this is not a viable option for
+us right now.
+
+Another way to talk about categories, is to have a type of objects and
+a type of morphisms, with the requirement that all category laws hold
+strictly. \ensuremath{\Conid{Type}} is an example of such a strict category:
+associativity and the identity laws hold definitionally. This approach
+gets us into trouble if we define the category of algebras, as the
+definition of algebra morphism refers to propositional equality and
+associativity no longer holds definitionally. One way to solve this
+problem is to extend the type theory we are working in to also have a
+``strict equality'', as is done in HTS.
+
+In this report we will take yet another approach: we will define
+categories with a type of objects and a type of morphisms and require
+the category laws to hold by propositional equality, but without
+imposing any extra coherence laws on them. This corresponds to the
+concept of a \emph{H-category}. Additionally, we will restrict
+ourselves to such \hit definitions that minimise the amount of
+coherence issues we have to deal with. Since we are working with a
+limited set of categories that we have explicitly defined, we can deal
+with any coherence issues as they come up.
 
 \subsection{\Hits as a sequence of monads}
 
@@ -1599,5 +1773,7 @@ We have now established initiality of \ensuremath{(\Conid{T},\Varid{c})}.
 \subsubsection{Existence}
 
 \subsubsection{Uniqueness}
+
+\section{Thesis outline}
 
 \end{document}

@@ -19,26 +19,6 @@
              {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
 }
 
-\DeclareUnicodeCharacter{737}{\textsuperscript{l}}
-\DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
-\DeclareUnicodeCharacter{8759}{::}
-\DeclareUnicodeCharacter{9669}{\ensuremath{\triangleleft}}
-\DeclareUnicodeCharacter{9665}{\ensuremath{\triangleleft}}
-\DeclareUnicodeCharacter{8799}{\ensuremath{\stackrel{\scriptscriptstyle ?}{=}}}
-\DeclareUnicodeCharacter{10214}{\ensuremath{\llbracket}}
-\DeclareUnicodeCharacter{10215}{\ensuremath{\rrbracket}}
-\DeclareUnicodeCharacter{946}{\ensuremath{\beta}}
-\DeclareUnicodeCharacter{8729}{\ensuremath{\ct}}
-\DeclareUnicodeCharacter{10218}{\ensuremath{ \{ }}
-\DeclareUnicodeCharacter{10219}{\ensuremath{ \} }}
-\DeclareUnicodeCharacter{8718}{\ensuremath{\blacksquare}}
-\DeclareUnicodeCharacter{7496}{\ensuremath{^d}}
-% TODO: This is in general not a good idea.
-\providecommand\textepsilon{$\epsilon$}
-\providecommand\textmu{$\mu$}
-\providecommand\textbeta{$\beta$}
-\providecommand\texttheta{$\theta$}
-
 %subst keyword a = "\Keyword{" a "}"
 
 %Actually, varsyms should not occur in Agda output.
@@ -62,6 +42,13 @@
 %format hdots = "\hdots"
 %format catC = "\mathbb{C}"
 %format S1 = "\Varid{S}^1"
+
+%format Fn = "\Varid{F}_{\Varid{n}}"
+%format Gn = "\Varid{G}_{\Varid{n}}"
+%format cn = "\Varid{c}_{\Varid{n}}"
+%format ln = "\Varid{l}_{\Varid{n}}"
+%format rn = "\Varid{r}_{\Varid{n}}"
+%format Eqn = "\Varid{Eq}_{\Varid{n}}"
 
 %format Fk = "\Varid{F}_{\Varid{k}}"
 %format Gk = "\Varid{G}_{\Varid{k}}"
@@ -103,3 +90,4 @@
 %format // = "||"
 %format _ = "\mathunderscore"
 %format _∙_ = "\mathunderscore∙\mathunderscore"
+%format _·_ = "\mathunderscore·\mathunderscore"
