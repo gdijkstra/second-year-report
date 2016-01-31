@@ -1,7 +1,17 @@
 \documentclass[a4paper,10pt]{article}
+
 \bibliographystyle{plain}
 
+\usepackage{xspace}
+\usepackage{todonotes}
+\usepackage{cleveref}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
 \usepackage{url}
+\usepackage{mathrsfs}
+\usepackage[pdftex, all]{xy}
 
 \title{Second year report}
 
@@ -15,7 +25,307 @@
 
 test~\cite{UFP2013}.
 
-\section{test}
+\section{Introduction}
+\label{sec:introduction}
+
+\section{Syntax of higher inductive types}
+\label{sec:syntax}
+
+If we define an ordinary inductive type, we start out by writing down
+a list of constructors, \eg:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T\ :\ \Type\ \where$} \\
+  &&\ \ c_0  &:\ F_0\ T \to T \\
+  &&\ \ c_1  &:\ F_1\ T \to T \\
+  &&\ \      &\vdots \\
+  &&\ \ c_k  &:\ F_k\ T \to T
+\end{alignat*}
+%
+where $F_i : \Type \to \Type$. We require each $F_i$ to be a (strictly
+positive) functor, in order to make sense of the computation rules of
+the elimination operator. A constructor $c_i$ is then an algebra of
+functor $F_i$ with carrier $T$. Equivalently, we can define an
+inductive type with a single constructor:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T\ :\ \Type\ \where$} \\
+  &&\ \ c &:\ F\ T \to T 
+\end{alignat*}
+%
+where $F\ X \ddefeq F_0\ X + F_1\ X + \hdots + F_k\ X$, so a single
+functor is all we need to describe an \oit.
+
+In the case of \hits, the situation is more involved. Consider for
+example the circle data type:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ S^1\ :\ \Type\ \where$} \\
+  &&\ \ \base     &:\ S^1 \\
+  &&\ \ \loopcstr &:\ \base = \base
+\end{alignat*}
+
+There are two things that are different from our previous
+situation. Firstly, the result type of $\loopcstr$ is not $S^1$, but a path
+space of $S^1$: constructors are no longer algebras of functor, but a
+kind of \emph{dialgebra}: the arguments as well as the result type of
+a constructor may vary. Secondly, the $\loopcstr$ constructor refers to the
+previous constructor $\base$.
+
+The result type of a constructor can also depend on the value of its
+arguments, as we see in the definition of propositional truncation as
+a \hit:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ || A ||\ :\ \Type \where$} \\
+  &&\ \ [\_]   &:\ A \to || A || \\
+  &&\ \ \trunc &:\ (x\ y : || A ||) \to x = y
+\end{alignat*}
+
+Constructors of a \hit are \emph{dependent dialgebras}. In general, a
+higher inductive type looks as follows:
+%
+\begin{alignat*}{5}
+  &\rlap{$\data\ T\ :\ \Type\ \where$}& \\
+  &&\ \ c_0    &: (x : F_0 T)                    &\to\ &G_0\ (T, x)& \\
+  &&\ \ c_1    &: (x : F_1 (T,c_0))              &\to\ &G_1\ ((T, c_0), x)& \\
+  &&\ \ c_2    &: (x : F_2 (T,c_0,c_1))          &\to\ &G_2\ ((T, c_0, c_1), x)& \\
+  &&\ \        &\vdots &&\\
+  &&\ \ c_{k+1} & : (x : F_k (T,c_0, \hdots, c_k) &\to\ &G_k\ ((T, c_0, \hdots, c_k), x)&
+\end{alignat*}
+
+We will refer to the $F_i$ functors as \emph{argument} functors and the
+$G_i$ functors as \emph{target} functors. The types of the argument
+functors are:
+%
+\begin{alignat*}{6}
+&F_0     &\ :\ &\Type                &\ \to \Type& \\
+&F_1     &\ :\ &\algcat{(F_0, G_0)}  &\ \to \Type& \\      
+&F_2     &\ :\ &\algcat{(F_1, G_1)}  &\ \to \Type& \\      
+&F_{k+1} &\ :\ &\algcat{(F_k, G_k)}  &\ \to \Type&
+\end{alignat*}
+%
+where $\algcat{(F0, G0)}$ is the category whose objects are dependent
+dialgebras $(X : \Type) \times (\theta : (x : F_0\ X) \to G_0\ (X,\ x))$. The category
+$\algcat{(F_{i+1},G_{i+1})}$ has as objects: $(X : \algcat{(F_i,G_i)}) \times (\theta : (x :
+F_{i+1}\ X) \to G_{i+1}\ (X, x)$. The target functors also take the value of
+the arguments as an argument, so they have the following types:
+%
+\begin{alignat*}{6}
+&G_0     &\ :\ &\int_{\Type} F_0                &\ \to \Type& \\
+&G_1     &\ :\ &\int_{\algcat{(F_0, G_0)}} F_1  &\ \to \Type& \\      
+&G_2     &\ :\ &\int_{\algcat{(F_1, G_1)}} F_2  &\ \to \Type& \\      
+&G_{k+1} &\ :\ &\int_{\algcat{(F_k, G_k)}} F_{k+1}  &\ \to \Type&
+\end{alignat*}
+
+We see that the general shape of a constructor is a dependent dialgebra:
+$$
+c : (x : F\ X) \to G\ (X , x)
+$$
+where $\C : \catcat$, $F : \C \to \Type$ and
+$G : \int_{\C} F \to \Type$, where $\C$ is either $\Type$ or some
+category of dependent dialgebras, ``containing'' all the previous
+constructors.
+
+When describing \hits, we do not allow for any target functor $G$: it
+must either return the type we are defining or a (possibly iterated)
+path space of that type. A constructor of which the target is an
+$n$-times iterated path space is called an \emph{$n$-constructor}. The
+$0$-times iterated path space of a type $A$ is simply the type $A$
+itself, hence ordinary constructors are \zeroconstructors. We call a
+\hit an $n$-\hit if $n$ is the maximum iteration depth of its
+constructors.
+
+A \emph{\zeroconstructor} or \emph{point constructor} is a dialgebra:
+$$
+c : (x : F\ X) \to U\ X
+$$
+where $\C : \catcat$, $F : \C \to \Type$ and $U : \C \to Type$ its forgetful
+functor.
+
+A \emph{\oneconstructor} is a dependent dialgebra of which the target
+functor returns a path space:
+$$
+  c : (x : F\ X) \to \Eq_0\ (X, x)
+$$
+where $\C : \catcat$, $F, U : \C \to \Type$, and $\Eq_0 : \int_{\C} F \to
+\Type$ is the functor:
+$$
+  \Eq_0\ (X , x) \ddefeq (l_0\ x = r_0\ x)
+$$
+where $l_0,\ r_0 : F \to U$ are natural transformations.
+
+For higher path constructors, we have to specify a tower of natural
+transformations, specifying the end points at every level. To specify
+an $(k+1)$-constructor, we need to give the natural transformations:
+%
+\begin{alignat*}{5}
+  &l_0,\ r_0  &\ :\ &F \to U& \\
+  &l_1,\ r_1  &\ : \ &1 \to \Eq_0& \\
+  &l_2,\ r_2  &\ : \ &1 \to \Eq_1& \\
+  &           &\vdots&& \\
+  &l_k,\ r_k  &\ : \ &1 \to \Eq_{k-1}&
+\end{alignat*}
+%
+where $\Eq_i\ (X, x) \ddefeq (l_i\ x = r_i\ x)$. $Eq_n$ is then the target
+functor we are interested in.
+
+Even when we consider only \zeroconstructors, the above scheme is more
+general than the schemes that are usually considered when talking
+about \oits: any constructor may refer to any previous
+constructor, \eg:
+%
+\begin{alignat*}{5}
+  &\rlap{$\data\ T\ :\ \Type\ \where$} \\
+  &\ \ c_0 &\ :\ &T&\\
+  &\ \ c_1 &\ :\ &c_0 = c_0 \to T&
+\end{alignat*}
+%
+In fact, Agda even allows such definitions.
+
+
+\section{Initiality and induction for \oits}
+\label{sec:oits}
+
+As mentioned in~\cref{sec:syntax}, an \oit is fully described by a
+functor $F : \Type \to \Type$.
+
+\subsection{Induction principle}
+\label{sec:oitinduction}
+
+The induction principle of an inductive type $T$ gives us a method to
+show that for a predicate $P : T \to \Type$, for all $x : T$, $P\ x$
+holds. Intuitively we have to show for each constructor $c$ that if
+$P$ holds for all $T$-subterms of $x$, then $P$ holds for $c x$. For
+example, for the natural numbers, we have the induction operator:
+
+\todoi{elim nat}
+
+The induction operator also comes with computation rules:
+
+\todoi{elim nat comp rules}
+
+Generalising this to an arbitrary inductive type $T$ given by a
+functor $F : \Type \to \Type$, we need to be able to state that a
+predicate $P : T \to \Type$ holds for all $T$-subterms of $x : FT$. We
+will do this by introducing a modality
+$\Box_F : (A \to \Type) \to FA \to \Type$, which is defined by the
+following equation, for $A : \Type$, $B : A \to \Type$:
+$$
+F (\Sigma\ A\ B) = \Sigma\ FA\ (\Box_{F} B)
+$$
+By singleton elimination we can then give the following definition of $\Box_{F}\ B$:
+$$
+\Box_{F}\ B\ x = (y : F (\Sigma\ A\ B)) \times (F\ \pi_1\ x = y)
+$$
+The induction principle for $T$ then becomes:
+
+\todoi{elim T}
+
+with computation rules:
+
+\todoi{elim T comp rules and introduce $\actionsection{F}$?}
+
+Usually $P$ is called the \emph{motive} of the induction and $m$ its
+\emph{method}. One can also think of a motive along with a method as a
+\emph{family} of algebras:
+
+\begin{defn}
+  An \emph{$F$-algebra family} over an algebra $(X,\theta)$, denoted
+  $\Famover{\algcat{F}}{(X,\theta)}$, consists of:
+
+  \begin{itemize}
+  \item $P : X \to \Type$
+  \item $m : (x : F\ X) \to \Box_F\ P\ x \to P\ (\theta\ x)$
+  \end{itemize}
+\end{defn}
+
+In $\Type$, giving a family over a type $A : \Type$ is the same as
+giving a function into $A$, \ie:
+$$
+(A \to \Type) = (B : \Type) \times (p : B \to A)
+$$
+In~\cref{sec:oitsectioninduction} we will show that giving a
+family over an algebra $\alg{X} : \algcat{F}$ is the same as giving an
+algebra morphism into $\alg{X}$:
+$$
+\Famover{\algcat{F}}{\alg{X}} = (\alg{Y} : \algcat{F}) \times \algcat{F}(\alg{Y},\alg{X})
+$$
+
+\subsection{Initiality}
+\label{sec:oitinitiality}
+
+\subsection{Section principle}
+\label{sec:oitsection}
+
+Instead of showing directly that the induction principle is logically
+equivalent to homotopy initiality, we introduce another principle that
+is somewhere in between the type theoretic induction principle and the
+categorical notion of initiality. In~\cref{sec:oitinduction}, the
+induction principle for an inductive type $T$ gives us for every
+algebra family $(P,m)$, a dependent function $(x : T) \to P\ x$
+subject to certain computation rules. The section principle states
+that every \emph{algebra fibration} has a \emph{section}.
+
+\begin{defn}
+  An \emph{$F$-algebra fibration} over an algebra $\alg{X}$ is an
+  algebra $\alg{Y}$ along with an algebra morphism
+  $\algcat{F}(\alg{Y},\alg{X})$. The type of $F$-algebra fibrations
+  over $\alg{X}$ is denoted as $\fibover{\algcat{F}}{\alg{X}}$
+\end{defn}
+
+\begin{defn}
+  Given $\alg{X} : \algcat{F}$ and $\algfib{P} : \fibover{\algcat{F}}{\alg{X}}$,
+\end{defn}
+
+
+\subsection{Induction principle is logically equivalent to section principle}
+\label{sec:oitsectioninduction}
+
+\subsection{Section principle is logically equivalent to initiality}
+\label{sec:oitsectioninitiality}
+
+We will first show that initiality implies the section induction
+principle. Suppose $\alg{X} : \algcat{F}$ is initial,
+$\alg{Y} : \algcat{F}$ and $p : \algcat{F}(\alg{Y},\alg{X})$. Since
+$\alg{X}$ is initial, there is a morphism
+$s : \algcat{F}(\alg{X},\alg{Y})$. Since $\alg{X}$ is initial, there
+is only one morphism $\algcat{F}(\alg{X},\alg{X})$, namely
+$\Id{\alg{X}}$, hence $p \circ s = \Id{\alg{X}}$, therefore $s$ is a
+section of $p$ and we are done.
+
+Conversely, let $\alg{X} : \algcat{F}$ be an algebra that satisfies
+the section principle, then we have to show that for any algebra
+$Y : \algcat{F}$ there exists a unique algebra morphism
+$f : \algcat{F}(\alg{X},\alg{Y})$. Given $\alg{X}$ and $\alg{Y}$, we
+can form the product of algebras $\alg{X} \times \alg{Y}$, which comes
+with projections $\pi_1 : \algcat{F}(\alg{X} \times \alg{Y}, \alg{X})$
+and $\pi_2 : \algcat{F}(\alg{X} \times \alg{Y}, \alg{Y})$. Let
+$s : \algcat{F}(\alg{X},\alg{X} \times \alg{Y})$ be the section of
+$\pi_1$. We can then construct the $f$ as follows:
+$$
+\xymatrix{
+  &\alg{X} \ar[r]^-{s} &\alg{X} \times \alg{Y} \ar[r]^-{\pi_2} &\alg{Y}
+}
+$$
+Now we have to show that for any $g : \algcat{F}(\alg{X},\alg{Y})$,
+  $f = g$. This can be done by constructing the equaliser $\alg{E}$ of
+  $f$ and $g$:
+$$
+\xymatrix{
+  &\alg{E} \ar[r]^{e} &\alg{X} \ar@<-.5ex>[r]_-{g} \ar@<.5ex>[r]^-{f} &\alg{Y}
+}
+$$
+We get a section of $e$, which then shows that $f = g$.
+
+\subsection{Category of algebras}
+\label{sec:oitalgcat}
+
+
+\section{Initiality and induction for \hits}
+\label{sec:hits}
+
+
 
 \bibliography{second-year-report}
 
