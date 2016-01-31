@@ -1,25 +1,24 @@
-LTX=note.ltx
-LTXMAIN=$(basename $(LTX))
-FMT=$(subst .ltx,.fmt,$(LTX))
-PDF=$(subst .ltx,.pdf,$(LTX))
-TEX=$(subst .ltx,.tex,$(LTX))
-LOG=$(subst .ltx,.log,$(LTX))
+TEX=second-year-report.tex
+TEXMAIN=$(basename $(TEX))
+PDF=$(subst .tex,.pdf,$(TEX))
+LOG=$(subst .tex,.log,$(TEX))
+BIB=$(subst .tex,.bib,$(TEX))
 
 default : $(PDF)
 
-$(TEX) : $(LTX) $(FMT)
-	lhs2TeX --agda $(LTX) > $(TEX)
-
-preview : $(PDF)
-	@if [ `uname` = 'Darwin' ]; then \
-	  open -a /Applications/Skim.app $(PDF); \
-	else \
-	  zathura $(PDF); \
-	fi
-
-$(PDF) : $(TEX)
+$(PDF) : $(TEX) $(BIB) macros.tex
 	pdflatex -halt-on-error $(TEX)
+	bibtex $(TEXMAIN)
 	pdflatex -halt-on-error $(TEX)
+	sh -c ' \
+	  i=1; \
+	  while [ $$i -lt 5 ] && ( \
+	       grep -c "undefined citations" $(LOG) \
+	    || grep -c "undefined references" $(LOG) ); \
+	  do pdflatex -halt-on-error $(TEX); \
+	     i=`expr $$i + 1`; \
+	     done; \
+          echo "Iterations: $$i"'
 
 clean :
-	rm -f *.aux *.log *.nav *.out *.ptb *.toc *.snm $(PDF) $(TEX) *.synctex.gz *.bcf *.bbl *.blg *.run.xml
+	rm -f *.aux *.log *.nav *.out *.ptb *.toc *.snm *.synctex.gz *.bbl *.blg $(PDF)

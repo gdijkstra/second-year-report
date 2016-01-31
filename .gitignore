@@ -1,6 +1,11 @@
-/note.aux
-/note.log
-/note.org_archive
-/note.out
-/note.ptb
-/note.bcf
+*.aux
+*.log
+*.nav
+*.out
+*.ptb
+*.toc
+*.snm
+*.synctex.gz
+*.bbl
+*.blg
+second-year-report.pdf
