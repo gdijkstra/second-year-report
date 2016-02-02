@@ -50,11 +50,14 @@
 \newcommand{\alg}[1]{\mathscr{#1}}
 \newcommand{\algcat}[1]{#1\mbox{-alg}}
 \newcommand{\cat}[1]{\mathcal{#1}}
-\newcommand{\Cat}[1]{\mathsf{Cat}}
+\newcommand{\Cat}{\mathsf{Cat}}
 \DeclareMathOperator*{\Id}{Id}
 \DeclareMathOperator*{\id}{id}
+\DeclareMathOperator*{\ido}{id_0}
+\DeclareMathOperator*{\idi}{id_1}
 
 \newcommand{\ddefeq}{:\equiv}
+\newcommand{\defeq}{\equiv}
 
 \newcommand{\cont}[2]{#1 \lhd #2}
 \newcommand{\cext}[2]{\llbracket \cont{#1}{#2} \rrbracket}
@@ -66,6 +69,11 @@
 \newcommand{\ap}{\mathsf{ap}}
 \newcommand{\ind}{\mathsf{ind}}
 \newcommand{\inn}{\mathsf{in}}
+\newcommand{\funext}{\mathsf{funext}}
+\newcommand{\Spec}{\mathsf{Spec}}
+\newcommand{\Alg}{\mathsf{Alg}}
+\newcommand{\Constr}{\mathsf{Constr}}
+\newcommand{\extend}{\mathsf{extend}}
 
 \newcommand{\base}{\mathsf{base}}
 \newcommand{\loopcstr}{\mathsf{loop}}
@@ -105,3 +113,13 @@
 \newcommand{\actionsection}[1]{\bar{#1}}
 
 \newcommand{\inverseImage}[1]{\mathsf{fib}_{#1}}
+
+% Path composition from The Book.
+\newcommand{\ct}{%
+  \mathchoice{\mathbin{\raisebox{0.5ex}{$\displaystyle\centerdot$}}}%
+             {\mathbin{\raisebox{0.5ex}{$\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
+             {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
+}
+
+\newcommand{\To}{\Rightarrow}

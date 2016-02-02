@@ -2,9 +2,9 @@
 
 \bibliographystyle{plain}
 
+\usepackage{tgpagella}
 \usepackage{xspace}
 \usepackage{todonotes}
-\usepackage{cleveref}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
@@ -12,6 +12,9 @@
 \usepackage{url}
 \usepackage{mathrsfs}
 \usepackage[pdftex, all]{xy}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
 
 \title{Second year report}
 
@@ -105,7 +108,7 @@ functors are:
 &F_{k+1} &\ :\ &\algcat{(F_k, G_k)}  &\ \to \Type&
 \end{alignat*}
 %
-where $\algcat{(F0, G0)}$ is the category whose objects are dependent
+where $\algcat{(F_0, G_0)}$ is the category whose objects are dependent
 dialgebras $(X : \Type) \times (\theta : (x : F_0\ X) \to G_0\ (X,\ x))$. The category
 $\algcat{(F_{i+1},G_{i+1})}$ has as objects: $(X : \algcat{(F_i,G_i)}) \times (\theta : (x :
 F_{i+1}\ X) \to G_{i+1}\ (X, x)$. The target functors also take the value of
@@ -183,12 +186,32 @@ constructor, \eg:
 %
 In fact, Agda even allows such definitions.
 
-
 \section{Initiality and induction for \oits}
 \label{sec:oits}
 
 As mentioned in~\cref{sec:syntax}, an \oit is fully described by a
-functor $F : \Type \to \Type$.
+single endofunctor $F : \Type \to \Type$.
+
+\todoi{introduce algebras and algebra morphisms?} 
+
+\todoi{do more introduction of this section}
+
+\subsection{Initiality}
+\label{sec:oitinitiality}
+
+One way to characterise inductive types is as the initial algebra of
+the given endofunctor. An algebra is initial if there exists a unique
+arrow to any algebra. In other words: for any algebra, the type of
+morphisms between the the initial algebra and that algebra is
+contractible:
+%
+\begin{defn}
+  An algebra $\alg{X} : \algcat{F}$ is \emph{homotopy initial} if we
+  have a proof of
+  $(\alg{Y} : \algcat{F}) \to \iscontr{\algcat{F}(\alg{X}, \alg{Y})})$
+\end{defn}
+%
+Note that being homotopy initial is a proposition.
 
 \subsection{Induction principle}
 \label{sec:oitinduction}
@@ -252,9 +275,6 @@ $$
 \Famover{\algcat{F}}{\alg{X}} = (\alg{Y} : \algcat{F}) \times \algcat{F}(\alg{Y},\alg{X})
 $$
 
-\subsection{Initiality}
-\label{sec:oitinitiality}
-
 \subsection{Section principle}
 \label{sec:oitsection}
 
@@ -275,55 +295,383 @@ that every \emph{algebra fibration} has a \emph{section}.
 \end{defn}
 
 \begin{defn}
-  Given $\alg{X} : \algcat{F}$ and $\algfib{P} : \fibover{\algcat{F}}{\alg{X}}$,
+  An algebra $\alg{X}$ satisfies the \emph{section principle} if for
+  every algebra fibration
+  $\algfib{P} : \fibover{\algcat{F}}{\alg{X}}$, there exists a section
+  $s : \algcat{F}(\alg{X},\alg{Y})$ of $p$, \ie
+  $p \circ s = \Id{\alg{X}}$.
 \end{defn}
 
+Note that in order for this to be a complete definition, we have to
+define composition of algebra morphisms and define the identity
+morphisms. This will be done in~\cref{sec:oitalgcat}.
 
 \subsection{Induction principle is logically equivalent to section principle}
 \label{sec:oitsectioninduction}
 
+\todoi{this, first think about approach} 
+
 \subsection{Section principle is logically equivalent to initiality}
 \label{sec:oitsectioninitiality}
 
-We will first show that initiality implies the section induction
-principle. Suppose $\alg{X} : \algcat{F}$ is initial,
-$\alg{Y} : \algcat{F}$ and $p : \algcat{F}(\alg{Y},\alg{X})$. Since
-$\alg{X}$ is initial, there is a morphism
-$s : \algcat{F}(\alg{X},\alg{Y})$. Since $\alg{X}$ is initial, there
-is only one morphism $\algcat{F}(\alg{X},\alg{X})$, namely
-$\Id{\alg{X}}$, hence $p \circ s = \Id{\alg{X}}$, therefore $s$ is a
-section of $p$ and we are done.
+We will first show that initiality implies the section principle.
 
-Conversely, let $\alg{X} : \algcat{F}$ be an algebra that satisfies
-the section principle, then we have to show that for any algebra
-$Y : \algcat{F}$ there exists a unique algebra morphism
-$f : \algcat{F}(\alg{X},\alg{Y})$. Given $\alg{X}$ and $\alg{Y}$, we
-can form the product of algebras $\alg{X} \times \alg{Y}$, which comes
-with projections $\pi_1 : \algcat{F}(\alg{X} \times \alg{Y}, \alg{X})$
-and $\pi_2 : \algcat{F}(\alg{X} \times \alg{Y}, \alg{Y})$. Let
-$s : \algcat{F}(\alg{X},\alg{X} \times \alg{Y})$ be the section of
-$\pi_1$. We can then construct the $f$ as follows:
+\begin{prop}
+  If $\alg{X} : \algcat{F}$ is initial, then every morphism
+  $\algcat{F}(\alg{Y},\alg{X})$ admits a section.
+\end{prop}
+
+\begin{proof}
+  Suppose $\alg{X} : \algcat{F}$ is initial, $\alg{Y} : \algcat{F}$
+  and $p : \algcat{F}(\alg{Y},\alg{X})$. Since $\alg{X}$ is initial,
+  there is a morphism $s : \algcat{F}(\alg{X},\alg{Y})$. Since
+  $\alg{X}$ is initial, there is only one morphism
+  $\algcat{F}(\alg{X},\alg{X})$, namely $\Id{\alg{X}}$, hence
+  $p \circ s = \Id{\alg{X}}$, therefore $s$ is a section of $p$ and we
+  are done.
+\end{proof}
+
+To prove the converse, we need to appeal to more of the category
+structure of $\algcat{F}$.
+
+\begin{prop}
+  If $\alg{X} : \algcat{F}$ satisfies the section principle, then it
+  is initial.
+\end{prop}
+
+\begin{proof}
+  Let $\alg{X} : \algcat{F}$ be an algebra that satisfies the section
+  principle, then we have to show that for any algebra
+  $Y : \algcat{F}$ there exists a unique algebra morphism
+  $f : \algcat{F}(\alg{X},\alg{Y})$. Given $\alg{X}$ and $\alg{Y}$, we
+  can form the product of algebras $\alg{X} \times \alg{Y}$, which
+  comes with projections
+  $\pi_1 : \algcat{F}(\alg{X} \times \alg{Y}, \alg{X})$ and
+  $\pi_2 : \algcat{F}(\alg{X} \times \alg{Y}, \alg{Y})$. Let
+  $s : \algcat{F}(\alg{X},\alg{X} \times \alg{Y})$ be the section of
+  $\pi_1$. We can then construct the $f$ as follows:
 $$
-\xymatrix{
-  &\alg{X} \ar[r]^-{s} &\alg{X} \times \alg{Y} \ar[r]^-{\pi_2} &\alg{Y}
-}
+\xymatrix{ &\alg{X} \ar[r]^-{s} &\alg{X} \times \alg{Y}
+  \ar[r]^-{\pi_2} &\alg{Y} }
 $$
 Now we have to show that for any $g : \algcat{F}(\alg{X},\alg{Y})$,
-  $f = g$. This can be done by constructing the equaliser $\alg{E}$ of
-  $f$ and $g$:
+$f = g$. This can be done by constructing the equaliser $\alg{E}$ of
+$f$ and $g$:
+$$
+\xymatrix{ &\alg{E} \ar[r]^{e} &\alg{X} \ar@<-.5ex>[r]_-{g}
+  \ar@<.5ex>[r]^-{f} &\alg{Y} }
+$$
+We get a section $s : \algcat{F}(\alg{X},\alg{E})$ of $e$, which then
+shows that $f = g$:
 $$
 \xymatrix{
-  &\alg{E} \ar[r]^{e} &\alg{X} \ar@<-.5ex>[r]_-{g} \ar@<.5ex>[r]^-{f} &\alg{Y}
-}
+  &\alg{E} \ar[r]^{e} &\alg{X} \ar@<-.5ex>[r]_-{g} \ar@<.5ex>[r]^-{f} &\alg{Y} \\
+  &\alg{X} \ar[u]^{s} \ar[ur]_{\Id{\alg{X}}} }
 $$
-We get a section of $e$, which then shows that $f = g$.
+\end{proof}
 
 \subsection{Category of algebras}
 \label{sec:oitalgcat}
 
+When showing that the section principle implies initiality, we had to
+use quite a bit of the category structure of $\algcat{F}$. First of
+all for the definition of the section principle we need to have
+composition and identity morphisms. Apart from that, we need to be
+able to construct equalisers and have proofs of the identity laws and
+associativity. As it turns out $\algcat{F}$ (unlike $\Type$) is not a
+\emph{strict category}: it does not satisfy the category laws strictly
+but only weakly.
+
+In this section we will assume that $F$ is given as a container, which
+means that it satisfies the functor laws strictly, simplifying the
+equational reasoning.
+
+\subsubsection{Identity morphisms}
+
+Given an algebra $(X,\theta)$ we can construct the identity morphism as follows:
+%
+\begin{align*}
+  &\Id{(X,\theta)} : \algcat{F}((X,\theta),(X,\theta)) \\
+  &\Id{(X,\theta)} \ddefeq (\id{X} , \ido{(X,\theta)})
+\end{align*}
+%
+where
+%
+\begin{align*}
+  &\ido{(X,\theta)} : (x : FX) \to \id{X} (\theta x) = \theta (F \id{X} x) \\
+  &\ido{(X,\theta)} x \ddefeq \\
+  &\id{X} (\theta x) \\
+  &\defeq \\
+  &\theta x \\
+  &\defeq \{ F is a strict functor \} \\
+  &\theta (F \id{X} x)
+\end{align*}
+%
+\subsubsection{Composition}
+
+Given three algebras $(X,\theta), (Y,\rho), (Z,\zeta)$ and morphisms
+$(g,g_0) : (Y,\rho) \to (Z,\zeta)$,
+$(f,f_0) : (X,\theta) \to (Y,\rho)$, we need to construct a morphism
+$(X,\theta) \to (Z,\zeta)$:
+%
+\begin{align*}
+  &(g,g_0) \circ (f,f_0) : \algcat{F}((X,\theta),(Y,\rho)) \\
+  &(g,g_0) \circ (f,f_0) \ddefeq (g \circ f , g_0 \circ_0 f_0)
+\end{align*}
+%
+where
+%
+\begin{align*}
+  &g_0 \circ_0 f_0 : (x : FX) \to (g \circ f) (\theta x)) = \zeta (F (g \circ f) x) \\
+  &g_0 \circ_0 f_0 x \ddefeq \\
+  &(g \circ f) (\theta x) \\
+  &\defeq \{ asdf \} \\
+  &g (f (\theta x)) \\
+  &= \{ \ap g (f_0 x) \} \\
+  &g (\rho (F f x)) \\
+  &= \{ g_0 (F f x) \} \\
+  &\zeta (F g (F f x)) \\
+  &\defeq \{ F is a strict functor \} \\
+  &\zeta (F (g \circ f) x
+\end{align*}
+%
+Note that if $F$ is given as a container, it satisfies the functor
+laws strictly, which simplifies the definition of algebra morphism
+composition.
+
+\subsubsection{Equality of algebra morphisms}
+
+In order to prove the category laws, we need to know what the equality
+of algebra morphisms looks like. Let $(X,\theta)$ and $(Y, \rho)$ be
+algebras and $(f,f_0) ,(g, g_0) : \algcat{F}((X,\theta),(Y,\rho))$,
+then, since we know that an equality of two dependent pairs is a
+dependent pair of equalities and using function extensionality, we
+get:
+$$
+((f,f_0) = (g,g_0)) = (p : f = g) \times (p_0 : (x : FX) \to f_0 = g_0 [ \lambda h . h (\theta x) = \rho (F h x) \downarrow p ])
+$$
+As we will see for the category laws, since $\Type$ is a strict
+category hence the $p$ part of algebra morphism equalities will be
+$\refl$ and $p_0$ will reduce to an non-dependent path. If $p$ is
+non-trivial, we can still simplify the $p_0$ part. Giving $p_0$
+amounts to giving the following square for every $x : FX$:
+$$
+\xymatrix{
+f (\theta x) \ar@{-}[d]_{f_0 x} \ar@{-}[r]^{\ap (\lambda h . h (\theta x)) p}  &g (\theta x) \ar@{-}[d]^{g_0 x} \\
+\rho (F f x) \ar@{-}[r]_{\ap (\lambda h . \rho (F h x)) p} &\rho (F g x) }
+$$
+
+\subsubsection{Identity laws}
+
+Let $(f , f_0) : \algcat{F}((X,\theta),(Y,\rho))$ be an algebra
+morphism. We need to show that
+$\Id{(Y,\rho)} \circ (f , f_0) = (f , f_0) \circ \Id{(X,\theta)} =
+(f,f_0)$.
+
+Since $\Type$ satisfies the category laws strictly, we only need to
+focus on $f_0 \circ_0 \ido{(X,\theta)}$, $\ido{(X,\theta)} \circ_0 f_0$
+and $f_0$. For $x : FX$, we have:
+%
+\begin{align*}
+  &f_0 \circ_0 \ido{(X,\theta)} x \\
+  &\defeq \\
+  &\ap f (\ido{(X,\theta)} x) \ct f_0 (F \id{X} x) \\
+  &\defeq \{ F is a strict functor \} \\
+  &\ap f (\ido{(X,\theta)} x) \ct f_0 x \\
+  &\defeq \{ \ido{(X,\theta)} is trivial \} \\
+  &\refl \ct f_0 x \\
+  &= \\
+  &f_0 x
+\end{align*}
+%
+The proof of $\ido{(Y,\rho)} \circ_0 f_0 x = f_0 x$ goes in a similar
+fashion. Whether the entire proof reduces to reflexivity depends on
+how path composition is defined: if it is defined by induction on the
+left argument, the left identity law holds strictly but the right
+identity law does not, and vice versa. If path composition is defined
+by induction on both arguments, then neither law holds strictly.
+
+\subsubsection{Associativity}
+
+Given four algebras $(X,\theta), (Y,\rho), (Z,\zeta), (W,\omega)$ and
+morphisms $(h,h_0) : (Z,\zeta) \to (W,\omega)$,
+$(g,g_0) : (Y,\rho) \to (Z,\zeta)$,
+$(f,f_0) : (X,\theta) \to (Y,\rho)$, we need to show that:
+$$
+((h,h_0) \circ (g,g_0)) \circ (f,f_0) = (h,h_0) \circ ((g,g_0) \circ (f,f_0)) = 
+$$
+As with the identity laws, associativity holds strictly for the
+underlying functions, so we need to show for every $x : FX$ that:
+$$
+(h_0 \circ_0 g_0) \circ_0 f_0 x = h_0 \circ (g_0 \circ_0 f_0) x
+$$
+
+\todoi{show horrendous proof}
+
+\subsubsection{Products}
+
+Given algebras $(X,\theta)$ and $(Y,\rho)$, we can define their
+product $(X,\theta) \times (Y,\rho)$ as follows:
+%
+\begin{align*}
+  &(X,\theta) \times (Y,\rho) : F-alg\\
+  &(X,\theta) \times (Y,\rho) \ddefeq (X \times Y , \lambda x . (\theta (F \pi_1 x) , \rho (F \pi_2 x)))
+\end{align*}
+%
+The projections $\pi_1$ and $\pi_2$ are then also strict algebra morphisms.
+
+\subsubsection{Equalisers}
+
+Given algebras $(X,\theta), (Y,\rho)$ and a parallel pair of morphisms
+$(f,f_0),(g,g_0) : \algcat{F}((X,\theta),(Y,\rho))$, we need to find
+an algebra $(E,\epsilon)$ along with morphism
+$(e,e_0) : \algcat{F}((E,\epsilon),(X,\theta))$ such that the
+following commutes:
+$$
+\xymatrix{ &(E,\epsilon) \ar[r]^{(e,e_0)} &(X,\theta) \ar@<-.5ex>[r]_-{(g,g_0)}
+  \ar@<.5ex>[r]^-{(f,f_0)} &(Y,\rho) }
+$$
+We can $E$ to be the equaliser (in $\Type$) of $f$ and $g$, \ie:
+$$
+E \ddefeq (x : X) \times (f x = g x)
+$$
+and define $e : E \to X$ as the first projection: $e \ddefeq \pi_1$.
+We define $p : e \circ f = e \circ g$ by function extensionality:
+$p \ddefeq \funext \circ \pi_2$. We have to define an algebra
+structure $\epsilon : FE \to E$ such that $e : E \to X$ becomes an
+algebra morphism, \ie for all $x : FE$,
+$\pi_1 (\epsilon x) = \theta (F \pi_1 x)$, so we only have to define
+$\pi_2 (\epsilon x) : f (\theta (F e x)) = g (\theta (F e x))$. We
+define $\pi_2 (\epsilon x)$ as the path:
+%
+\begin{align*}
+  &f (\theta (F e x)) \\
+  &= \{ f_0 (F e x) \} \\
+  &\rho (F f (F e x)) \\
+  &\defeq \{ F functor \} \\
+  &\rho (F (f \circ e) x) \\
+  &= \{ \ap (\lambda h . \rho (F h x)) p \} \\
+  &\rho (F (g \circ e) x) \\
+  &\defeq \{ F functor \} \\
+  &\rho (F g (F e x)) \\
+  &= \{ g_0 (F e x) ^{-1} \} \\
+  &g (\theta (F e x))
+\end{align*}
+%
+Note that by construction, $e_0 x \defeq \refl$. We still have to show
+that composing $(e,e_0)$ with $(f,f_0)$ or $(g,g_0)$ yields the same
+results, so we have to give:
+$$
+p : f \circ e = g \circ e
+$$
+and for all $x : FE$ the square:
+$$
+\xymatrix{
+f (e (\epsilon x)) 
+  \ar@{-}[r]^{\ap (\lambda h . h (\epsilon x)) p} 
+  \ar@{-}[d]_{f_0 (F e x)}  
+&g (e (\epsilon x)) 
+  \ar@{-}[d]^{g_0 (F e x)}
+\\
+\rho (F (f \circ e) x)
+  \ar@{-}[r]_{\ap (\lambda h . \rho (F h x)) p}
+&\rho (F (g \circ e) x)}
+$$
+
+\todoi{this proof}
+
+We do not need to show that our equaliser satisfies the universal
+property as this is not used by the proof that section induction
+implies initiality.
 
 \section{Initiality and induction for \hits}
 \label{sec:hits}
+
+In this section we will attempt to generalise the previous
+constructions to \hits. We will start out with the most general
+approach and see where we run into (usually coherence) problems and
+will impose restrictions to make things more tractable.
+
+We have seen that a \hit can be described as a sequence of pairs of
+functors, where the domain of the functors depends on the category of
+algebras of all the previous constructors. Since we are only concerned
+with establishing an induction principle, defining the category of
+algebras and showing that the induction principle and initiality
+coincide, we do not immediately need to restrict ourselves to strictly
+positive functors. We will also not put restrictions on the target
+functors a priori to see how far we can get without them.
+
+We can formalise such a specification of a \hit as the
+following inductive-recursive definition:
+%
+\begin{align*}
+  &\Spec : \Type \\
+  &\Alg : Spec \to \Cat \\
+  \\
+  &\data \Spec \where \\
+  &\epsilon : \Spec \\
+  &\_,\_ : (s : \Spec) \to \Constr (\Alg s) \to \Spec    
+  \\
+  &\Alg \epsilon \ddefeq \Type\\
+  &\Alg (s , c) \ddefeq \extend (\Alg s) c
+\end{align*}
+%
+where
+%
+\begin{align*}
+  &\Constr \C \ddefeq (F : \C \To \Type) \times (G : \int \C F \To \Type)
+\end{align*}
+%
+and
+%
+\begin{align*}
+  &\extend : (\C : \Cat) \to \Constr \C \to \Cat
+\end{align*}
+%
+and $\To : \Cat \to \Cat \to \Type$ is the type of functors. This
+definition makes it clear how every constructor defined depends on all
+the previous constructors.
+
+The definition of $\extend$ depends on $\Cat$: if we add more
+coherence laws to the definition of $\Cat$, we have to adjust
+$\extend$ accordingly, which usually also means putting more coherence
+laws in the definition of functor.
+
+\todoi{show problems with identity and all that, we want functors to be strict}
+
+\section{Initiality and induction for \onehits}
+\label{sec:onehits}
+
+Instead of considering the most general case, we will restrict
+ourselves to \onehits of the form:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T\ :\ \Type\ \where$} \\
+  &&\ \ c_0  &:\ F_0\ T \to T \\
+  &&\ \ c_1  &:\ (x : F_1\ T) \to c_0 * (l\ x) = c_0 * (r\ x)
+\end{alignat*}
+%
+where:
+\begin{itemize}
+\item $F_0, F_1 : \Type \to \Type$ are (strict) functors, given as containers
+\item $l r : F_1 \to F_0 *$ are (strict) natural transformations, given as container morphisms
+\end{itemize}
+
+\todoi{show that this is less general than the ordinary $(0,1)$-HIT, but straightforward restriction}
+
+\todoi{explain $F_0 *$ free monad}
+
+\subsection{Initiality}
+
+\subsection{Induction principle}
+
+\subsection{Section principle}
+
+\subsection{Induction principle is logically equivalent to section principle}
+
+\subsection{Section principle is logically equivalent to initiality}
+
+\subsection{Category of algebras}
 
 
 
