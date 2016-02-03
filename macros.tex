@@ -46,13 +46,18 @@
 
 \newcommand{\Type}{\mathsf{Type}}
 
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\indnat}{\mathsf{ind-nat}}
+\newcommand{\zero}{\mathsf{zero}}
+\newcommand{\suc}{\mathsf{succ}}
+
 \newcommand{\constr}[1]{#1}
-\newcommand{\alg}[1]{\mathscr{#1}}
+\newcommand{\alg}[1]{\mathcal{#1}}
 \newcommand{\algcat}[1]{#1\mbox{-alg}}
 \newcommand{\cat}[1]{\mathcal{#1}}
 \newcommand{\Cat}{\mathsf{Cat}}
-\DeclareMathOperator*{\Id}{Id}
-\DeclareMathOperator*{\id}{id}
+\newcommand{\Id}[1]{\mathsf{Id}_{#1}}
+\newcommand{\id}[1]{\mathsf{id}_{#1}}
 \DeclareMathOperator*{\ido}{id_0}
 \DeclareMathOperator*{\idi}{id_1}
 
@@ -102,6 +107,7 @@
 \DeclareMathOperator{\total}{\mathsf{total}}
 \DeclareMathOperator{\proj}{\mathsf{proj}}
 \DeclareMathOperator{\refl}{\mathsf{refl}}
+\DeclareMathOperator{\lift}{\mathsf{lift}}
 
 \newcommand{\Fam}{\mathsf{Fam}}
 \newcommand{\Famover}[2]{\Fam_{#1}\ #2}

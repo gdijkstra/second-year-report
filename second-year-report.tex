@@ -1,8 +1,8 @@
+
 \documentclass[a4paper,10pt]{article}
 
 \bibliographystyle{plain}
 
-\usepackage{tgpagella}
 \usepackage{xspace}
 \usepackage{todonotes}
 \usepackage{amsmath}
@@ -14,7 +14,6 @@
 \usepackage[pdftex, all]{xy}
 \usepackage{hyperref}
 \usepackage{cleveref}
-
 
 \title{Second year report}
 
@@ -93,7 +92,7 @@ higher inductive type looks as follows:
   &&\ \ c_0    &: (x : F_0 T)                    &\to\ &G_0\ (T, x)& \\
   &&\ \ c_1    &: (x : F_1 (T,c_0))              &\to\ &G_1\ ((T, c_0), x)& \\
   &&\ \ c_2    &: (x : F_2 (T,c_0,c_1))          &\to\ &G_2\ ((T, c_0, c_1), x)& \\
-  &&\ \        &\vdots &&\\
+  &&\ \        &\vdots &&&\\
   &&\ \ c_{k+1} & : (x : F_k (T,c_0, \hdots, c_k) &\to\ &G_k\ ((T, c_0, \hdots, c_k), x)&
 \end{alignat*}
 
@@ -190,28 +189,36 @@ In fact, Agda even allows such definitions.
 \label{sec:oits}
 
 As mentioned in~\cref{sec:syntax}, an \oit is fully described by a
-single endofunctor $F : \Type \to \Type$.
+single endofunctor $F : \Type \to \Type$. 
 
-\todoi{introduce algebras and algebra morphisms?} 
-
-\todoi{do more introduction of this section}
+\todoi{some more introducing the sections}
 
 \subsection{Initiality}
 \label{sec:oitinitiality}
 
-One way to characterise inductive types is as the initial algebra of
-the given endofunctor. An algebra is initial if there exists a unique
-arrow to any algebra. In other words: for any algebra, the type of
-morphisms between the the initial algebra and that algebra is
-contractible:
+The inductive type $T : \Type$ described by this comes with an
+introduction rule $c : FT \to T$, \ie we have an algebra
+$(T,c) : \algcat{F}$. We can define the category $\algcat{F}$ as
+having objects:
+$$
+| \algcat{F} | \ddefeq (X : \Type) \times (\theta : FX \to X)
+$$
+and for algebras $(X,\theta)$ and $(Y,\rho)$, we have morphisms:
+$$
+\algcat{F}((X,\theta),(Y,\rho)) \ddefeq (f : X \to Y) \times (f_0 : (x : FX) \to f (\theta x) = \rho (F f x)
+$$
+A way to characterise inductive types is as the initial object in this
+category. A concise way of stating that an algebra $\alg{X}$ is
+initial is requiring that for any algebra $\alg{Y}$ the type of
+morphisms $\algcat{F}(\alg{X},\alg{Y})$ is contractible:
 %
-\begin{defn}
-  An algebra $\alg{X} : \algcat{F}$ is \emph{homotopy initial} if we
-  have a proof of
-  $(\alg{Y} : \algcat{F}) \to \iscontr{\algcat{F}(\alg{X}, \alg{Y})})$
-\end{defn}
+\begin{align*}
+&\isinitial : \algcat{F} \to \Type \\
+&\isinitial \alg{X} \ddefeq (\alg{Y} : \algcat{F}) \to \iscontr (\algcat{F}(\alg{X},\alg{Y}))
+\end{align*}
 %
-Note that being homotopy initial is a proposition.
+This way of stating initiality has the benefit that
+$\isinitial \alg{X}$ is a proposition.
 
 \subsection{Induction principle}
 \label{sec:oitinduction}
@@ -221,13 +228,22 @@ show that for a predicate $P : T \to \Type$, for all $x : T$, $P\ x$
 holds. Intuitively we have to show for each constructor $c$ that if
 $P$ holds for all $T$-subterms of $x$, then $P$ holds for $c x$. For
 example, for the natural numbers, we have the induction operator:
-
-\todoi{elim nat}
-
-The induction operator also comes with computation rules:
-
-\todoi{elim nat comp rules}
-
+%
+\begin{align*}
+  &\indnat &:   &(P : \Nat \to \Type) \\
+  &        &    &(m_{\zero} : P \zero) \\
+  &        &    &(m_{\suc} : (n : \Nat) \to P n \to P (\suc n)) \\
+  &        &\to &(x : \Nat) \to P x
+\end{align*}
+%
+The induction operator also comes with computation rules that tell us
+how the introduction and elimination rules interact:
+%
+\begin{align*}
+  &\indnat P m_{\zero} m_{\suc} \zero = m_{\zero} \\
+  &\indnat P m_{\zero} m_{\suc} (\suc k) = m_{\suc} k (\indnat P m_{\zero} m_{\suc} k)
+\end{align*}
+%
 Generalising this to an arbitrary inductive type $T$ given by a
 functor $F : \Type \to \Type$, we need to be able to state that a
 predicate $P : T \to \Type$ holds for all $T$-subterms of $x : FT$. We
@@ -242,10 +258,13 @@ $$
 \Box_{F}\ B\ x = (y : F (\Sigma\ A\ B)) \times (F\ \pi_1\ x = y)
 $$
 The induction principle for $T$ then becomes:
-
-\todoi{elim T}
-
-with computation rules:
+%
+\begin{align*}
+  &\ind &:   &(P : T \to \Type) \\
+  &     &    &(m : (x : FT) \to \Box_{F} P x \to P (c x) \\
+  &     &\to &(x : T) \to P x
+\end{align*}
+%
 
 \todoi{elim T comp rules and introduce $\actionsection{F}$?}
 
@@ -432,7 +451,7 @@ where
   &= \{ g_0 (F f x) \} \\
   &\zeta (F g (F f x)) \\
   &\defeq \{ F is a strict functor \} \\
-  &\zeta (F (g \circ f) x
+  &\zeta (F (g \circ f) x)
 \end{align*}
 %
 Note that if $F$ is given as a container, it satisfies the functor
@@ -537,7 +556,7 @@ E \ddefeq (x : X) \times (f x = g x)
 $$
 and define $e : E \to X$ as the first projection: $e \ddefeq \pi_1$.
 We define $p : e \circ f = e \circ g$ by function extensionality:
-$p \ddefeq \funext \circ \pi_2$. We have to define an algebra
+$p \ddefeq \funext \pi_2$. We have to define an algebra
 structure $\epsilon : FE \to E$ such that $e : E \to X$ becomes an
 algebra morphism, \ie for all $x : FE$,
 $\pi_1 (\epsilon x) = \theta (F \pi_1 x)$, so we only have to define
@@ -588,9 +607,15 @@ implies initiality.
 \label{sec:hits}
 
 In this section we will attempt to generalise the previous
-constructions to \hits. We will start out with the most general
-approach and see where we run into (usually coherence) problems and
-will impose restrictions to make things more tractable.
+constructions to \hits. Naturally, the categorical concepts generalise
+without change: initiality, algebra fibrations and their sections and
+the proof that initiality and the section principle are logically
+equivalent can be used directly, given that the categorical structure
+needed for them is present. Starting out with the most general
+approach, we will see that we can define the objects and morphisms of
+the categories of algebras without any issues. Adding any more
+categorical structure, however, turns out to be problematic, as we run
+into coherence issues.
 
 We have seen that a \hit can be described as a sequence of pairs of
 functors, where the domain of the functors depends on the category of
@@ -601,8 +626,46 @@ coincide, we do not immediately need to restrict ourselves to strictly
 positive functors. We will also not put restrictions on the target
 functors a priori to see how far we can get without them.
 
-We can formalise such a specification of a \hit as the
-following inductive-recursive definition:
+In order to specify a (higher) constructor, we need to give an
+arguments functor and target functor out of an appropriate category:
+%
+\begin{align*}
+  &\Constr\ \C \ddefeq (F : \C \To \Type) \times (G : \int \C\ F \To \Type)
+\end{align*}
+%
+where we expect $\C$ to be either $\Type$ or some category of algebras
+consisting of all the previous constructors. Given the specification
+of a constructor, we can extend the category $\C$ to a category of
+algebras with this new constructor:
+%
+\begin{align*}
+  &\extend : (\C : \Cat) \to \Constr \C \to \Cat
+\end{align*}
+%
+At the moment we have not defined what $\Cat$ is and consequently what
+the type of functors $\To$ is. We will start with the minimum, \ie
+objects, and try to add more and more structure as needed and see
+where we run into coherence issues and how we can possibly avoid
+those.
+
+The objects of $\C$ extended with a constructor $(F,G) : \Constr\ \C$ are:
+$$
+(X : \C) \times (\theta : (x : FX) \to G\ (X,x))
+$$
+A morphism $(X, \theta) \to (Y, \rho)$ consists of:
+$$
+(f : \C(X,Y)) \times (f_0 : (x : FX) \to G (\lift\ f\ x) (\theta\ x) = \rho (F f x))
+$$
+where:
+%
+\begin{align*}
+&\lift : (f : \C(X,Y)) (x : FX) \to \int_{C}\ F ((X,x),(Y,Ffx)) \\
+&\lift f x \ddefeq (f , \refl)
+\end{align*}
+%
+
+We can now formalise such a specification of a \hit as the following
+inductive-recursive definition:
 %
 \begin{align*}
   &\Spec : \Type \\
@@ -610,34 +673,42 @@ following inductive-recursive definition:
   \\
   &\data \Spec \where \\
   &\epsilon : \Spec \\
-  &\_,\_ : (s : \Spec) \to \Constr (\Alg s) \to \Spec    
+  &\_,\_ : (s : \Spec) \to \Constr (\Alg s) \to \Spec \\
   \\
   &\Alg \epsilon \ddefeq \Type\\
   &\Alg (s , c) \ddefeq \extend (\Alg s) c
 \end{align*}
 %
-where
+Since we have defined objects and morphisms, we have enough
+categorical structure to use our previous definitions of initiality
+and algebra fibrations. 
+
+\subsection{Algebra families}
+\label{sec:algfamhits}
+In order to define algebra families , we need to generalise the $\Box$
+modality from acting on families in $\Type$ to acting on families in
+$\C$. We can define for $F : \Alg_s \To \Type$ and
+$G : \int_{\Alg_s}\ F \To \Type$ the following mutually by induction
+on $s : Spec$:
 %
 \begin{align*}
-  &\Constr \C \ddefeq (F : \C \To \Type) \times (G : \int \C F \To \Type)
+  &\Fam_s : \Alg_s \to \Type\\
+  &\Box_F : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+    \to F \alg{X} \to \Type\\
+  &\Box_G : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+    (x : F \alg{X}) (y : \Box_F \alg{X} \alg{P}\ x) 
+    \to G (\alg{X} , x) \to \Type\\
+  &\total : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+    \to \Alg_s\\
+  &\proj : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+    \to \Alg_s(\total\ \alg{X}\ \alg{P}, \alg{X})\\
+  &\phi_F : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+    \to \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \alg{P}) \to F (\total\ \alg{X}\ \alg{P})\\
+  &\phi_G : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X})
+    (x : F \alg{X}) (y : \Box_F \alg{X} \alg{P}\ x)
+    \to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \alg{P}\ x\ y) \to G (\total\ \alg{X}\ \alg{P}, \phi_F\ \alg{X}\ \alg{P} (x , y))
 \end{align*}
 %
-and
-%
-\begin{align*}
-  &\extend : (\C : \Cat) \to \Constr \C \to \Cat
-\end{align*}
-%
-and $\To : \Cat \to \Cat \to \Type$ is the type of functors. This
-definition makes it clear how every constructor defined depends on all
-the previous constructors.
-
-The definition of $\extend$ depends on $\Cat$: if we add more
-coherence laws to the definition of $\Cat$, we have to adjust
-$\extend$ accordingly, which usually also means putting more coherence
-laws in the definition of functor.
-
-\todoi{show problems with identity and all that, we want functors to be strict}
 
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
