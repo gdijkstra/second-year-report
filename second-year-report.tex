@@ -3,6 +3,8 @@
 
 \bibliographystyle{plain}
 
+\usepackage{hyperref}
+\usepackage{cleveref}
 \usepackage{xspace}
 \usepackage{todonotes}
 \usepackage{amsmath}
@@ -12,8 +14,6 @@
 \usepackage{url}
 \usepackage{mathrsfs}
 \usepackage[pdftex, all]{xy}
-\usepackage{hyperref}
-\usepackage{cleveref}
 
 \title{Second year report}
 
@@ -29,6 +29,19 @@ test~\cite{UFP2013}.
 
 \section{Introduction}
 \label{sec:introduction}
+
+\subsection{\Hits versus quotients}
+\label{sec:quotients}
+
+\subsection{Inductive-inductive types}
+\label{sec:inductiveinductive}
+
+\subsection{Theory of \hits}
+\label{sec:theoryhits}
+
+\subsection{Overview}
+\label{sec:overview}
+
 
 \section{Syntax of higher inductive types}
 \label{sec:syntax}
@@ -79,7 +92,7 @@ arguments, as we see in the definition of propositional truncation as
 a \hit:
 %
 \begin{alignat*}{2}
-  &\rlap{$\data\ || A ||\ :\ \Type \where$} \\
+  &\rlap{$\data\ || A ||\ :\ \Type\ \where$} \\
   &&\ \ [\_]   &:\ A \to || A || \\
   &&\ \ \trunc &:\ (x\ y : || A ||) \to x = y
 \end{alignat*}
@@ -172,6 +185,9 @@ an $(k+1)$-constructor, we need to give the natural transformations:
 where $\Eq_i\ (X, x) \ddefeq (l_i\ x = r_i\ x)$. $Eq_n$ is then the target
 functor we are interested in.
 
+\subsection{\nhits{0}}
+\label{sec:zerohits}
+
 Even when we consider only \zeroconstructors, the above scheme is more
 general than the schemes that are usually considered when talking
 about \oits: any constructor may refer to any previous
@@ -183,15 +199,31 @@ constructor, \eg:
   &\ \ c_1 &\ :\ &c_0 = c_0 \to T&
 \end{alignat*}
 %
-In fact, Agda even allows such definitions.
+In fact, Agda even allows such definitions, although the above example
+is not particularly useful.
+
+In the general scheme presented earlier, the constructors map into the
+type $T$ itself or its (iterated) path spaces. Lifting this
+restriction to map into a collection of types instead allows us to
+describe inductive-inductive types using the
+scheme~\cite{Capriotti2014}.
 
 \section{Initiality and induction for \oits}
 \label{sec:oits}
 
-As mentioned in~\cref{sec:syntax}, an \oit is fully described by a
-single endofunctor $F : \Type \to \Type$. 
+In this section we will recap some of the basic theory of \oits: we
+will give its induction principle and explain the initial algebra
+characterisation and how these two characterisations coincide.
 
-\todoi{some more introducing the sections}
+We need to have a specification of an \oit, which is, as mentioned
+in~\cref{sec:syntax}, given as an endofunctor $F : \Type \to \Type$.
+We will assume this functor to be given as a
+container~\cite{Abbott2005}, which ensures that it is strictly
+positive and that it satisfies the functor laws strictly. Since we are
+not primarily interested in the existence of the inductive types, we
+do not need this restriction. It is however very convenient for us to
+work with strict functors, as it makes the equational reasoning
+considerably easier.
 
 \subsection{Initiality}
 \label{sec:oitinitiality}
@@ -226,7 +258,7 @@ $\isinitial \alg{X}$ is a proposition.
 The induction principle of an inductive type $T$ gives us a method to
 show that for a predicate $P : T \to \Type$, for all $x : T$, $P\ x$
 holds. Intuitively we have to show for each constructor $c$ that if
-$P$ holds for all $T$-subterms of $x$, then $P$ holds for $c x$. For
+$P$ holds for all $T$-subterms of $x$, then $P$ holds for $c\ x$. For
 example, for the natural numbers, we have the induction operator:
 %
 \begin{align*}
@@ -261,7 +293,7 @@ The induction principle for $T$ then becomes:
 %
 \begin{align*}
   &\ind &:   &(P : T \to \Type) \\
-  &     &    &(m : (x : FT) \to \Box_{F} P x \to P (c x) \\
+  &     &    &(m : (x : FT) \to \Box_{F} P x \to P (c\ x) \\
   &     &\to &(x : T) \to P x
 \end{align*}
 %
@@ -351,7 +383,7 @@ We will first show that initiality implies the section principle.
 \end{proof}
 
 To prove the converse, we need to appeal to more of the category
-structure of $\algcat{F}$.
+structure of $\algcat{F}$:
 
 \begin{prop}
   If $\alg{X} : \algcat{F}$ satisfies the section principle, then it
@@ -533,7 +565,7 @@ Given algebras $(X,\theta)$ and $(Y,\rho)$, we can define their
 product $(X,\theta) \times (Y,\rho)$ as follows:
 %
 \begin{align*}
-  &(X,\theta) \times (Y,\rho) : F-alg\\
+  &(X,\theta) \times (Y,\rho) : \algcat{F}\\
   &(X,\theta) \times (Y,\rho) \ddefeq (X \times Y , \lambda x . (\theta (F \pi_1 x) , \rho (F \pi_2 x)))
 \end{align*}
 %
@@ -626,11 +658,14 @@ coincide, we do not immediately need to restrict ourselves to strictly
 positive functors. We will also not put restrictions on the target
 functors a priori to see how far we can get without them.
 
+\subsection{Specification}
+\label{sec:hitspec}
+
 In order to specify a (higher) constructor, we need to give an
 arguments functor and target functor out of an appropriate category:
 %
 \begin{align*}
-  &\Constr\ \C \ddefeq (F : \C \To \Type) \times (G : \int \C\ F \To \Type)
+  &\Constr\ \C \ddefeq (F : \C \To \Type) \times (G : \int_\C\ F \To \Type)
 \end{align*}
 %
 where we expect $\C$ to be either $\Type$ or some category of algebras
@@ -639,7 +674,7 @@ of a constructor, we can extend the category $\C$ to a category of
 algebras with this new constructor:
 %
 \begin{align*}
-  &\extend : (\C : \Cat) \to \Constr \C \to \Cat
+  &\extend : (\C : \Cat) \to \Constr\ \C \to \Cat
 \end{align*}
 %
 At the moment we have not defined what $\Cat$ is and consequently what
@@ -693,20 +728,20 @@ on $s : Spec$:
 %
 \begin{align*}
   &\Fam_s : \Alg_s \to \Type\\
-  &\Box_F : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+  &\Box_F : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
     \to F \alg{X} \to \Type\\
-  &\Box_G : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
-    (x : F \alg{X}) (y : \Box_F \alg{X} \alg{P}\ x) 
+  &\Box_G : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
+    (x : F \alg{X}) (y : \Box_F \alg{X} \algfib{P}\ x) 
     \to G (\alg{X} , x) \to \Type\\
-  &\total : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
+  &\total : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
     \to \Alg_s\\
-  &\proj : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
-    \to \Alg_s(\total\ \alg{X}\ \alg{P}, \alg{X})\\
-  &\phi_F : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X}) 
-    \to \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \alg{P}) \to F (\total\ \alg{X}\ \alg{P})\\
-  &\phi_G : (\alg{X} : \Alg_s) (\alg{P} : \Fam_s \alg{X})
-    (x : F \alg{X}) (y : \Box_F \alg{X} \alg{P}\ x)
-    \to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \alg{P}\ x\ y) \to G (\total\ \alg{X}\ \alg{P}, \phi_F\ \alg{X}\ \alg{P} (x , y))
+  &\proj : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
+    \to \Alg_s(\total\ \alg{X}\ \algfib{P}, \alg{X})\\
+  &\phi_F : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
+    \to \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \algfib{P}) \to F (\total\ \alg{X}\ \algfib{P})\\
+  &\phi_G : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X})
+    (x : F \alg{X}) (y : \Box_F \alg{X} \algfib{P}\ x)
+    \to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfib{P}\ x\ y) \to G (\total\ \alg{X}\ \algfib{P}, \phi_F\ \alg{X}\ \algfib{P} (x , y))
 \end{align*}
 %
 
@@ -743,6 +778,9 @@ where:
 \subsection{Section principle is logically equivalent to initiality}
 
 \subsection{Category of algebras}
+
+\section{Thesis outline}
+\label{sec:outline}
 
 
 
