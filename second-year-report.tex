@@ -28,14 +28,312 @@
 \section{Introduction}
 \label{sec:introduction}
 
+One of the insights of \hott is that we can view a type as a
+topological space (up to homotopy) and equalities between elements of
+the type as paths. Since equality between two elements is a type
+again, one can consider equalities \emph{between} equalities as well,
+and so on. something about weak $\omega$-groupoids~\cite{VanDenBerg2008}.
+
+This then raises the question what kind of homotopical structure we
+get in the types we know. For the usual types, such as the natural
+numbers and the booleans, the structure is rather trivial: two
+elements of are either equal, connected by a unique path ($\refl$), or
+they are not equal, \ie not connected by a path. Types like these
+satisfy \emph{\uip}. Sometimes it makes sense to not have this
+property. If we talk about the type $\Type$, we would like that
+equality of elements in this type coincides with isomorphism of
+types. There can be several distinct isomorphisms between types that
+do not make sense to identify with eachother, such as the isomorphisms
+$\id{}$ and $\boolnot$ on $\Bool$. In \hott, one typically assumes the
+\emph{univalence} axiom for a universe of, which tells us, for any
+types $A$ and $B$:
+$$
+(A \simeq B) = (A = B)
+$$
+In homotopy theory, we have ``simpler'' examples of spaces where there
+are multiple distinct paths between two points. One example of such a
+space is the circle: a path going around the circle two times is not a
+path we can continuously deform into a path that goes around the
+circle one time. In order to talk about such examples in a type
+theoretic way, \emph{\hits} can be added to the theory. A \hit that
+corresponds to the circle is:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ S^1\ :\ \Type\ \where$} \\
+  &&\ \ \base     &:\ S^1 \\
+  &&\ \ \loopcstr &:\ \base = \base
+\end{alignat*}
+%
+The circle is defined as a type with a point $\base$ and a
+(non-trivial) loop $\loopcstr$. $\loopcstr$ is called a \emph{higher}
+constructor, as it does not map into the type $S^1$, but one of its
+equality types. $S^1$ comes with a recursion principle or
+non-dependent eliminator:
+$$
+\rec : (A : \Type) (b : A) (l : b = b) \to S^1 \to \Type
+$$
+which comes with the following computation rules, given $A : \Type$,
+$b : A$ and $l : b = b$:
+$$
+\rec\mbox{-}\beta_0 : \rec\ A\ b\ l\ \base = b
+$$
+$$
+\rec\mbox{-}\beta_1 : \ap\ \rec\ \loopcstr = l
+$$
+For \oits, it is usually the case that the computation rules for the
+elimination principles hold definitionally. In this note we want to
+talk about the theory of \hits in type theory itself and as such we do
+not have a way to talk about definitional equalities, hence the
+computation rules we talk about only hold by propositional equality.
+
+We can also have constructors that map into an equality type of an
+equality of the type we are defining, one example being the torus:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T^2\ :\ \Type\ \where$} \\
+  &&\ \ \base     &:\ T^2 \\
+  &&\ \ p         &:\ \base = \base \\
+  &&\ \ q         &:\ \base = \base \\
+  &&\ \ s         &:\ p \ct q = q \ct p
+\end{alignat*}
+%
+The constructor $s$ maps into an equality type not of $T^2$, but
+$\base = \base$. A constructor such as $\base$ is referred to as a
+\emph{point constructor} or \emph{\zeroconstructor}, as they construct
+points, but do not introduce any new non-trivial paths
+themselves. Constructors such as $p$ and $q$ are called
+\emph{\oneconstructors} and $s$ a \emph{\nconstructor{2}}. For
+$n > 0$, \nconstructors{n} are also referred to as \emph{path
+  constructors}.
+
 \subsection{\Hits versus quotients}
 \label{sec:quotients}
+
+Another example of a \hit is the quotient of a type $A$ by a relation
+$~ : A \to A \to \Type$:
+\begin{alignat*}{2}
+  &\rlap{$\data\ A/\sim\ :\ \Type\ \where$} \\
+  &&\ \ [\_]  &:\ A \to A/\sim \\
+  &&\ \ \quot &:\ (x\ y : A) \to x \sim y \to [ x ] = [ y ] \\
+  &&\ \ \uipc  &:\ (x\ y : A/\sim) (p\ q : x = y) \to p = q
+\end{alignat*}
+%
+Note that we have to add $\uipc$ as a constructor to make sure that the
+result is a set. Without it, we may get non-trivial equalities even
+though we $A$ might be a set and $~$ is propositional everywhere. An
+example of this is taking $A$ to be the unit type and ``quotienting''
+it by the trivial relation, \ie $x ~ y = \unitty$ for all
+$x\ y : \unitty$. Without the $\uipc$ constructor, $A/~$ will be
+equivalent to the circle.
+
+It is clear that we can implement quotient types using \hits. The
+other way around does not hold for different reasons. When we talk
+about quotient types, we usually talk about quotienting a \emph{set}
+by a propositional relation, and do not think about them as a way of
+introducing types with non-trivial (higher) equalities. However, even
+if we restrict ourselves to sets, \hits are more general than
+quotients. An example where this difference shows up is the type of
+infinitely branching trees up to permutation:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \Tree\ :\ \Type\ \where$} \\
+  &&\ \ l     &:\ \Tree \\
+  &&\ \ n     &:\ (Nat \to \Tree) \to \Tree \\
+  &&\ \ q     &:(f\ g : \Nat \to \Tree) (p : \Nat = \Nat) \to ((x : \Nat) \to f\ x = g\ (\coe\ p\ x)) \to n\ f = n\ g \\
+  &&\ \ \uipc &:(x\ y : Tree) (p\ q : x = y) \to p = q
+\end{alignat*}
+%
+We put in the constructor $\uipc$ since we are only interested in the points here.
+
+We could try to emulate this \hit using quotients by first defining
+infinitely branching trees (without the permutations) and then
+quotienting this type by the permutation relation:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \Pretree\ :\ \Type\ \where$} \\
+  &&\ \ l     &:\ \Pretree \\
+  &&\ \ n     &:\ (Nat \to \Pretree) \to \Pretree \\
+\end{alignat*}
+%
+\begin{align*}
+  &\sim : \Pretree \to \Pretree \to \Type \\
+  &l \sim l \defeq \top \\
+  &n\ f \sim n\ g \defeq (p : \Nat = \Nat) \times ((x : Nat) \to f\ x ~ g\ (\coe\ p\ x)) \\
+  &l \sim n\ g \defeq \bot \\
+  &n\ f \sim l \defeq \bot
+\end{align*}
+%
+If we now want to lift the node constructor of $\Pretree$ to the
+quotient $\Pretree/\sim$, we run into trouble: we want to define:
+$$
+n' : (\Nat \to \Pretree/\sim) \to \Pretree/\sim
+$$
+It seems that we need some sort of choice principle to make this
+work. The important difference between the quotient approach and the
+\hit approach is that with the latter the ``quotienting'' is done ``at
+the same time'' as the induction.
 
 \subsection{Inductive-inductive types}
 \label{sec:inductiveinductive}
 
+In the definitions of the circle $S^1$ and the torus $T^2$ we saw
+(path) constructors that referred to previous constructors. Another
+class of inductive types where this occurs are inductive-inductive
+types~\cite{Altenkirch2011}. Inductive-inductive definitions can
+describe families $A : \Type$, $B : A \to \Type$ where the
+constructors of $A$ may refer to $B$ and $B$ may refer to $A$, as well
+as \emph{constructors} of $A$. An example of an inductive-inductive
+type is the syntax of (dependent) types and contexts:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \Ctx\ :\ \Type\ \where$} \\
+  &&\ \ \epsilon &:\ \Ctx \\
+  &&\ \ \snoc    &:\ (\Gamma : \Ctx) \to \sigma : \Ty\ \Gamma \to \Ctx
+\end{alignat*}
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \Ty\ :\ \Ctx \to \Type\ \where$} \\
+  &&\ \ \unitty &:\ \Ctx \\
+  &&\ \ \Pi     &:\ (\Gamma : \Ctx) (\sigma : \Ty\ \Gamma) (\tau : \Ty (\snoc \Gamma \sigma)) \to \Ty \Gamma
+\end{alignat*}
+%
+Here we see the dependence on \emph{constructors} of $\Ctx$ in the
+arguments of the constructor $\Pi$.
+
 \subsection{Theory of \hits}
 \label{sec:theoryhits}
+
+As of yet, there is no formal description of what constitutes a \hit
+and as such formally proving properties about \hits in general is
+impossible. However, there are several statements ...
+
+\subsubsection{Reordering of constructors}
+
+In the case of \oits, we can permute the order of constructors in our
+definitions, \ie we know that the following describe equivalent types:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \Nat\ :\ \Type\ \where$} \\
+  &&\ \ \zero &:\ \Nat \\
+  &&\ \ \suc  &:\ \Nat \to \Nat
+\end{alignat*}
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \Nat \prime\ :\ \Type\ \where$} \\
+  &&\ \ \suc  &:\ \Nat \prime \to \Nat \prime \\
+  &&\ \ \zero &:\ \Nat \prime
+\end{alignat*}
+
+Similarly, we expect the following to be equivalent as well:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T^2\ :\ \Type\ \where$} \\
+  &&\ \ \base     &:\ T^2 \\
+  &&\ \ p         &:\ \base = \base \\
+  &&\ \ q         &:\ \base = \base \\
+  &&\ \ s         &:\ p \ct q = q \ct p
+\end{alignat*}
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T^2 \prime\ :\ \Type\ \where$} \\
+  &&\ \ \base     &:\ T^2 \prime \\
+  &&\ \ q         &:\ \base = \base \\
+  &&\ \ p         &:\ \base = \base \\
+  &&\ \ s         &:\ p \ct q = q \ct p
+\end{alignat*}
+
+With \hits there are permutations that do not make sense:
+\begin{alignat*}{2}
+  &\rlap{$\data\ \toruswrong\ :\ \Type\ \where$} \\
+  &&\ \ s         &:\ p \ct q = q \ct p \\
+  &&\ \ q         &:\ \base = \base \\
+  &&\ \ p         &:\ \base = \base \\
+  &&\ \ \base     &:\ \toruswrong
+\end{alignat*}
+When changing the position of a constructor, we cannot put it before
+any constructor on which it depends.
+
+\subsubsection{Hub-spokes reduction}
+
+In the inductive definition of the torus $T^2$, there was the \twoconstructor:
+$$
+s : p \ct q = q \ct p
+$$
+which gives us a \emph{higher} path. As it turns out, such a
+\twoconstructor can be represented by a \zeroconstructor (hub)
+and a \oneconstructor (spokes):
+%
+\begin{align*}
+&h : T^2 \\
+&s' : (x : S^1) \to f\ x = h
+\end{align*}
+%
+where $f : S^1 \to T^2$ is defined using the recursion principle of
+$S^1$ with:
+%
+\begin{align*}
+  &f\ \base \ddefeq \base \\
+  &\ap\ f\ \loopcstr \ddefeq p \ct q \ct (q \ct p)^{-1}
+\end{align*}
+%
+In this special case, one can show that the resulting type is
+equivalent to the original $T^2$. Intuitively, the hub-spokes
+construction replaces a path between paths with a hub together with a
+path from every point on the ``boundary'' formed by the two original
+paths being connected, to the hub point.
+
+For \nconstructors{n} where $n > 2$, the construction can be iterated,
+showing that we only need \zeroconstructors and
+\oneconstructors. However, since we lack a formal definition of what
+constitutes a \hit, we cannot prove this formally.
+
+\subsubsection{Non-recursive \hits}
+
+From the previous section we have seen that we only need
+\zeroconstructors and \oneconstructors. In some cases it seems we can
+also simplify the path constructors themselves. Consider the
+propositional truncation \hit of a type $A$:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ || A ||\ :\ \Type\ \where$} \\
+  &&\ \ [\_]   &:\ A \to || A || \\
+  &&\ \ \trunc &:\ (x\ y : || A ||) \to x = y
+\end{alignat*}
+%
+The constructor $\trunc$ is \emph{recursive} in that its arguments
+refer to $|| A ||$ itself. We can replace $\trunc$ with a
+non-recursive constructor, arriving at the following definition:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ \{ A \}\ :\ \Type\ \where$} \\
+  &&\ \ [\_]   &:\ A \to \{ A \} \\
+  &&\ \ \trunc &:\ (x\ y : A) \to \{ x \} = \{ y \}
+\end{alignat*}
+%
+In general we do not have $|| A || = \{ A \}$, \eg when
+$|| \unitty || = \unitty$, but $\{ \unitty \} = S^1$. We can consider
+the cochain we get by applying $[\_]$ iteratively, starting from $A$:
+$$
+A \to \{ A \} \to \{ \{ A \} \} \to \{ \{ \{ A \} \} \} \to \hdots
+$$
+It turns out that taking the colimit of this cochain is equivalent to
+$|| A ||$~\cite{VanDoorn2015}. Sequential colimits such as the above
+are also examples of \hits:
+%
+A \emph{sequence} of types is a family $A : \Nat \to \Type$ along with
+a family of functions $f : (n : \Nat) \to A\ n \to A\ (\suc\ n)$. The
+sequential colimit of this sequence is given by the following \hit:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ A_\infty :\ \Type\ \where$} \\
+  &&\ \ i : (n : \Nat) \to A\ n \to A\ (\suc\ n) \\
+  &&\ \ g : (n : \Nat) \to (a : A\ n) \to i\ n\ a = i\ (\suc n)\ (f\ n\ a)
+\end{alignat*}
+%
+We conjecture that there is a class of \hits with recursive path
+constructors, such as propositional truncation, that can be
+implemented as a colimit of a sequence of types given as \hits without
+recursive path constructors, similar to the construction above.
 
 \subsection{Overview}
 \label{sec:overview}
@@ -722,32 +1020,34 @@ In order to define algebra families , we need to generalise the $\Box$
 modality from acting on families in $\Type$ to acting on families in
 $\C$. We can define for $F : \Alg_s \To \Type$ and
 $G : \int_{\Alg_s}\ F \To \Type$ the following mutually by induction
-on $s : Spec$:
+on $s : Spec$, assuming $\alg{X} : \Alg_s$ and
+$\algfib{P} : \Fam_s \alg{X}$:
 %
-\begin{align*}
-  &\Fam_s : \Alg_s \to \Type\\
-  &\Box_F : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
-    \to F \alg{X} \to \Type\\
-  &\Box_G : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
-    (x : F \alg{X}) (y : \Box_F \alg{X} \algfib{P}\ x) 
-    \to G (\alg{X} , x) \to \Type\\
-  &\total : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
-    \to \Alg_s\\
-  &\proj : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
-    \to \Alg_s(\total\ \alg{X}\ \algfib{P}, \alg{X})\\
-  &\phi_F : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X}) 
-    \to \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \algfib{P}) \to F (\total\ \alg{X}\ \algfib{P})\\
-  &\phi_G : (\alg{X} : \Alg_s) (\algfib{P} : \Fam_s \alg{X})
-    (x : F \alg{X}) (y : \Box_F \alg{X} \algfib{P}\ x)
-    \to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfib{P}\ x\ y) \to G (\total\ \alg{X}\ \algfib{P}, \phi_F\ \alg{X}\ \algfib{P} (x , y))
-\end{align*}
+\begin{alignat*}{4}
+  &\Fam_s\ \alg{X} \ \algfib{P} &&: \Alg_s \to \Type&\\
+  &\Box_F\ \alg{X} \ \algfib{P} &&: F \alg{X} \to \Type&\\
+  &\Box_G\ \alg{X} \ \algfib{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfib{P}\ x) \to G (\alg{X} , x) \to \Type&\\
+  &\total\ \alg{X} \ \algfib{P} &&: \Alg_s&\\
+  &\proj\ \alg{X} \ \algfib{P}  &&: \Alg_s(\total\ \alg{X}\ \algfib{P}, \alg{X})&\\
+  &\phi_F\ \alg{X} \ \algfib{P} &&: \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \algfib{P}) \to F (\total\ \alg{X}\ \algfib{P})&\\
+  &\phi_G\ \alg{X} \ \algfib{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfib{P}\ x) &\\
+  &\ \ \ \ &&\to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfib{P}\ x\ y) 
+            \to G (\total\ \alg{X}\ \algfib{P}, \phi_F\ \alg{X}\ \algfib{P} (x , y)) &
+\end{alignat*}
 %
+
+\subsection{Category structure and coherence issues}
+\label{sec:hitscategory}
+
 
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
 
-Instead of considering the most general case, we will restrict
-ourselves to \onehits of the form:
+\todoi{simplify to two constructors: one \zeroconstructor followed by one \oneconstructor}
+
+\todoi{simplify \oneconstructor: introduce free monad}
+
+We arrive at the following form of \hits:
 %
 \begin{alignat*}{2}
   &\rlap{$\data\ T\ :\ \Type\ \where$} \\
@@ -761,21 +1061,22 @@ where:
 \item $l r : F_1 \to F_0 *$ are (strict) natural transformations, given as container morphisms
 \end{itemize}
 
-\todoi{show that this is less general than the ordinary $(0,1)$-HIT, but straightforward restriction}
+\subsection{Examples}
 
-\todoi{explain $F_0 *$ free monad}
 
-\subsection{Initiality}
+\subsection{Target functor}
+
+\subsection{Category of algebras}
 
 \subsection{Induction principle}
 
-\subsection{Section principle}
+\subsubsection{Algebra families}
 
-\subsection{Induction principle is logically equivalent to section principle}
+\subsubsection{Dependent algebra morphisms}
 
-\subsection{Section principle is logically equivalent to initiality}
+\subsection{Limitations}
 
-\subsection{Category of algebras}
+While being quite general, the approach explained here has several shortcomings.
 
 \section{Thesis outline}
 \label{sec:outline}
