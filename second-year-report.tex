@@ -585,6 +585,11 @@ By singleton elimination we can then give the following definition of $\Box_{F}\
 $$
 \Box_{F}\ B\ x = (y : F (\Sigma\ A\ B)) \times (F\ \pi_1\ x = y)
 $$
+As we sometimes need to refer to it explicitly, we will give the
+witness of the equivalence a name:
+$$
+\phi : F (\Sigma\ A\ B) \to \Sigma\ FA\ (\Box_{F} B)
+$$
 The induction principle for $T$ then becomes:
 %
 \begin{align*}
@@ -621,6 +626,19 @@ algebra morphism into $\alg{X}$:
 $$
 \Famover{\algcat{F}}{\alg{X}} = (\alg{Y} : \algcat{F}) \times \algcat{F}(\alg{Y},\alg{X})
 $$
+
+For a type family $A : \Type, B : A \to \Type$, we have the
+$\Sigma$-type $\Sigma A B : \Type$ along with a projection into $A$:
+$\pi_1 : \Sigma A B \to A$. For $F$-algebra families we have similar
+operations, that we will call $\total$ for \emph{total space} and
+$\proj$, the project out of the total space into its base space:
+\begin{align*}
+  &\total : \Famover{\algcat{F}}{(X,\theta)} \to \algcat{F} \\
+  &\total (P, m) \ddefeq (\Sigma X P, \lambda x . (\theta (F \pi_1 x) , \uncurry m \circ \phi)) \\
+  &\\
+  &\proj : (\algfam{P} : \Famover{\algcat{F}}{(X,\theta)}) \to \algcat{F}(\total \algfam{P}, (X,\theta)) \\
+  &\proj (P, m) \ddefeq (\pi_1 , \lambda x . \refl)
+\end{align*}
 
 \subsection{Section principle}
 \label{sec:oitsection}
@@ -1039,6 +1057,57 @@ $\algfib{P} : \Fam_s \alg{X}$:
 \subsection{Category structure and coherence issues}
 \label{sec:hitscategory}
 
+While we the above specification of \hits allows us to define algebras
+and algebra morphisms, we run into coherence issues as soon as we try
+to add more category structure. To add more category structure, we
+need to change the definition of $\Cat$ and hence the definitions of
+$\extend$. Since the definition of $\extend$ depends on functors, we
+also need the given functors to preserve the added structure. There is
+also the added complexity of the target functors $G$ being
+``dependent'' functors, \ie functors out of $\int_\C F$. In this
+section we will first show how this dependency causes issues when
+trying to add category structure. We will then show that even if we
+did not have this dependency, \ie we considered ordinary dialgebras
+$\theta : F X \to G X$ with $F, G : \C \to \Type$, then we run into
+coherence issues elsewhere.
+
+If we want to add identity morphisms to $\Cat$, we we want to extend
+the function $\extend$ to also have an operation
+$\Id : (\alg{X} : \Alg_s) \to \Alg_s(\alg{X},\alg{X})$, for any
+specification $s : Spec$. We can try to define identity morphisms by
+doing induction on a specification $s : \Spec$. For the base case
+where $s \defeq \epsilon$, $\Alg_s \defeq \Type$ hence we can define
+the identity for object $X : \Type$ as $(\lambda x . x) : X \to X$. For
+the inductive case, we get the following:
+%
+\begin{itemize}
+\item $s : \Spec$ 
+\item $c : \Constr\ Alg_s$, \ie $F : \Alg_s \to \Type$ and $G : \int_{\Alg_s} F \to \Type$
+\item $\alg{X} : \Alg_s$ along with
+  $\Id{\alg{X}} : \Alg_s (\alg{X},\alg{X})$
+\item  $\theta : (x : F \alg{X}) \to G (\alg{X}, x)$
+\end{itemize}
+%
+Given this, we need to specify a morphism
+$f : \Alg_s (\alg{X},\alg{X})$ with
+$f_0 : (x : F \alg{X}) \to G (\lift f\ x) (\theta\ x) = \theta (F\ f\
+x))$.
+By induction, we are given a morphism $\Alg_s (\alg{X},\alg{X})$ which
+is our only candidate for $f$. To define $f_0$, we have to give a path, for $x : F \alg{X}$:
+$$
+G (\lift \Id{\alg{X}}\ x) (\theta\ x) = \theta (F\ \Id{\alg{X}}\ x))
+$$
+If we require functors to preserve identities, we would have the equation:
+$$
+F\ \Id{\alg{X}}\ x = x
+$$
+For $G$ it is different, as
+$\lift \Id{\alg{X}} x : \int_{\Alg_s} F ((\alg{X},x), (\alg{X}, F\
+\Id{\alg{X}}\ x)$,
+whereas the identity morphism of $\int_{\Alg_s} F$ would have type
+$\int_{\Alg_s} F ((\alg{X},x),(\alg{X},x))$, which are not
+definitionally the same, unless $F$ happens to satisfy the functor
+laws strictly, which is not something we can assume.
 
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
