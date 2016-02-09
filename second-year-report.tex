@@ -792,7 +792,7 @@ where
   &(g \circ f) (\theta\ x) \\
   &\defeq \{ asdf \} \\
   &g (f (\theta\ x)) \\
-  &= \{ \ap g (f_0 x) \} \\
+  &= \{ \ap\ g (f_0 x) \} \\
   &g (\rho (F f x)) \\
   &= \{ g_0 (F f x) \} \\
   &\zeta (F g (F f x)) \\
@@ -822,8 +822,8 @@ non-trivial, we can still simplify the $p_0$ part. Giving $p_0$
 amounts to giving the following square for every $x : FX$:
 $$
 \xymatrix{
-f (\theta\ x) \ar@{-}[d]_{f_0 x} \ar@{-}[r]^{\ap (\lambda h . h (\theta\ x)) p}  &g (\theta\ x) \ar@{-}[d]^{g_0 x} \\
-\rho (F f x) \ar@{-}[r]_{\ap (\lambda h . \rho (F h x)) p} &\rho (F g x) }
+f (\theta\ x) \ar@{-}[d]_{f_0 x} \ar@{-}[r]^{\ap\ (\lambda h . h (\theta\ x)) p}  &g (\theta\ x) \ar@{-}[d]^{g_0 x} \\
+\rho (F f x) \ar@{-}[r]_{\ap\ (\lambda h . \rho (F h x)) p} &\rho (F g x) }
 $$
 
 \subsubsection{Identity laws}
@@ -840,9 +840,9 @@ and $f_0$. For $x : FX$, we have:
 \begin{align*}
   &f_0 \circ_0 \ido{(X,\theta)} x \\
   &\defeq \\
-  &\ap f (\ido{(X,\theta)} x) \ct f_0 (F \id{X} x) \\
+  &\ap\ f (\ido{(X,\theta)} x) \ct f_0 (F \id{X} x) \\
   &\defeq \{ F is a strict functor \} \\
-  &\ap f (\ido{(X,\theta)} x) \ct f_0 x \\
+  &\ap\ f (\ido{(X,\theta)} x) \ct f_0 x \\
   &\defeq \{ \ido{(X,\theta)} is trivial \} \\
   &\refl \ct f_0 x \\
   &= \\
@@ -915,7 +915,7 @@ define $\pi_2 (\epsilon x)$ as the path:
   &\rho (F f (F e x)) \\
   &\defeq \{ F functor \} \\
   &\rho (F (f \circ e) x) \\
-  &= \{ \ap (\lambda h . \rho (F h x)) p \} \\
+  &= \{ \ap\ (\lambda h . \rho (F h x)) p \} \\
   &\rho (F (g \circ e) x) \\
   &\defeq \{ F functor \} \\
   &\rho (F g (F e x)) \\
@@ -933,13 +933,13 @@ and for all $x : FE$ the square:
 $$
 \xymatrix{
 f (e (\epsilon x)) 
-  \ar@{-}[r]^{\ap (\lambda h . h (\epsilon x)) p} 
+  \ar@{-}[r]^{\ap\ (\lambda h . h (\epsilon x)) p} 
   \ar@{-}[d]_{f_0 (F e x)}  
 &g (e (\epsilon x)) 
   \ar@{-}[d]^{g_0 (F e x)}
 \\
 \rho (F (f \circ e) x)
-  \ar@{-}[r]_{\ap (\lambda h . \rho (F h x)) p}
+  \ar@{-}[r]_{\ap\ (\lambda h . \rho (F h x)) p}
 &\rho (F (g \circ e) x)}
 $$
 
@@ -1109,12 +1109,19 @@ $\int_{\Alg_s} F ((\alg{X},x),(\alg{X},x))$, which are not
 definitionally the same, unless $F$ happens to satisfy the functor
 laws strictly, which is not something we can assume in \mltt.
 
-\subsubsection{Non-dependent dialgebras}
+\subsection{Non-dependent dialgebras}
 \label{sec:nondepdialg}
 
 In order to avoid the problem mentioned above, we can restrict
 ourselves to \emph{non-dependent} dialgebras, \ie we consider target
-functors $G : \C \to \Type$ instead. In this setting we can define
+functors $G : \C \to \Type$ instead. This restriction rules out
+certain \hits such as propositional truncation, but it still includes
+interesting examples such as the torus. It is also a good way to see
+what 
+
+\subsubsection{Identity morphisms}
+
+In this setting we can define
 identity morphisms and composition, which again happens by induction
 over the specification $s : \Spec$. The base case is the same as
 before and the interesting part is the inductive case, where we get
@@ -1145,6 +1152,8 @@ follows, given $x : F \alg{X}$:
   &\theta\ (F\ \Id{\alg{X}}\ x)
 \end{align*}
 %
+
+\subsubsection{Composition}
 We can also define composition by induction on $s : \Spec$. The base
 case is again trivial as we just use ordinary composition of functions
 for $\Type$. For the inductive case we get the following:
@@ -1188,7 +1197,177 @@ $x : F \alg{X}$:
   &= \reasonterm{\ap\ \zeta\ (\Fcomp\ g\ f\ x)^{-1}} \\
   &\zeta\ (F\ (g \circ f)\ x)
 \end{align*}
+
+\subsubsection{Equality of algebra morphisms}
+
+In order to show the identity laws and associativity, we need to be
+able to talk about equality of algebra morphisms. The data needed to
+show that two morphisms are equal can be defined by induction on
+$s : \Spec$: for functions $f, g$ in $\Type$ it is just $f = g$. In
+the inductive case, we have:
 %
+\begin{itemize}
+\item $\alg{X}, \alg{Y} : \Alg_s$
+\item $\theta : F \alg{X} \to G \alg{X}$ and $\rho : F \alg{Y} \to G \alg{Y}$
+\item $f, g : \Alg_s(\alg{X},\alg{Y})$
+\item $f_0 : (x : F \alg{X}) \to G\ f\ (\theta\ x) = \rho\ (F\ f\ x)$
+\item $g_0 : (x : F \alg{X}) \to G\ g\ (\theta\ x) = \rho\ (F\ g\ x)$
+\end{itemize}
+%
+To show that $(f,f_0) = (g,g_0)$, we need $p : f = g$ along with the
+following square $p_0 x$ for every $x : F \alg{X}$:
+$$
+\xymatrix{
+G\ f (\theta\ x) \ar@{-}[d]_{f_0 x} \ar@{-}[r]^{\ap\ (\lambda h . G\ h (\theta\ x)) p}  &G\ g\ (\theta\ x) \ar@{-}[d]^{g_0 x} \\
+\rho\ (F\ f\ x) \ar@{-}[r]_{\ap\ (\lambda h . \rho\ (F\ h\ x)) p} &\rho\ (F\ g\ x) }
+$$
+\subsubsection{Identity laws}
+
+Just as we have to assume that the functors $F$ and $G$ preserve
+identity morphisms and composition to get that structure in the
+category of dialgebras, we also need them to preserve the identity
+\emph{laws} and associativity to show that the category of dialgebras
+satisfies these laws. Let
+$\leftid_{\C} : (f : \C(X,Y)) \to \Id{Y} \circ f = f$ be the witness
+of the left identity law for $\C$. A functor $F : \C \to \Type$
+preserves the left identity law, if for $f : \C (X,Y)$ and $x : FX$ we
+have the following commuting diagram:
+$$
+\xymatrix{
+F\ (\Id{Y} \circ f)\ x \ar@{-}[d]_{\Fcomp \Id{Y} f x} \ar@{-}[dr]^{\ap\ (\lambda h . F h x)\ \leftid_{\C}}\\
+F\ \Id{Y}\ (F\ f\ x) \ar@{-}[r]_{\Fid (F\ f\ x)} &F\ f\ x
+}
+$$
+
+To show that the left identity law holds for $\Alg_s$ given
+$s : Spec$, we proceed by induction on $s$. $\Type$ satisfies the left
+identity law trivially, so the base case is done. For the inductive
+case we get the following data:
+%
+\begin{itemize}
+\item $\alg{X} : \Alg_s$
+\item $\theta : F \alg{X} \to G \alg{X}$
+\item $f : \Alg_s(\alg{X},\alg{Y})$ 
+\item $f_0 : (x : F \alg{X}) \to G\ f\ (\theta\ x) = \rho\ (F\ f\ x)$
+\item $\leftid_{\Alg_s} f : \Id{\alg{X}} \circ f = f$
+\end{itemize}
+%
+We then need to show that $(h,h_0) = (f,f_0)$ where $h = \Id{\alg{X}} \circ f$ and
+\begin{align*}
+  &h_0 : (x : F \alg{X}) \to G\ (\Id{\alg{X}} \circ f)\ (\theta\ x) = \rho\ (F\ (\Id{\alg{X}} \circ f)\ x) \\
+  &h_0\ x \defeq \\
+  &\ \ \    \Gcomp\ \Id{\alg{Y}}\ f\ (\theta\ x) \\
+  &\ \ct\ \ap\ (G\ \Id{\alg{Y}})\ (f_0\ x) \\
+  &\ \ct\ \Gid_{\alg{Y}}\ (\rho\ x) \\
+  &\ \ct\ \ap\ \rho\ (\Fid_{\alg{Y}}\ x)^{-1} \\
+  &\ \ct\ \ap\ \rho\ (\Fcomp \Id{\alg{Y}}\ f\ x)^{-1}
+\end{align*}
+
+To show that $(h,h_0) = (f,f_0)$ we need to provide a $p : h = f$,
+which is given by $\leftid_{\Alg_s} f$, and for every $x : F \alg{X}$ an equality:
+$$
+h_0\ x \ct \ap\ (\lambda h . \rho\ (F\ h\ x))\ \leftid_{\Alg_s} 
+ = \ap\ (\lambda h . G\ h\ (\theta\ x))\ \leftid_{\Alg_s} \ct f_0\ x
+$$
+Unfolding the definition of $h_0\ x$, this equality can be given by
+using the fact that $F$ and $G$ preserve the left identity law,
+various properties of $\ap$ and the naturality property of
+homotopies. Showing the right identity law can be done in a similar
+way.
+
+\subsubsection{Associativity}
+
+Let
+$\assoc_{\C} : (h : \C(Z,W)) (g : \C(Y,Z)) (f : \C(X,Y)) \to (h \circ
+g) \circ f = h \circ (g \circ f)$
+be the witness of associativity for $\C$. A functor $F : \C \to \Type$
+preserves associativity if given morphisms:
+$$
+X \overset{f}\to Y \overset{g}\to Z \overset{h}\to W
+$$
+we have for any $x : FX$ the following pentagon:
+$$
+\xymatrix{
+F\ ((h \circ g) \circ f)\ x 
+  \ar@{-}[rr]^{\ap\ (\lambda h . F\ h\ x)\ (\assoc_{\C}\ h\ g\ f)} 
+  \ar@{-}[d]_{\Fcomp\ (h \circ g)\ f\ x}
+&&F\ (h \circ (g \circ f))\ x 
+  \ar@{-}[d]^{\Fcomp\ h\ (g \circ f)\ x}
+  \\
+F\ (h \circ g)\ (F\ f\ x)
+  \ar@{-}[dr]_{\Fcomp\ h\ g\ (F\ f\ x)}
+&&F\ h\ (F\ (g \circ f)\ x) 
+  \ar@{-}[dl]^{\ap\ (F\ h)\ (\Fcomp\ g\ f\ x)}
+  \\
+&F\ h\ (F\ g\ (F\ f\ x))&
+}
+$$
+Assuming that our functors $F$ and $G$ satisfy this condition, we can
+show that for any $s : \Spec$, $\Alg_s$ has associativity.
+
+\subsubsection{Products}
+
+To show that the section principle is logically equivalent to
+initiality, we saw in~\cref{sec:oitsectioninitiality} that we need to
+have products and equalisers in our category. If we want to define
+these in our categories of dialgebras, we have to make sure the target
+functors $G$ preserve products and equalisers. For products, functors
+$G : \C \to \Type$ need to be equipped with an operation
+$\Gtimes : (X, Y : \C) \to GX \times_{\Type} GY \to G(X \times_{\C}
+Y)$
+relating the products of $\C$ with those of $\Type$. The operation
+must commute with projections, \ie:
+$$
+\xymatrix{
+GX \times_{\Type} GY 
+ \ar[r]^{\Gtimes\ X\ Y} 
+ \ar[rd]_{\pi_1}
+&G(X \times_{\C} Y)
+ \ar[d]^{G\ \pi_1} \\
+&GX
+}
+$$
+and an analogous diagram for $\pi_2$. Now we can define the product
+for any category of dialgebras $\Alg_s$ given $s : \Spec$, by induction
+on $s$:
+%
+\begin{itemize}
+\item $\alg{X}, \alg{Y} : \Alg_s$
+\item $\theta : F \alg{X} \to G \alg{X}$
+\item $\rho : F \alg{Y} \to G \alg{Y}$
+\end{itemize}
+%
+We define the dialgebra on $\alg{X} \times \alg{Y}$ as
+\begin{align*}
+&\theta \times \rho : F (\alg{X} \times \alg{Y}) \to G (\alg{X} \times \alg{Y}) \\
+&\theta \times \rho\ x \ddefeq  \Gtimes\ (\theta\ (F\ \pi_1\ x))\ (\rho\ (F\ \pi_2\ x))
+\end{align*}
+Showing that $\pi_1$ and $\pi_2$ are algebra morphisms then uses the
+commuting triangles introduced above.
+
+\subsubsection{Equalisers}
+
+Since equalisers in $\Type$ are very similar to products, constructing
+equalisers in $Alg_s$ will be quite similar to the construction of
+products in $Alg_s$. We will denote the equaliser in $\Type$ of
+functions $f, g : X \to Y$ as $\eq_{\Type}\ f\ g$, which is defined as
+$\eq_{\Type}\ f\ g \ddefeq (x : X) \times f\ x = g\ x$. Equalisers in
+$\C$ will be denoted with $\eq_{\C}$. For equalisers, functors
+$G : \C \to \Type$ need to be equipped with an operation
+$\Geq : (f\ g : \C(X,Y)) \to \eq_{\Type}\ (G f)\ (G g) \to G (\eq_{\C}\
+f\ g)$ such that the following commutes:
+$$
+\xymatrix{
+\eq_{\Type}\ (G f)\ (G g)
+ \ar[r]^{\Geq\ f\ g}
+ \ar[rd]_{\pi_1}
+&G (\eq_{\C}\ f\ g)
+ \ar[d]^{G\ i} \\
+&GX
+}
+$$
+
+\todoi{rest of this stuff}
 
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
@@ -1202,7 +1381,7 @@ We arrive at the following form of \hits:
 \begin{alignat*}{2}
   &\rlap{$\data\ T\ :\ \Type\ \where$} \\
   &&\ \ c_0  &:\ F_0\ T \to T \\
-  &&\ \ c_1  &:\ (x : F_1\ T) \to c_0 * (l\ x) = c_0 * (r\ x)
+  &&\ \ c_1  &:\ (x : F_1\ T) \to c_0^* (l\ x) = c_0^* (r\ x)
 \end{alignat*}
 %
 where:
