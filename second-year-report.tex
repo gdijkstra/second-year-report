@@ -533,7 +533,7 @@ $$
 $$
 and for algebras $(X,\theta)$ and $(Y,\rho)$, we have morphisms:
 $$
-\algcat{F}((X,\theta),(Y,\rho)) \ddefeq (f : X \to Y) \times (f_0 : (x : FX) \to f (\theta x) = \rho (F f x)
+\algcat{F}((X,\theta),(Y,\rho)) \ddefeq (f : X \to Y) \times (f_0 : (x : FX) \to f (\theta\ x) = \rho (F f x)
 $$
 A way to characterise inductive types is as the initial object in this
 category. A concise way of stating that an algebra $\alg{X}$ is
@@ -763,11 +763,11 @@ Given an algebra $(X,\theta)$ we can construct the identity morphism as follows:
 where
 %
 \begin{align*}
-  &\ido{(X,\theta)} : (x : FX) \to \id{X} (\theta x) = \theta (F \id{X} x) \\
+  &\ido{(X,\theta)} : (x : FX) \to \id{X} (\theta\ x) = \theta (F \id{X} x) \\
   &\ido{(X,\theta)} x \ddefeq \\
-  &\id{X} (\theta x) \\
+  &\id{X} (\theta\ x) \\
   &\defeq \\
-  &\theta x \\
+  &\theta\ x \\
   &\defeq \{ F is a strict functor \} \\
   &\theta (F \id{X} x)
 \end{align*}
@@ -787,11 +787,11 @@ $(X,\theta) \to (Z,\zeta)$:
 where
 %
 \begin{align*}
-  &g_0 \circ_0 f_0 : (x : FX) \to (g \circ f) (\theta x)) = \zeta (F (g \circ f) x) \\
+  &g_0 \circ_0 f_0 : (x : FX) \to (g \circ f) (\theta\ x)) = \zeta (F (g \circ f) x) \\
   &g_0 \circ_0 f_0 x \ddefeq \\
-  &(g \circ f) (\theta x) \\
+  &(g \circ f) (\theta\ x) \\
   &\defeq \{ asdf \} \\
-  &g (f (\theta x)) \\
+  &g (f (\theta\ x)) \\
   &= \{ \ap g (f_0 x) \} \\
   &g (\rho (F f x)) \\
   &= \{ g_0 (F f x) \} \\
@@ -813,7 +813,7 @@ then, since we know that an equality of two dependent pairs is a
 dependent pair of equalities and using function extensionality, we
 get:
 $$
-((f,f_0) = (g,g_0)) = (p : f = g) \times (p_0 : (x : FX) \to f_0 = g_0 [ \lambda h . h (\theta x) = \rho (F h x) \downarrow p ])
+((f,f_0) = (g,g_0)) = (p : f = g) \times (p_0 : (x : FX) \to f_0 = g_0 [ \lambda h . h (\theta\ x) = \rho (F h x) \downarrow p ])
 $$
 As we will see for the category laws, since $\Type$ is a strict
 category hence the $p$ part of algebra morphism equalities will be
@@ -822,7 +822,7 @@ non-trivial, we can still simplify the $p_0$ part. Giving $p_0$
 amounts to giving the following square for every $x : FX$:
 $$
 \xymatrix{
-f (\theta x) \ar@{-}[d]_{f_0 x} \ar@{-}[r]^{\ap (\lambda h . h (\theta x)) p}  &g (\theta x) \ar@{-}[d]^{g_0 x} \\
+f (\theta\ x) \ar@{-}[d]_{f_0 x} \ar@{-}[r]^{\ap (\lambda h . h (\theta\ x)) p}  &g (\theta\ x) \ar@{-}[d]^{g_0 x} \\
 \rho (F f x) \ar@{-}[r]_{\ap (\lambda h . \rho (F h x)) p} &\rho (F g x) }
 $$
 
@@ -1073,7 +1073,7 @@ coherence issues elsewhere.
 
 If we want to add identity morphisms to $\Cat$, we we want to extend
 the function $\extend$ to also have an operation
-$\Id : (\alg{X} : \Alg_s) \to \Alg_s(\alg{X},\alg{X})$, for any
+$\Id{} : (\alg{X} : \Alg_s) \to \Alg_s(\alg{X},\alg{X})$, for any
 specification $s : Spec$. We can try to define identity morphisms by
 doing induction on a specification $s : \Spec$. For the base case
 where $s \defeq \epsilon$, $\Alg_s \defeq \Type$ hence we can define
@@ -1107,7 +1107,88 @@ $\lift \Id{\alg{X}} x : \int_{\Alg_s} F ((\alg{X},x), (\alg{X}, F\
 whereas the identity morphism of $\int_{\Alg_s} F$ would have type
 $\int_{\Alg_s} F ((\alg{X},x),(\alg{X},x))$, which are not
 definitionally the same, unless $F$ happens to satisfy the functor
-laws strictly, which is not something we can assume.
+laws strictly, which is not something we can assume in \mltt.
+
+\subsubsection{Non-dependent dialgebras}
+\label{sec:nondepdialg}
+
+In order to avoid the problem mentioned above, we can restrict
+ourselves to \emph{non-dependent} dialgebras, \ie we consider target
+functors $G : \C \to \Type$ instead. In this setting we can define
+identity morphisms and composition, which again happens by induction
+over the specification $s : \Spec$. The base case is the same as
+before and the interesting part is the inductive case, where we get
+the following data:
+%
+\begin{itemize}
+\item $s : \Spec$ 
+\item $c : \Constr\ Alg_s$, \ie $F : \Alg_s \to \Type$ and $G : \Alg_s \to \Type$
+\item $\alg{X} : \Alg_s$ along with
+  $\Id{\alg{X}} : \Alg_s (\alg{X},\alg{X})$
+\item  $\theta : F \alg{X} \to G \alg{X}$
+\end{itemize}
+%
+Given this, we need to specify a morphism
+$f : \Alg_s (\alg{X},\alg{X})$ with
+$f_0 : (x : F \alg{X}) \to G\ f\ (\theta\ x) = \theta (F\ f\ x))$.
+Again for, for $f$ we choose $\Id{\alg{X}}$. Now suppose $F$ and $G$
+preserve identity morphisms, \ie we have a term
+$\Fid_{\alg{X}} : (x : F \alg{X}) \to F\ \Id{\alg{X}}\ x = x$, and
+similarly a term $\Gid_{\alg{X}}$, then we can define $f_0$ as
+follows, given $x : F \alg{X}$:
+%
+\begin{align*}
+  &G\ \Id{\alg{X}}\ (\theta\ x) \\
+  &= \reasonterm{\Gid_{\alg{X}} (\theta\ x)} \\
+  &\theta\ x \\
+  &= \reasonterm{\ap\ \theta\ (\Fid_{\alg{X}}\ x)^{-1}} \\
+  &\theta\ (F\ \Id{\alg{X}}\ x)
+\end{align*}
+%
+We can also define composition by induction on $s : \Spec$. The base
+case is again trivial as we just use ordinary composition of functions
+for $\Type$. For the inductive case we get the following:
+%
+\begin{itemize}
+\item $s : \Spec$ 
+\item $c : \Constr\ Alg_s$, \ie $F : \Alg_s \to \Type$ and $G : \Alg_s \to \Type$
+\item $\alg{X}, \alg{Y}, \alg{Z} : \Alg_s$ along with algebras:
+\item $\theta : F \alg{X} \to G \alg{X}$, $\rho : F \alg{Y} \to G \alg{Y}$, $\zeta : F \alg{Z} \to G \alg{Z}$
+\item $f : \Alg_s(\alg{X},\alg{Y})$, $f_0 : (x : F \alg{X}) \to G\ f\ (\theta\ x) = \rho\ (F\ f\ x)$
+\item $g : \Alg_s(\alg{Y},\alg{Z})$, $g_0 : (x : F \alg{X}) \to G\ g\ (\rho\ x) = \zeta\ (F\ g\ x)$
+\item $g \circ f : \Alg_s(\alg{X},\alg{Z})$
+\end{itemize}
+%
+We have to define:
+%
+\begin{itemize}
+  \item $h : \Alg_s(\alg{X},\alg{Z})$
+  \item $h_0 : (x : F \alg{X}) \to G\ h\ (\theta\ x) = \zeta\ (F\ h\ x)$
+\end{itemize}
+%
+For $h$ we can choose it to be $g \circ f$, so we need to give a term
+of type
+$(x : F \alg{X}) \to G\ (g \circ f)\ (\theta\ x) = \zeta\ (F\ (g \circ
+f)\ x)$.
+Just like we needed the functors $F$ and $G$ to preserve identity
+morphisms in order to define them in the inductive case, we need $F$
+and $G$ to also preserve composition, \ie we have terms
+$\Fcomp\ g\ f : (x : F \alg{X}) \to F\ (g \circ f) x = F\ g\ (F\ f\ x)$ and
+the same for $G$. Given these, we can define $h_0$ as follows, given
+$x : F \alg{X}$:
+%
+\begin{align*}
+  &G\ (g \circ f)\ (\theta\ x) \\
+  &= \reasonterm{\Gcomp\ g\ f\ (\theta\ x)} \\
+  &G\ g\ (G\ f\ (\theta\ x) \\
+  &= \reasonterm{\ap\ (G\ g)\ (f_0\ x)} \\
+  &G\ g\ (\rho\ (F\ f\ x)) \\
+  &= \reasonterm{g_0\ (F\ f\ x)} \\
+  &\zeta\ (F\ g\ (F\ f\ x)) \\
+  &= \reasonterm{\ap\ \zeta\ (\Fcomp\ g\ f\ x)^{-1}} \\
+  &\zeta\ (F\ (g \circ f)\ x)
+\end{align*}
+%
 
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
