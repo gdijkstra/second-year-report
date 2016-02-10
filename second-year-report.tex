@@ -1038,7 +1038,7 @@ In order to define algebra families , we need to generalise the $\Box$
 modality from acting on families in $\Type$ to acting on families in
 $\C$. We can define for $F : \Alg_s \To \Type$ and
 $G : \int_{\Alg_s}\ F \To \Type$ the following mutually by induction
-on $s : Spec$, assuming $\alg{X} : \Alg_s$ and
+on $s : \Spec$, assuming $\alg{X} : \Alg_s$ and
 $\algfib{P} : \Fam_s \alg{X}$:
 %
 \begin{alignat*}{4}
@@ -1074,7 +1074,7 @@ coherence issues elsewhere.
 If we want to add identity morphisms to $\Cat$, we we want to extend
 the function $\extend$ to also have an operation
 $\Id{} : (\alg{X} : \Alg_s) \to \Alg_s(\alg{X},\alg{X})$, for any
-specification $s : Spec$. We can try to define identity morphisms by
+specification $s : \Spec$. We can try to define identity morphisms by
 doing induction on a specification $s : \Spec$. For the base case
 where $s \defeq \epsilon$, $\Alg_s \defeq \Type$ hence we can define
 the identity for object $X : \Type$ as $(\lambda x . x) : X \to X$. For
@@ -1240,7 +1240,7 @@ F\ \Id{Y}\ (F\ f\ x) \ar@{-}[r]_{\Fid (F\ f\ x)} &F\ f\ x
 $$
 
 To show that the left identity law holds for $\Alg_s$ given
-$s : Spec$, we proceed by induction on $s$. $\Type$ satisfies the left
+$s : \Spec$, we proceed by induction on $s$. $\Type$ satisfies the left
 identity law trivially, so the base case is done. For the inductive
 case we get the following data:
 %
@@ -1369,8 +1369,100 @@ $$
 
 \todoi{rest of this stuff}
 
+\section{Generalised containers}
+\label{sec:gencontainers}
+
+So far we have not concerned ourselves with the existence of \hits and
+as such have put no restrictions on the argument and target
+functors. For \oits, we know that the argument functor has to
+\emph{strictly positive} for the initial algebra to exist. For \hits a
+more general notion of strict positivity is needed. Consider for
+example the following type, which has as constructors the axioms of a
+field:
+%
+\begin{alignat*}{2}
+&\rlap{$\data\ \initialfield\ :\ \Type\ \where$} \\
+&&\ \ 0        &:\ \initialfield \\
+&&\ \ 1        &:\ \initialfield \\
+&&\ \ +        &:\ \initialfield \to \initialfield \to \initialfield \\
+&&\ \ *        &:\ \initialfield \to \initialfield \to \initialfield \\
+&&&\vdots \\
+&&\ \ ^{-1}     &:\ (x : \initialfield) \to (x = 0 \to \bot) \to \initialfield \\
+&&&\vdots
+\end{alignat*}
+%
+The type $\initialfield$ along with its constructors should give us
+the initial object in the category of fields, but there is no such
+object. The culprit here seems the constructor $^{-1}$, which has as
+one of its arguments the type $x = 0 \to \bot$ where the constructor
+$0 : \initialfield$ occurs negatively.
+
+One way to generalise the notion of strict positivity is to generalise
+the notion of containers:
+%
+\begin{defn}
+  A \emph{generalised container} consists of a type of \emph{shapes}
+  $S : \Type$ along with \emph{positions} $P : S \to \C$
+\end{defn}
+%
+Instead of the positions being a family of types indexed by $S$, it is
+now a family of objects of $\C$. The extension of a generalised
+container is defined as:
+%
+\begin{align*}
+  &\cext{S}{P}_0 : \C \to \Type \\
+  &\cext{S}{P}_0 \ X \ddefeq (s : S) \times \C(P \ s,\ X)
+\end{align*}
+%
+with the action on morphisms:
+%
+\begin{align*}
+  &\cext{S}{P}_1 : \C(X , Y) \to \cext{S}{P}_0 \ X \to \cext{S}{P}_0 \ Y \\
+  &\cext{S}{P}_1 \ f \ (s ,\ t) \ddefeq (s ,\ f \circ t)
+\end{align*}
+%
+Showing that the action on morphisms preserves the category structure
+is done by appealing to the category structure of $\C$. To show that
+$\cext{S}{P}$ preserves the identity morphism, we get the following
+proof:
+%
+\begin{align*}
+&\cext{S}{P}_1 \ \Id{X} \ (s ,\ t) \\
+&\defeq \\
+&(s , \Id{X} \circ t) \\
+&= \reasontext{left identity law of $\C$} \\
+&(s, t)
+\end{align*}
+%
+To show that $\cext{S}{P}$ preserves composition, we need to appeal to
+associativity of $\C$. Recall that in order to show that extending a
+category $\C$ with a constructor given by functors
+$F, G : \C \to \Type$ has identity morphisms, we need $F$ and $G$ to
+preserve identity morphisms. For generalised containers to preserve
+identity morphisms, we need $\C$ to have the left identity law, a
+coherence condition \emph{on} identity morphisms. Similarly, to show
+that the category $\C$ extended with a constructor has composition, we
+need associativity of $\C$. To show that it has associativity, we need
+the associativity of $\C$ to satisfy the pentagon coherence law: for
+every structure and coherence law in the extended category, we need
+one level more in the original category. This means that the more
+constructors we have in our specification, the more coherence laws we
+need to show, if we use generalised containers.
+
+\todoi{mention something about \omegacats segal spaces two-level type theory}
+
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
+
+In~\cref{sec:hitscategory} we saw that we run into coherence issues
+when describing the category structure in general. We can switch to
+non-dependent dialgebras, which allows us to define the category of
+dialgebras with enough categorical structure to do what we want to
+do. In this section we consider a simplification of the general
+scheme, which is expressive enough to include interesting
+examples. Apart from this the coherence issues are still
+manageable. We will restrict ourselves to \hits with a
+\zeroconstructors followed by one \oneconstructor. 
 
 \todoi{simplify to two constructors: one \zeroconstructor followed by one \oneconstructor}
 
@@ -1386,8 +1478,8 @@ We arrive at the following form of \hits:
 %
 where:
 \begin{itemize}
-\item $F_0, F_1 : \Type \to \Type$ are (strict) functors, given as containers
-\item $l r : F_1 \to F_0 *$ are (strict) natural transformations, given as container morphisms
+\item $F_0, F_1 : \Type \to \Type$ are functors, given as containers
+\item $l r : F_1 \to F_0 *$ are natural transformations, given as container morphisms
 \end{itemize}
 
 \subsection{Examples}
