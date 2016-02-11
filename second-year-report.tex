@@ -509,17 +509,47 @@ scheme~\cite{Capriotti2014}.
 
 In this section we will recap some of the basic theory of \oits: we
 will give its induction principle and explain the initial algebra
-characterisation and how these two characterisations coincide.
+characterisation and how these two characterisations coincide. This
+section provides an outline for how to approach the theory of \hits.
 
-We need to have a specification of an \oit, which is, as mentioned
-in~\cref{sec:syntax}, given as an endofunctor $F : \Type \to \Type$.
-We will assume this functor to be given as a
+Note that since we are working inside the type theory so the
+specification of initiality will also be internal, which means we are
+working with \emph{homotopy initiality}~\cite{Awodey2012}. In this
+note we will leave out the ``homotopy'' part to increase readability.
+
+We will first explain how an \oit is specified and what its
+introduction rules are in~\cref{sec:oitspec}.
+In~\cref{sec:oitinitiality} we will define the category of algebras and
+define initiality and in~\cref{sec:oitinduction} the induction
+principle is defined. Instead of showing directly that initiality and
+induction are equivalent, we formulate the \emph{section principle}
+which is ``in between'' the two, in~\cref{sec:oitsection}. We will
+first show that this principle is logically equivalent to the
+induction principle in~\cref{sec:oitsectioninduction}. The section
+principle is also logically equivalent to initiality, given by a
+purely categorical proof in~\cref{sec:oitsectioninitiality}. The
+categorical structure of the algebras needed for this proof is given
+in~\cref{sec:oitalgcat}.
+
+\subsection{Specification}
+\label{sec:oitspec}
+Specifying an \oit is done by giving an endofunctor
+$F : \Type \to \Type$. We will assume this functor to be given as a
 container~\cite{Abbott2005}, which ensures that it is strictly
-positive and that it satisfies the functor laws strictly. Since we are
-not primarily interested in the existence of the inductive types, we
-do not need this restriction. It is however very convenient for us to
-work with strict functors, as it makes the equational reasoning
-considerably easier.
+positive. Since we are not primarily interested in the existence of
+the inductive types, we do not need this particular
+restriction. Containers do give rise to functors that satisfy the
+functor laws strictly, which makes the equational reasoning a lot more
+convenient for us.
+
+A functor $F$ defines an inductive type $T$ with type formation rule:
+$$
+\frac{}{T : \Type}
+$$
+and an introduction rule, or constructor:
+$$
+\frac{x : FT}{c\ x : T}
+$$
 
 \subsection{Initiality}
 \label{sec:oitinitiality}
@@ -1303,7 +1333,10 @@ F\ (h \circ g)\ (F\ f\ x)
 }
 $$
 Assuming that our functors $F$ and $G$ satisfy this condition, we can
-show that for any $s : \Spec$, $\Alg_s$ has associativity.
+show that for any $s : \Spec$, $\Alg_s$ has associativity. Note that
+the pentagon looks similar to the usual pentagonal coherence condition
+for associators, in fact, if the functor is a representible functor,
+the above diagram is such a pentagon.
 
 \subsubsection{Products}
 
@@ -1449,7 +1482,81 @@ one level more in the original category. This means that the more
 constructors we have in our specification, the more coherence laws we
 need to show, if we use generalised containers.
 
-\todoi{mention something about \omegacats segal spaces two-level type theory}
+To specify \hits using containers for the argument functors, we need
+to deal with coherence in its full generality: we need to be able to
+talk about \omegacats internally to type theory. One way to do this is
+to internalise the notion of \emph{Segal category}, which in turn
+depends on the notion of \emph{simplicial type}. To define simplicial
+types, we need to have a way of talking about strict equalities in
+type theory itself.
+
+\subsection{Target functors}
+
+The target functors are more restricted than just being strictly
+positive: they either are a forgetful functor or an iterated path
+space functor. In~\cref{sec:syntax} we have seen that these functors
+are given via a sequence of natural transformations, with the first
+ones $l, r : F \to U$ going from the arguments functor
+$F : \C \to \Type$ into a forgetful functor $U : \C \to \Type$. If $U$
+can be expressed as a container, we can give the natural
+transformations as a \emph{container morphism}:
+
+\begin{defn}
+A container morphism $\cont{S}{P} \to \cont{T}{Q}$ is given by:
+% 
+\begin{itemize}
+\item $\alpha_0 : S \to T$
+\item $\alpha_1 : (s : S) \to \C(T\ (\alpha_0 s) ,\ P\ s)$
+\end{itemize}
+% 
+\end{defn}
+
+A container morphism
+$(\alpha_0,\alpha_1) : \cont{S}{P} \to \cont{T}{Q}$ gives rise to the
+following natural transformation:
+%
+\begin{align*}
+  &\alpha : \{ X : | \C | \} \to \cext{S}{P} \ X \to \cext{T}{Q} \ X \\
+  &\alpha\ (s , t) \ddefeq ( \alpha_0\ s ,\ t \circ \alpha_1\ s )
+\end{align*}
+%
+Giving the naturality square of $\alpha$ is done by using
+associativity of $\C$. Container morphisms on ordinary containers
+therefore yield strict natural transformations. If we have given
+natural transformations $l, r : F \to U$ as container morphisms, for
+$F, U : \C \to \Type$, we still have to show that
+$\lambda (X , x) . l_X x = g_X x : \int_{\C} F \to \Type$ is a functor
+and satisfies the coherence conditions. Since naturality is given
+using associativity of $\C$, the coherence properties of the functor
+depend on those of $\C$.
+
+Note that if $U : \C \to \Type$ has a left adjoint $L : \Type \to \C$,
+it is in fact expressible as a container, as we have for any $X : \C$:
+%
+\begin{align*}
+  U X &= 1 \to U X \\
+      &= \C(L1, X)
+\end{align*}
+%
+where $1 : \Type$ is the unit type. Hence we have that
+$U = \cext{1}{L 1}$. We do not need any functorial properties of $L$:
+we only need the object $L1 : \C$ that has the property shown
+above. For the category $\algcat{F}$ for an endofunctor
+$F : \Type \to \Type$, the left adjoint of the forgetful functor
+$U : \algcat{F} \to \Type$ is given by the free monad of $F$, which we
+can define pointwise as the following inductive type:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ F^*\ (X : \Type)\ :\ \Type\ \where$} \\
+  &&\ \ \eta &:\ X \to F^* X \\
+  &&\ \ c    &:\ F(F^*X) \to F^* X
+\end{alignat*}
+%
+This means that in order for us to define $U : \algcat{F} \to \Type$
+as a container, we need to have \oits available. Hence to specify \eg
+a \hit with a \zeroconstructor followed by one \oneconstructor in this
+way using containers and container morphisms, we also need to have
+\oits available.
 
 \section{Initiality and induction for \onehits}
 \label{sec:onehits}
