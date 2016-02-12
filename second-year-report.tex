@@ -334,6 +334,16 @@ constructors, such as propositional truncation, that can be
 implemented as a colimit of a sequence of types given as \hits without
 recursive path constructors, similar to the construction above.
 
+\section{Categories in type theory}
+\label{sec:catintt}
+
+As we will talk about categorical concepts in type theory in this
+report, we have to elucidate what we mean when we say \eg
+``category''. 
+
+% what is a category? aks category?
+
+% all limits and colimits are /homotopy/ limits and colimits
 \section{Overview}
 \label{sec:overview}
 
@@ -550,64 +560,95 @@ and an introduction rule, or constructor:
 $$
 \frac{x : FT}{c\ x : T}
 $$
+Its elimination rules can either be stated as requiring $T$ to be
+initial (\cref{sec:oitinitiality}) or as $T$ being endowed with an
+induction principle (\cref{sec:oitinduction}).
 
 \section{Initiality}
 \label{sec:oitinitiality}
 
-The inductive type $T : \Type$ described by this comes with an
-introduction rule $c : FT \to T$, \ie we have an algebra
-$(T,c) : \algcat{F}$. We can define the category $\algcat{F}$ as
-having objects:
+Another way of stating that $T$ has a type formation and introduction
+rule is saying that $T$ admits an algebra structure:
+$(T : \Type , c : FT \to T) : \algcat{F}$. The category $\algcat{F}$
+has objects:
 $$
 | \algcat{F} | \ddefeq (X : \Type) \times (\theta : FX \to X)
 $$
 and for algebras $(X,\theta)$ and $(Y,\rho)$, we have morphisms:
 $$
-\algcat{F}((X,\theta),(Y,\rho)) \ddefeq (f : X \to Y) \times (f_0 : (x : FX) \to f (\theta\ x) = \rho (F f x)
+\algcat{F}((X,\theta),(Y,\rho)) \ddefeq (f : X \to Y) \times (f_0 : (x : FX) \to f\ (\theta\ x) = \rho\ (F\ f\ x)
 $$
-A way to characterise inductive types is as the initial object in this
-category. A concise way of stating that an algebra $\alg{X}$ is
-initial is requiring that for any algebra $\alg{Y}$ the type of
-morphisms $\algcat{F}(\alg{X},\alg{Y})$ is contractible:
+We can think of algebra morphisms $\algcat{F}((X,\theta),(Y,\rho))$ as
+functions $f : X \to Y$ that come with a computation rule $f_0$. If an
+algebra $(T,c)$ is initial, there exists a function $\rec : X \to Y$
+to any $Y : \Type$ that has an algebra $\rho : FY \to Y$. The
+existence of this function along with its computation rule is also
+called the \emph{recursion principle} of $T$ with $\rec$ the
+\emph{recursor} or \emph{non-dependent eliminator}. Apart from
+requiring that there exists an algebra morphism to any algebra, this
+morphism must also be unique. In fact, this uniqueness allows us to
+show that initiality coincides with the induction principle
+(\cref{sec:oitsectioninitiality}).
+
+A concise way of stating that an algebra $\alg{X}$ is initial is
+requiring that for any algebra $\alg{Y}$ the type of morphisms
+$\algcat{F}(\alg{X},\alg{Y})$ is contractible:
 %
 \begin{align*}
 &\isinitial : \algcat{F} \to \Type \\
 &\isinitial \alg{X} \ddefeq (\alg{Y} : \algcat{F}) \to \iscontr (\algcat{F}(\alg{X},\alg{Y}))
 \end{align*}
 %
-This way of stating initiality has the benefit that
-$\isinitial \alg{X}$ is a proposition.
+Expressing initiality this way makes it apparent that
+$\isinitial \alg{X}$ is a proposition since $\iscontr$ is
+propositional and $\Pi$-types into propositions are propositional
+themselves.
 
 \section{Induction principle}
 \label{sec:oitinduction}
 
 The induction principle of an inductive type $T$ gives us a method to
-show that for a predicate $P : T \to \Type$, for all $x : T$, $P\ x$
-holds. Intuitively we have to show for each constructor $c$ that if
-$P$ holds for all $T$-subterms of $x$, then $P$ holds for $c\ x$. For
-example, for the natural numbers, we have the induction operator:
+show that for a family $P : T \to \Type$, for all $x : T$, $P\ x$ is
+inhabited. Intuitively we have to show for each constructor $c$ that
+if $P$ holds for all $T$-subterms of $x$, then $P$ holds for $c\
+x$.
+For example, for the natural numbers, we have the induction operator:
+%
+\begin{alignat*}{2}
+  \indnat &:   &&\ (P : \Nat \to \Type) \\
+          &    &&\ (m_{\zero} : P\ \zero) \\
+          &    &&\ (m_{\suc} : (n : \Nat) \to P\ n \to P\ (\suc\ n)) \\
+          &\to &&\ (x : \Nat) \to P\ x
+\end{alignat*}
+%
+$P$ is usually referred to as the \emph{motive} of the induction, with
+the functions $m_{\zero}$ and $m_{\suc}$ the \emph{methods}. The
+induction operator also comes with computation rules that tell us how
+the introduction and elimination rules interact:
 %
 \begin{align*}
-  &\indnat &:   &(P : \Nat \to \Type) \\
-  &        &    &(m_{\zero} : P \zero) \\
-  &        &    &(m_{\suc} : (n : \Nat) \to P n \to P (\suc n)) \\
-  &        &\to &(x : \Nat) \to P x
+  &\indnatzero_0\ P\ m_{\zero}\ m_{\suc} : \\
+  &\ \ \indnat\ P\ m_{\zero}\ m_{\suc}\ \zero\ =\ m_{\zero} \\
+  \\
+  &\indnatsucc_0\ P\ m_{\zero}\ m_{\suc}  : \\
+  &\ \ \indnat\ P\ m_{\zero}\ m_{\suc}\ (\suc\ k)\ =\ m_{\suc}\ k\ (\indnat\ P\ m_{\zero}\ m_{\suc}\ k)
 \end{align*}
 %
-The induction operator also comes with computation rules that tell us
-how the introduction and elimination rules interact:
-%
-\begin{align*}
-  &\indnat P m_{\zero} m_{\suc} \zero = m_{\zero} \\
-  &\indnat P m_{\zero} m_{\suc} (\suc k) = m_{\suc} k (\indnat P m_{\zero} m_{\suc} k)
-\end{align*}
-%
-Generalising this to an arbitrary inductive type $T$ given by a
-functor $F : \Type \to \Type$, we need to be able to state that a
-predicate $P : T \to \Type$ holds for all $T$-subterms of $x : FT$. We
+Another way of stating the induction principle for $\Nat$ is that for
+any \emph{$\Nat$-algebra family} (the family $P$ along with its
+methods) we get a \emph{dependent $\Nat$-algebra morphism} ($\indnat$
+along with its computation rules). Note that usually the computation
+laws for $\indnat$ hold strictly. Since we are working inside type
+theory, we cannot state that a computation rule holds strictly, hence
+all the rules hold up to propositional equality.
+
+Defining what constitutes an algebra family for a functor
+$F : \Type \to \Type$ requires us to be able to state that a family
+$P : T \to \Type$ is inhabited for all $T$-subterms of $x : FT$. We
 will do this by introducing a modality
-$\Box_F : (A \to \Type) \to FA \to \Type$, which is defined by the
-following equation, for $A : \Type$, $B : A \to \Type$:
+$\Box_F : (A \to \Type) \to FA \to \Type$. This modality is the action
+of $F$ on families in $\Type$ and is defined by the following
+equation, for $A : \Type$, $B : A \to \Type$:
 $$
 F (\Sigma\ A\ B) = \Sigma\ FA\ (\Box_{F} B)
 $$
@@ -616,59 +657,66 @@ $$
 \Box_{F}\ B\ x = (y : F (\Sigma\ A\ B)) \times (F\ \pi_1\ x = y)
 $$
 As we sometimes need to refer to it explicitly, we will give the
-witness of the equivalence a name:
+witness of the isomorphism a name:
 $$
 \phi : F (\Sigma\ A\ B) \to \Sigma\ FA\ (\Box_{F} B)
 $$
-The induction principle for $T$ then becomes:
+Using this modality we can define what an algebra family is:
 %
-\begin{align*}
-  &\ind &:   &(P : T \to \Type) \\
-  &     &    &(m : (x : FT) \to \Box_{F} P x \to P (c\ x) \\
-  &     &\to &(x : T) \to P x
-\end{align*}
-%
-
-\todoi{elim T comp rules and introduce $\actionsection{F}$?}
-
-Usually $P$ is called the \emph{motive} of the induction and $m$ its
-\emph{method}. One can also think of a motive along with a method as a
-\emph{family} of algebras:
-
 \begin{defn}
   An \emph{$F$-algebra family} over an algebra $(X,\theta)$, denoted
   $\Famover{\algcat{F}}{(X,\theta)}$, consists of:
 
   \begin{itemize}
-  \item $P : X \to \Type$
-  \item $m : (x : F\ X) \to \Box_F\ P\ x \to P\ (\theta\ x)$
+  \item a motive $P : X \to \Type$
+  \item a method $m : (x : F\ X) \to \Box_F\ P\ x \to P\ (\theta\ x)$
+  \end{itemize}
+\end{defn}
+%
+To define dependent algebra morphisms, we need to define the action of
+$F$ on dependent functions:
+%
+\begin{align*}
+&\actionsection{F} : (f : (x : A) \to B\ x) \to (x : FA) \to \Box_F\ B\ x \\
+&\actionsection{F} f x \ddefeq (F\ (\lambda z . (z , f\ z))\ x, \refl)
+\end{align*}
+%
+\begin{defn}
+  A \emph{dependent $F$-algebra morphism} of an an $F$-algebra family
+  $(P,m) : \Famover{\algcat{F}}{(X,\theta)}$ over algebra
+  $(X,\theta)$, which is denoted as $\DepHom{\algcat{F}}{(P,m)}$,
+  consists of:
+
+  \begin{itemize}
+  \item a dependent function $f : (x : X) \to P\ x$, along with
+  \item a computation rule $f_0 : (x : FX) \to f\ (\theta\ x) = m\ x\ (\actionsection{F}\ f\ x)$
   \end{itemize}
 \end{defn}
 
-In $\Type$, giving a family over a type $A : \Type$ is the same as
-giving a function into $A$, \ie:
+Now we have all the ingredients to specify the induction principle:
+
+\begin{defn}
+  An algebra $(T,c) : \algcat{F}$ satisfies the \emph{induction
+    principle} if for every algebra family
+  $(P,m) : \Famover{\algcat{F}}{(T,c)}$ there is a dependent algebra
+  morphism $(\ind,\ind_0) : \DepHom{\algcat{F}}{(P,m)}$.
+\end{defn}
+
+So far we have been careful to avoid the words ``fibration'' and
+``section''. In $\Type$, giving a family over a type $A : \Type$ is
+the same as giving a function into $A$, or a \emph{fibration}, \ie:
 $$
 (A \to \Type) = (B : \Type) \times (p : B \to A)
 $$
-In~\cref{sec:oitsectioninduction} we will show that giving a
-family over an algebra $\alg{X} : \algcat{F}$ is the same as giving an
-algebra morphism into $\alg{X}$:
+A dependent function then corresponds to a \emph{section} of the
+fibration $p$. As such, the terms ``dependent function'' and
+``section'' are sometimes used
+interchangeably. In~\cref{sec:oitsectioninduction} we will show that
+giving a family over an algebra $\alg{X} : \algcat{F}$ is the same as
+giving an algebra morphism into $\alg{X}$:
 $$
 \Famover{\algcat{F}}{\alg{X}} = (\alg{Y} : \algcat{F}) \times \algcat{F}(\alg{Y},\alg{X})
 $$
-
-For a type family $A : \Type, B : A \to \Type$, we have the
-$\Sigma$-type $\Sigma A B : \Type$ along with a projection into $A$:
-$\pi_1 : \Sigma A B \to A$. For $F$-algebra families we have similar
-operations, that we will call $\total$ for \emph{total space} and
-$\proj$, the project out of the total space into its base space:
-\begin{align*}
-  &\total : \Famover{\algcat{F}}{(X,\theta)} \to \algcat{F} \\
-  &\total (P, m) \ddefeq (\Sigma X P, \lambda x . (\theta (F \pi_1 x) , \uncurry m \circ \phi)) \\
-  &\\
-  &\proj : (\algfam{P} : \Famover{\algcat{F}}{(X,\theta)}) \to \algcat{F}(\total \algfam{P}, (X,\theta)) \\
-  &\proj (P, m) \ddefeq (\pi_1 , \lambda x . \refl)
-\end{align*}
 
 \section{Section principle}
 \label{sec:oitsection}
@@ -677,26 +725,34 @@ Instead of showing directly that the induction principle is logically
 equivalent to homotopy initiality, we introduce another principle that
 is somewhere in between the type theoretic induction principle and the
 categorical notion of initiality. In~\cref{sec:oitinduction}, the
-induction principle for an inductive type $T$ gives us for every
-algebra family $(P,m)$, a dependent function $(x : T) \to P\ x$
-subject to certain computation rules. The section principle states
-that every \emph{algebra fibration} has a \emph{section}.
-
+induction principle for an inductive type $T$ with constructor
+$c : FT \to T$ gives us for every algebra family
+$(P,m) : \Famover{\algcat{F}}{(T,c)}$, a dependent algebra morphism
+$(\ind,\ind_0) : \DepHom{\algcat{F}}(P,m)$. The section principle
+states that every \emph{algebra fibration} has a \emph{section}:
+%
 \begin{defn}
   An \emph{$F$-algebra fibration} over an algebra $\alg{X}$ is an
   algebra $\alg{Y}$ along with an algebra morphism
   $\algcat{F}(\alg{Y},\alg{X})$. The type of $F$-algebra fibrations
   over $\alg{X}$ is denoted as $\fibover{\algcat{F}}{\alg{X}}$
 \end{defn}
-
+%
+\begin{defn}
+  Given an algebra fibration
+  $(\alg{Y},p) : \fibover{\algcat{F}}{\alg{X}}$, a \emph{section} of
+  $(\alg{Y},p)$ (denoted $\sectionof{\algcat{F}}{(\alg{Y},p)}$) is a
+  morphism $s : \algcat{F}(\alg{X},\alg{Y})$ along with
+  $s_0 : p \circ s = \Id{\alg{X}}$.
+\end{defn}
+%
 \begin{defn}
   An algebra $\alg{X}$ satisfies the \emph{section principle} if for
   every algebra fibration
   $\algfib{P} : \fibover{\algcat{F}}{\alg{X}}$, there exists a section
-  $s : \algcat{F}(\alg{X},\alg{Y})$ of $p$, \ie
-  $p \circ s = \Id{\alg{X}}$.
+  $\algsect{s} : \sectionof{\algcat{F}}{\algfib{P}}$.
 \end{defn}
-
+%
 Note that in order for this to be a complete definition, we have to
 define composition of algebra morphisms and define the identity
 morphisms. This will be done in~\cref{sec:oitalgcat}.
@@ -704,7 +760,36 @@ morphisms. This will be done in~\cref{sec:oitalgcat}.
 \section{Induction principle is logically equivalent to section principle}
 \label{sec:oitsectioninduction}
 
-\todoi{this, first think about approach} 
+To show that the induction and the section principle are logically
+equivalent, we need to show that, given an algebra
+$\alg{X} : \algcat{F}$:
+$$
+(\algfam{P} : \Famover{\algcat{F}}{\alg{X}}) \to \DepHom{\algcat{F}}{\algfam{P}}
+$$
+is logically equivalent to:
+$$
+(\algfib{P} : \fibover{\algcat{F}}{\alg{X}}) \to \sectionof{\algcat{F}}{\algfib{P}}
+$$
+We first have to show that $\Famover{\algcat{F}}{\alg{X}}$ is equivalent
+to $\fibover{\algcat{F}}{\alg{X}}$. 
+
+
+For a type family $A
+: \Type, B : A \to \Type$, we have the $\Sigma$-type $\Sigma A B :
+\Type$ along with a projection into $A$: $\pi_1 : \Sigma A B \to
+A$. For
+$F$-algebra
+families we have similar operations, that we will call $\total$
+for \emph{total space} and $\proj$,
+the project out of the total space into its base space:
+\begin{align*}
+  &\total : \Famover{\algcat{F}}{(X,\theta)} \to \algcat{F} \\
+  &\total\ (P, m) \ddefeq (\Sigma X P, \lambda x . (\theta\ (F\ \pi_1\ x) , \uncurry m \circ \phi)) \\
+  &\\
+  &\proj : (\algfam{P} : \Famover{\algcat{F}}{(X,\theta)}) \to \algcat{F}(\total \algfam{P}, (X,\theta)) \\
+  &\proj\ (P, m) \ddefeq (\pi_1 , \lambda x . \refl)
+\end{align*}
+
 
 \section{Section principle is logically equivalent to initiality}
 \label{sec:oitsectioninitiality}
@@ -793,15 +878,17 @@ Given an algebra $(X,\theta)$ we can construct the identity morphism as follows:
 where
 %
 \begin{align*}
-  &\ido{(X,\theta)} : (x : FX) \to \id{X} (\theta\ x) = \theta (F \id{X} x) \\
-  &\ido{(X,\theta)} x \ddefeq \\
-  &\id{X} (\theta\ x) \\
-  &\defeq \\
-  &\theta\ x \\
-  &\defeq \{ F is a strict functor \} \\
-  &\theta (F \id{X} x)
+  &\ido{(X,\theta)} : (x : FX) \to \id{X}\ (\theta\ x) = \theta\ (F\ \id{X}\ x) \\
+  &\ido{(X,\theta)}\ x\ \ddefeq \\
+  &\ \ \ \id{X}\ (\theta\ x) \\
+  &\ \ \ \defeq \reasontext{$\Type$ is a strict category} \\
+  &\ \ \ \theta\ x \\
+  &\ \ \ \defeq \reasontext{$F$ is a strict functor} \\
+  &\ \ \ \theta\ (F\ \id{X}\ x)
 \end{align*}
 %
+\ie, $\ido{(X,\theta)} x \defeq \refl$.
+
 \subsection{Composition}
 
 Given three algebras $(X,\theta), (Y,\rho), (Z,\zeta)$ and morphisms
@@ -817,17 +904,17 @@ $(X,\theta) \to (Z,\zeta)$:
 where
 %
 \begin{align*}
-  &g_0 \circ_0 f_0 : (x : FX) \to (g \circ f) (\theta\ x)) = \zeta (F (g \circ f) x) \\
-  &g_0 \circ_0 f_0 x \ddefeq \\
-  &(g \circ f) (\theta\ x) \\
-  &\defeq \{ asdf \} \\
-  &g (f (\theta\ x)) \\
-  &= \{ \ap\ g (f_0 x) \} \\
-  &g (\rho (F f x)) \\
-  &= \{ g_0 (F f x) \} \\
-  &\zeta (F g (F f x)) \\
-  &\defeq \{ F is a strict functor \} \\
-  &\zeta (F (g \circ f) x)
+  &g_0\ \circ_0 f_0 : (x : FX) \to (g \circ f)\ (\theta\ x)) = \zeta\ (F\ (g \circ f)\ x) \\
+  &(g_0\ \circ_0\ f_0)\ x \ddefeq \\
+  &(g \circ f)\ (\theta\ x) \\
+  &\defeq \reasontext{definition of $\circ$} \\
+  &g\ (f\ (\theta\ x)) \\
+  &= \reasonterm{\ap\ g\ (f_0\ x)} \\
+  &g\ (\rho\ (F\ f\ x)) \\
+  &= \reasonterm{g_0\ (F\ f\ x)} \\
+  &\zeta\ (F\ g\ (F\ f\ x)) \\
+  &\defeq \reasontext{$F$ is a strict functor} \\
+  &\zeta\ (F\ (g \circ f)\ x)
 \end{align*}
 %
 Note that if $F$ is given as a container, it satisfies the functor
@@ -841,9 +928,9 @@ of algebra morphisms looks like. Let $(X,\theta)$ and $(Y, \rho)$ be
 algebras and $(f,f_0) ,(g, g_0) : \algcat{F}((X,\theta),(Y,\rho))$,
 then, since we know that an equality of two dependent pairs is a
 dependent pair of equalities and using function extensionality, we
-get:
+get that the type $(f,f_0) = (g,g_0)$ is equivalent to:
 $$
-((f,f_0) = (g,g_0)) = (p : f = g) \times (p_0 : (x : FX) \to f_0 = g_0 [ \lambda h . h (\theta\ x) = \rho (F h x) \downarrow p ])
+(p : f = g) \times (p_0 : (x : FX) \to f_0 = g_0 [ \lambda h . h (\theta\ x) = \rho (F h x) \downarrow p ])
 $$
 As we will see for the category laws, since $\Type$ is a strict
 category hence the $p$ part of algebra morphism equalities will be
@@ -868,18 +955,18 @@ focus on $f_0 \circ_0 \ido{(X,\theta)}$, $\ido{(X,\theta)} \circ_0 f_0$
 and $f_0$. For $x : FX$, we have:
 %
 \begin{align*}
-  &f_0 \circ_0 \ido{(X,\theta)} x \\
-  &\defeq \\
-  &\ap\ f (\ido{(X,\theta)} x) \ct f_0 (F \id{X} x) \\
-  &\defeq \{ F is a strict functor \} \\
-  &\ap\ f (\ido{(X,\theta)} x) \ct f_0 x \\
-  &\defeq \{ \ido{(X,\theta)} is trivial \} \\
-  &\refl \ct f_0 x \\
+  &(f_0 \circ_0 \ido{(X,\theta)})\ x \\
+  &\defeq \reasontext{definition of $\circ_0$}\\
+  &\ap\ f\ (\ido{(X,\theta)}\ x) \ct f_0\ (F\ \id{X}\ x) \\
+  &\defeq \reasontext{$F$ is a strict functor} \\
+  &\ap\ f\ (\ido{(X,\theta)}\ x) \ct f_0\ x \\
+  &\defeq \reasontext{$\ido{(X,\theta)}\ x$ is $\refl$} \\
+  &\refl \ct f_0\ x \\
   &= \\
-  &f_0 x
+  &f_0\ x
 \end{align*}
 %
-The proof of $\ido{(Y,\rho)} \circ_0 f_0 x = f_0 x$ goes in a similar
+The proof of $(\ido{(Y,\rho)} \circ_0 f_0)\ x = f_0\ x$ goes in a similar
 fashion. Whether the entire proof reduces to reflexivity depends on
 how path composition is defined: if it is defined by induction on the
 left argument, the left identity law holds strictly but the right
@@ -888,20 +975,24 @@ by induction on both arguments, then neither law holds strictly.
 
 \subsection{Associativity}
 
-Given four algebras $(X,\theta), (Y,\rho), (Z,\zeta), (W,\omega)$ and
-morphisms $(h,h_0) : (Z,\zeta) \to (W,\omega)$,
-$(g,g_0) : (Y,\rho) \to (Z,\zeta)$,
-$(f,f_0) : (X,\theta) \to (Y,\rho)$, we need to show that:
+Given three algebra morphisms:
+$$
+(X,\theta) \overset{(f,f_0)}\longrightarrow 
+(Y,\rho) \overset{(g,g_0)}\longrightarrow
+(Z,\zeta) \overset{(h,h_0)}\longrightarrow
+(W,\omega)
+$$
+we need to show that:
 $$
 ((h,h_0) \circ (g,g_0)) \circ (f,f_0) = (h,h_0) \circ ((g,g_0) \circ (f,f_0)) = 
 $$
 As with the identity laws, associativity holds strictly for the
 underlying functions, so we need to show for every $x : FX$ that:
 $$
-(h_0 \circ_0 g_0) \circ_0 f_0 x = h_0 \circ (g_0 \circ_0 f_0) x
+((h_0 \circ_0 g_0) \circ_0 f_0)\ x = (h_0 \circ (g_0 \circ_0 f_0))\ x
 $$
-
-\todoi{show horrendous proof}
+This can by shown by appealing to functoriality of $\ap$ (in both its
+arguments) and using naturality of homotopies.
 
 \subsection{Products}
 
@@ -910,7 +1001,7 @@ product $(X,\theta) \times (Y,\rho)$ as follows:
 %
 \begin{align*}
   &(X,\theta) \times (Y,\rho) : \algcat{F}\\
-  &(X,\theta) \times (Y,\rho) \ddefeq (X \times Y , \lambda x . (\theta (F \pi_1 x) , \rho (F \pi_2 x)))
+  &(X,\theta) \times (Y,\rho) \ddefeq (X \times Y , \lambda x . (\theta\ (F\ \pi_1\ x) , \rho\ (F\ \pi_2\ x)))
 \end{align*}
 %
 The projections $\pi_1$ and $\pi_2$ are then also strict algebra morphisms.
@@ -936,24 +1027,24 @@ $p \ddefeq \funext \pi_2$. We have to define an algebra
 structure $\epsilon : FE \to E$ such that $e : E \to X$ becomes an
 algebra morphism, \ie for all $x : FE$,
 $\pi_1 (\epsilon x) = \theta (F \pi_1 x)$, so we only have to define
-$\pi_2 (\epsilon x) : f (\theta (F e x)) = g (\theta (F e x))$. We
+$\pi_2 (\epsilon x) : f (\theta (F\ e\ x)) = g (\theta (F\ e\ x))$. We
 define $\pi_2 (\epsilon x)$ as the path:
 %
 \begin{align*}
-  &f (\theta (F e x)) \\
-  &= \{ f_0 (F e x) \} \\
-  &\rho (F f (F e x)) \\
-  &\defeq \{ F functor \} \\
-  &\rho (F (f \circ e) x) \\
-  &= \{ \ap\ (\lambda h . \rho (F h x)) p \} \\
-  &\rho (F (g \circ e) x) \\
-  &\defeq \{ F functor \} \\
-  &\rho (F g (F e x)) \\
-  &= \{ g_0 (F e x) ^{-1} \} \\
-  &g (\theta (F e x))
+  &f\ (\theta\ (F\ e\ x)) \\
+  &= \reasonterm{f_0\ (F\ e\ x)} \\
+  &\rho\ (F\ f\ (F\ e\ x)) \\
+  &\defeq \reasontext{$F$ is a strict functor} \\
+  &\rho\ (F\ (f \circ e)\ x) \\
+  &= \reasonterm{\ap\ (\lambda h . \rho\ (F\ h\ x))\ p} \\
+  &\rho\ (F\ (g \circ e)\ x) \\
+  &\defeq \reasontext{$F$ is a strict functor} \\
+  &\rho\ (F\ g (F\ e\ x)) \\
+  &= \reasonterm{g_0\ (F\ e\ x)^{-1}} \\
+  &g\ (\theta\ (F\ e\ x))
 \end{align*}
 %
-Note that by construction, $e_0 x \defeq \refl$. We still have to show
+Note that by construction, $e_0\ x \defeq \refl$. We still have to show
 that composing $(e,e_0)$ with $(f,f_0)$ or $(g,g_0)$ yields the same
 results, so we have to give:
 $$
@@ -962,21 +1053,19 @@ $$
 and for all $x : FE$ the square:
 $$
 \xymatrix{
-f (e (\epsilon x)) 
-  \ar@{-}[r]^{\ap\ (\lambda h . h (\epsilon x)) p} 
-  \ar@{-}[d]_{f_0 (F e x)}  
-&g (e (\epsilon x)) 
-  \ar@{-}[d]^{g_0 (F e x)}
+f\ (e\ (\epsilon\ x)) 
+  \ar@{-}[r]^{\ap\ (\lambda h . h\ (\epsilon x))\ p} 
+  \ar@{-}[d]_{f_0\ (F\ e\ x)}  
+&g (e\ (\epsilon\ x)) 
+  \ar@{-}[d]^{g_0\ (F\ e\ x)}
 \\
-\rho (F (f \circ e) x)
-  \ar@{-}[r]_{\ap\ (\lambda h . \rho (F h x)) p}
-&\rho (F (g \circ e) x)}
+\rho\ (F\ (f \circ e)\ x)
+  \ar@{-}[r]_{\ap\ (\lambda h . \rho\ (F\ h\ x))\ p}
+&\rho\ (F\ (g \circ e)\ x)}
 $$
 
-\todoi{this proof}
-
 We do not need to show that our equaliser satisfies the universal
-property as this is not used by the proof that section induction
+property as this is not used by the proof that the section principle
 implies initiality.
 
 \section{Free monads}
@@ -1438,8 +1527,6 @@ $$
 }
 $$
 
-\todoi{rest of this stuff}
-
 \chapter{Generalised containers}
 \label{sec:gencontainers}
 
@@ -1582,7 +1669,7 @@ we only need the object $L1 : \C$ that has the property shown
 above. For the category $\algcat{F}$ for an endofunctor
 $F : \Type \to \Type$, the left adjoint of the forgetful functor
 $U : \algcat{F} \to \Type$ is defined using the free monad of $F$, as
-we have seen in~\cref{oitfreemonad}.
+we have seen in~\cref{sec:oitfreemonad}.
 
 This means that in order for us to define $U : \algcat{F} \to \Type$
 as a container, we need to have \oits available. Hence to specify \eg
@@ -1603,9 +1690,9 @@ examples. Apart from this the coherence issues are still
 manageable. We will restrict ourselves to \hits with a
 \zeroconstructors followed by one \oneconstructor. 
 
-\todoi{simplify to two constructors: one \zeroconstructor followed by one \oneconstructor}
+simplify to two constructors: one \zeroconstructor followed by one \oneconstructor
 
-\todoi{simplify \oneconstructor: introduce free monad}
+simplify \oneconstructor: introduce free monad
 
 We arrive at the following form of \hits:
 %
