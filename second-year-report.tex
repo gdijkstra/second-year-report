@@ -29,33 +29,54 @@
 
 One of the insights of \hott is that we can view a type as a
 topological space (up to homotopy) and equalities between elements of
-the type as paths. Since equality between two elements is a type
-again, one can consider equalities \emph{between} equalities as well,
-and so on. something about weak $\omega$-groupoids~\cite{VanDenBerg2008}.
+the type as paths. For every inhabitant (or point) $a$ in a type $A$,
+we have the equality $\refl : a = a$. This (trivial) equality can be
+thought of as the constant path from $a$ to $a$. Since equality in
+\mltt is defined as an inductive type, it also comes with an
+elimination principle. This principle allows us to show that equality
+gives us an equivalence relation on a type. For inhabitants
+$x, y, z : A$ and equalities $p : x = y$, $q : y = z$, we can define
+an equality $p \ct q : x = z$ (transitivity) and we can define an
+equality $p^{-1} : y = x$ (symmetry). We can also consider equalities
+\emph{between} equalities, \eg we can prove that transitivity,
+symmetry along with $\refl$ satisfy the groupoid
+laws~\cite{Hofmann1998}. There is no need to stop there, we can also
+consider equalities between equalities between equalities, ad
+infinitum: a type along with its equality types forms a weak
+$\omega$-groupoid~\cite{VanDenBerg2008}.
 
 This then raises the question what kind of homotopical structure we
 get in the types we know. For the usual types, such as the natural
 numbers and the booleans, the structure is rather trivial: two
 elements of are either equal, connected by a unique path ($\refl$), or
 they are not equal, \ie not connected by a path. Types like these
-satisfy \emph{\uip}. Sometimes it makes sense to not have this
-property. If we talk about the type $\Type$, we would like that
+satisfy \emph{\uip}. In topology a space with this property is called
+a \emph{discrete} space. Types that satisfy \uip are usually referred
+to as \emph{h-sets} or simply \emph{sets}.
+
+If we talk about the universe of types $\Type$, we would like that
 equality of elements in this type coincides with isomorphism of
-types. There can be several distinct isomorphisms between types that
-do not make sense to identify with eachother, such as the isomorphisms
-$\id{}$ and $\boolnot$ on $\Bool$. In \hott, one typically assumes the
-\emph{univalence} axiom for a universe of, which tells us, for any
-types $A$ and $B$:
+types. In \hott, one typically assumes the \emph{univalence} axiom for
+a universe of types, which tells us, for any types $A$ and $B$:
 $$
 (A \simeq B) = (A = B)
 $$
-In homotopy theory, we have ``simpler'' examples of spaces where there
-are multiple distinct paths between two points. One example of such a
-space is the circle: a path going around the circle two times is not a
-path we can continuously deform into a path that goes around the
-circle one time. In order to talk about such examples in a type
-theoretic way, \emph{\hits} can be added to the theory. A \hit that
-corresponds to the circle is:
+Universes that satisfy univalence, also called \emph{univalent
+  universes} often do not satisfy \uip, \eg assuming $\Type$ is
+univalent, we have two distinct equalities on $Bool : \Type$: $\id{}$
+(or $\refl$) and $\boolnot$.
+
+Instead of looking at the homotopical structure of types we are
+already familiar with, we can do the converse and look at the
+geometric examples from homotopy theory, such as spheres and tori. The
+question then becomes how we represent such objects in a type
+theoretic way. \Hits have been introduced to provide an answer to this
+question.
+
+One example of such a space is the circle: a path going around the
+circle two times is not a path we can continuously deform into a path
+that goes around the circle one time. A \hit that corresponds to the
+circle is:
 %
 \begin{alignat*}{2}
   &\rlap{$\data\ S^1\ :\ \Type\ \where$} \\
@@ -69,16 +90,32 @@ constructor, as it does not map into the type $S^1$, but one of its
 equality types. $S^1$ comes with a recursion principle or
 non-dependent eliminator:
 $$
-\rec : (A : \Type) (b : A) (l : b = b) \to S^1 \to \Type
+\rec : (A : \Type) (b : A) (l : b = b) \to S^1 \to A
 $$
 which comes with the following computation rules, given $A : \Type$,
 $b : A$ and $l : b = b$:
+%
+\begin{align*}
+&\rec\mbox{-}\beta_0 : \rec\ A\ b\ l\ \base = b \\
+&\rec\mbox{-}\beta_1 : \ap\ \rec\ \loopcstr = l
+\end{align*}
+%
+The recursion principle for $S^1$ tells us that in order to map out of
+$S^1$, we need to what we want to map the constructor $\base$ to and
+also where we want to mape the \emph{path constructor} $\loopcstr$
+to. Just as the constructor $\loopcstr$ refers to a previous
+constructor, the data for the recursion principle has the same
+dependency. This means that we cannot blindly reorder the constructors
+of $S^1$, nor the data for the recursion principle.
+
+The induction principle or dependent eliminator of $S^1$ is as
+follows:
 $$
-\rec\mbox{-}\beta_0 : \rec\ A\ b\ l\ \base = b
+\ind : (P : S^1 \to \Type) (b : P\ \base) (l : b = b [ P \downarrow \loopcstr ]) \to (x : S^1) \to P\ x
 $$
-$$
-\rec\mbox{-}\beta_1 : \ap\ \rec\ \loopcstr = l
-$$
+Note that for $l$ we now have to give a dependent path over
+$\loopcstr$.
+
 For \oits, it is usually the case that the computation rules for the
 elimination principles hold definitionally. In this note we want to
 talk about the theory of \hits in type theory itself and as such we do
@@ -203,8 +240,10 @@ arguments of the constructor $\Pi$.
 \label{sec:theoryhits}
 
 As of yet, there is no formal description of what constitutes a \hit
-and as such formally proving properties about \hits in general is
-impossible. However, there are several statements ...
+and as such formally proving properties about them in general is
+impossible. However, there are several somewhat formal statements
+about \hits that can be made. Once we have a theory of \hits, these
+are the sort of statements we ought to be able to prove.
 
 \subsection{Reordering of constructors}
 
@@ -337,11 +376,25 @@ recursive path constructors, similar to the construction above.
 \section{Categories in type theory}
 \label{sec:catintt}
 
-As we will talk about categorical concepts in type theory in this
-report, we have to elucidate what we mean when we say \eg
-``category''. 
+As we will be talking about categorical concepts in type theory in
+this report, we have to elucidate what we mean when we say \eg
+``category''. We can start by saying that a category $\C$ consists of:
+%
+\begin{itemize}
+\item a type of objects: $\obj : \Type$
+\item a type of morphisms: $\Hom : \obj \to \obj \to \Type$
+\end{itemize}
+%
+Traditionally, the definition of a category has for each pair of
+objects a \emph{set} of objects, whereas here we have a $\Type$. We
+have seen that types are weak $\omega$-groupoids and therefore need
+not be sets, \ie satisfy \uip. We can restrict the type of $\Hom$ to
+only give us types that satisfy \uip. Doing so allows us to formalise
+basic category theory in type theory~\cite{Ahrens2015}.
 
-% what is a category? aks category?
+Since we want to talk about types and not just sets, such an approach
+is not sufficient for us. $\Type$ should not be seen as a category,
+but as a \omegacat. Defining what an \omegacat is exactly is 
 
 % all limits and colimits are /homotopy/ limits and colimits
 \section{Overview}
