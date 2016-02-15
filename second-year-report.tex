@@ -64,7 +64,8 @@ $$
 Universes that satisfy univalence, also called \emph{univalent
   universes} often do not satisfy \uip, \eg assuming $\Type$ is
 univalent, we have two distinct equalities on $Bool : \Type$: $\id{}$
-(or $\refl$) and $\boolnot$.
+(or $\refl$) and $\boolnot$. Identifying these two equalities would
+allow us to prove $\true = \false$.
 
 Instead of looking at the homotopical structure of types we are
 already familiar with, we can do the converse and look at the
@@ -393,18 +394,64 @@ only give us types that satisfy \uip. Doing so allows us to formalise
 basic category theory in type theory~\cite{Ahrens2015}.
 
 Since we want to talk about types and not just sets, such an approach
-is not sufficient for us. $\Type$ should not be seen as a category,
-but as a \omegacat. Defining what an \omegacat is exactly is 
+is not sufficient for us. However, if we have hom-types instead of
+hom-sets, we should require the category laws to satisfy coherence
+conditions, \eg the associator $\assoc$ should satisfy the usual
+pentagon condition. The witness of the pentagon condition itself also
+has to adhere to coherence conditions, and so on. Luckily, for $\Type$
+itself this is not much of an issue, as the category laws hold
+strictly. We will see that for the category of algebras $\algcat{F}$
+of an endofunctor $F : \Type \to \Type$ is not a strict functor, so
+there we cannot avoid talking about coherence.
 
-% all limits and colimits are /homotopy/ limits and colimits
+The notion of \omegacat makes it precise what coherence conditions we
+need. Defining what a \omegacat is exactly is requires the machinery
+of simplicial simplicial sets (or bisimplicial sets). One could
+replace bisimplicial sets with simplicial \emph{types}, but giving a
+definition of simplicial types in type theory itself is
+problematic. In order to do so, it seems one has to extend the theory
+to be able to talk about strict equalities inside the theory. Instead
+of giving a definition of \omegacats, we will deal with coherence
+lazily: we will prove the appropriate conditions when we need them. We
+will see that we are able to get some results with considering a
+finite amount of coherence laws.
+
+Since we are working internally, limit and colimit constructions yield
+\emph{homotopy} limits and \emph{homotopy} colimits~\cite{Avigad2015}:
+the constructions are up to propositional equality. When we talk about
+initial algebras internally, these objects also correspond to
+\emph{homotopy} initial algebras~\cite{Awodey2012}. We will usually
+drop the ``homotopy'' prefix for readability purposes.
+
 \section{Overview}
 \label{sec:overview}
 
+In~\cref{sec:syntax} we will introduce the syntax of \hits and
+describe how they differ from \oits. In~\cref{sec:oits} we will show
+how for \oits, being an initial algebra and satisfying the induction
+principle coincide. In~\cref{sec:hits} we attempt to generalise this
+construction to \hits and note which things work and what is
+problematic. \Cref{sec:gencontainers} introduces the concept of
+\emph{generalised containers}, which generalises the notion of
+container or strictly positive functor from functors $\Type \to \Type$
+to functors $\C \to \Type$ for any category
+$\C$. In~\cref{sec:onehits} we consider a restricted scheme of \hits
+in order to limit the coherence issues and work towards showing that
+initiality and induction coincide. The last chapter,
+\cref{sec:outline}, gives a thesis outline.
 
-\chapter{Syntax of higher inductive types}
+\section{Formalisation}
+\label{sec:formalisation}
+
+The goal of this project is to have a theory of \hits that we can
+formalise in type theory. As such, many of the results in this report
+have been formalised in Agda~\cite{Norell2009}:
+\url{https://github.com/gdijkstra/homotopy-initiality/tree/general-approach}.
+
+\chapter{Syntax of \hits}
 \label{sec:syntax}
 
-If we define an ordinary inductive type, we start out by writing down
+If we define an \oit, we start out by writing down
 a list of constructors, \eg:
 %
 \begin{alignat*}{2}
@@ -456,7 +503,7 @@ a \hit:
 \end{alignat*}
 
 Constructors of a \hit are \emph{dependent dialgebras}. In general, a
-higher inductive type looks as follows:
+\hit looks as follows:
 %
 \begin{alignat*}{5}
   &\rlap{$\data\ T\ :\ \Type\ \where$}& \\
@@ -573,11 +620,6 @@ In this section we will recap some of the basic theory of \oits: we
 will give its induction principle and explain the initial algebra
 characterisation and how these two characterisations coincide. This
 section provides an outline for how to approach the theory of \hits.
-
-Note that since we are working inside the type theory so the
-specification of initiality will also be internal, which means we are
-working with \emph{homotopy initiality}~\cite{Awodey2012}. In this
-note we will leave out the ``homotopy'' part to increase readability.
 
 We will first explain how an \oit is specified and what its
 introduction rules are in~\cref{sec:oitspec}.
