@@ -159,14 +159,14 @@ Note that we have to add $\uipc$ as a constructor to make sure that the
 result is a set. Without it, we may get non-trivial equalities even
 though we $A$ might be a set and $~$ is propositional everywhere. An
 example of this is taking $A$ to be the unit type and ``quotienting''
-it by the trivial relation, \ie $x ~ y = \unitty$ for all
+it by the trivial, relation, \ie $x ~ y = \unitty$ for all
 $x\ y : \unitty$. Without the $\uipc$ constructor, $A/~$ will be
 equivalent to the circle.
 
 It is clear that we can implement quotient types using \hits. The
 other way around does not hold for different reasons. When we talk
 about quotient types, we usually talk about quotienting a \emph{set}
-by a propositional relation, and do not think about them as a way of
+by a propositional, relation, and do not think about them as a way of
 introducing types with non-trivial (higher) equalities. However, even
 if we restrict ourselves to sets, \hits are more general than
 quotients. An example where this difference shows up is the type of
@@ -511,10 +511,10 @@ Constructors of a \hit are \emph{dependent dialgebras}. In general, a
   &&\ \ c_1    &: (x : F_1 (T,c_0))              &\to\ &G_1\ ((T, c_0), x)& \\
   &&\ \ c_2    &: (x : F_2 (T,c_0,c_1))          &\to\ &G_2\ ((T, c_0, c_1), x)& \\
   &&\ \        &\vdots &&&\\
-  &&\ \ c_{k+1} & : (x : F_k (T,c_0, \hdots, c_k) &\to\ &G_k\ ((T, c_0, \hdots, c_k), x)&
+  &&\ \ c_{k+1} & : (x : F_k (T,c_0, \hdots, c_k)) &\to\ &G_k\ ((T, c_0, \hdots, c_k), x)&
 \end{alignat*}
 
-We will refer to the $F_i$ functors as \emph{argument} functors and the
+We will, refer to the $F_i$ functors as \emph{argument} functors and the
 $G_i$ functors as \emph{target} functors. The types of the argument
 functors are:
 %
@@ -616,7 +616,7 @@ scheme~\cite{Capriotti2014}.
 \chapter{Initiality and induction for \oits}
 \label{sec:oits}
 
-In this section we will recap some of the basic theory of \oits: we
+In this section we will, recap some of the basic theory of \oits: we
 will give its induction principle and explain the initial algebra
 characterisation and how these two characterisations coincide. This
 section provides an outline for how to approach the theory of \hits.
@@ -644,7 +644,7 @@ container~\cite{Abbott2005}, which ensures that it is strictly
 positive. Since we are not primarily interested in the existence of
 the inductive types, we do not need this particular
 restriction. Containers do give rise to functors that satisfy the
-functor laws strictly, which makes the equational reasoning a lot more
+functor laws strictly, which makes the equational, reasoning a lot more
 convenient for us.
 
 A functor $F$ defines an inductive type $T$ with type formation rule:
@@ -959,7 +959,7 @@ but only weakly.
 
 In this section we will assume that $F$ is given as a container, which
 means that it satisfies the functor laws strictly, simplifying the
-equational reasoning.
+equational, reasoning.
 
 \subsection{Identity morphisms}
 
@@ -1029,7 +1029,7 @@ $$
 $$
 As we will see for the category laws, since $\Type$ is a strict
 category hence the $p$ part of algebra morphism equalities will be
-$\refl$ and $p_0$ will reduce to an non-dependent path. If $p$ is
+$\refl$ and $p_0$ will, reduce to an non-dependent path. If $p$ is
 non-trivial, we can still simplify the $p_0$ part. Giving $p_0$
 amounts to giving the following square for every $x : FX$:
 $$
@@ -1450,7 +1450,7 @@ $x : F \alg{X}$:
 \begin{align*}
   &G\ (g \circ f)\ (\theta\ x) \\
   &= \reasonterm{\Gcomp\ g\ f\ (\theta\ x)} \\
-  &G\ g\ (G\ f\ (\theta\ x) \\
+  &G\ g\ (G\ f\ (\theta\ x)) \\
   &= \reasonterm{\ap\ (G\ g)\ (f_0\ x)} \\
   &G\ g\ (\rho\ (F\ f\ x)) \\
   &= \reasonterm{g_0\ (F\ f\ x)} \\
@@ -1796,33 +1796,121 @@ dialgebras with enough categorical structure to do what we want to
 do. In this section we consider a simplification of the general
 scheme, which is expressive enough to include interesting
 examples. Apart from this the coherence issues are still
-manageable. We will restrict ourselves to \hits with a
-\zeroconstructors followed by one \oneconstructor. 
-
-simplify to two constructors: one \zeroconstructor followed by one \oneconstructor
-
-simplify \oneconstructor: introduce free monad
+manageable. We can restrict ourselves to \hits with a
+\zeroconstructors followed by one \oneconstructor, \ie consider \hits
+of the form:
+%
+\begin{alignat*}{2}
+  &\rlap{$\data\ T\ :\ \Type\ \where$} \\
+  &&\ \ c_0  &:\ F_0\ T \to T \\
+  &&\ \ c_1  &:\ (x : F_1\ (T,c_0)) \to l_{(T,c_0)}\ x = r_{(T,c_0)}\ x
+\end{alignat*}
+%
+where $l, r : F_1 \to U_0$, for $U_0 : \algcat{F_0} \to \Type$ the
+forgetful functor. In~\cref{sec:hitscategory} we have seen that the
+constructor $c_1$ is problematic if $F_1$ is not strict. If we $F_1$
+is given as a generalised container, it will generally not be strict,
+as it maps out of $\algcat{F}$, which in itself does not satisfy the
+category laws strictly. To avoid this issue, we assume $F_1$ does not
+use the algebra part $c_0$, \ie there exists $F_1' : \Type \to \Type$
+such that $F_1 = F_1' \circ U_0$. With this restriction, the natural
+transformations $F_1 \to U_0$ reduce to natural transformations
+$F_1' \to F_0^*$: the target functors becomes
+$G ((X,\theta_0), x) \ddefeq (\theta_0^*\ (l\ x) = \theta_0^*\ (r\
+x))$,
+where $\theta_0^* : F_0^* X \to X$ is the lifting of $\theta$ to the
+free monad $F_0^*$. Now if $F_0, F_1 : \Type \to \Type$ are given as
+containers, they will be strict functors, hence we avoid the coherence
+issues mentioned in~\cref{sec:hitscategory}.
 
 We arrive at the following form of \hits:
 %
 \begin{alignat*}{2}
   &\rlap{$\data\ T\ :\ \Type\ \where$} \\
   &&\ \ c_0  &:\ F_0\ T \to T \\
-  &&\ \ c_1  &:\ (x : F_1\ T) \to c_0^* (l\ x) = c_0^* (r\ x)
+  &&\ \ c_1  &:\ (x : F_1\ T) \to c_0^*\ (l\ x) = c_0^*\ (r\ x)
 \end{alignat*}
 %
 where:
 \begin{itemize}
 \item $F_0, F_1 : \Type \to \Type$ are functors, given as containers
-\item $l r : F_1 \to F_0 *$ are natural transformations, given as container morphisms
+\item $l, r : F_1 \to F_0^*$ are natural transformations, given as container morphisms
 \end{itemize}
-
-\section{Examples}
-
 
 \section{Target functor}
 
+For the inductive types we are talking about in this chapter there are
+two target functors: one for the first constructor and one for the
+second. Since the first target functor is just the identity functor,
+it does not need any special treatment. As such, when we say ``the
+target functor'', we are referring to the second target functor. This
+target functor is defined as:
+%
+\begin{align*}
+&G : \int_{\algcat{F_0}} (F_1 \circ U_0) \to \Type \\
+&G\ ((X,\theta_0), x) \ddefeq (\theta_0^*\ (l_{X}\ x) = \theta_0^*\ (r_{X}\ x))
+\end{align*}
+%
+with its action on morphisms:
+%
+\begin{align*}
+&G : \int_{\algcat{F_0}} (F_1 \circ U_0) (((X,\theta_0),x),((Y,\rho_0),y)) \\
+&\ \ \to G\ ((X,\theta_0),x) \to G\ ((Y,\rho_0),y) \\
+&G\ ((f,f_0),p) q \ddefeq \\
+&\ \ \rho_0^*\ (l\ y) \\
+&\ \ = \reasonterm{\ap\ (\lambda z . \rho_0^*\ (l\ z))\ p} \\
+&\ \ \rho_0^*\ (l\ (F_1\ f\ x)) \\
+&\ \ \defeq \reasontext{naturality of $l$} \\
+&\ \ \rho_0^*\ (F_0^*\ (l\ x)) \\
+&\ \ = \reasonterm{f_0^*\ (l\ x)} \\
+&\ \ f\ (\theta_0^*\ (l\ x)) \\
+&\ \ = \reasonterm{\ap\ f\ q} \\
+&\ \ f\ (\theta_0^*\ (r\ x)) \\
+&\ \ = \reasonterm{f_0^*\ (r\ x)^{-1}} \\
+&\ \ \rho_0^*\ (F_0^*\ f\ (r\ x)) \\
+&\ \ \defeq \reasontext{naturality of $r$} \\
+&\ \ \rho_0^*\ (r\ (F_1\ f\ x)) \\
+&\ \ = \reasonterm{\ap\ (\lambda z . \rho_0^*\ (r\ z))\ p^{-1}} \\
+&\ \ \rho_0^*\ (r\ y)
+\end{align*}
+%
+The lifting $^* : \algcat{F_0} \to \algcat{F_0^*}$ is functorial, so
+we also have a lifting of:
+$$
+f_0 : (x : F_0 X) \to f\ (\theta_0\ x) = \rho_0\ (F_0\ f\ x)
+$$
+to
+$$
+f_0^* : (x : F_0^* X) \to f\ (\theta_0^*\ x) = \rho_0^*\ (F_0^*\ f\ x)
+$$
+
+We can also show that the target functor preserves composition and
+identity morphisms, appealing to functoriality of $\ap$ and of lifting
+of algebras. This means that $G$ is not a strict functor.
+
 \section{Category of algebras}
+
+In~\cref{sec:hits} we have seen what the algebras and algebra
+morphisms look like in the general case, so we can instantiate it for
+our restricted version:
+%
+\begin{alignat*}{3}
+&|\Alg_s| &&\ddefeq &&\ (X : Type) \\
+&&&\ \times &&\ (\theta_0 : F_0 X \to X) \\
+&&&\ \times &&\ (\theta_1 : (x : F_1 X) \to G\ ((X,\theta_0),x)
+\end{alignat*}
+%
+with morphisms:
+\begin{alignat*}{3}
+  &\Alg_s((X,\theta_0,\theta_1),(Y,\rho_0,\rho_1)) &&\ddefeq &&\ (f : X \to Y) \\
+  &&&\ \times &&\ (f_0 : (x : F_0 X) \to f\ (\theta_0\ x) = \rho_0\ (F_0\ f\ x)) \\
+  &&&\ \times &&\ (f_1 : (x : F_1 X) \to G\ (\lift f) (\theta_1\ x) = \rho_1\ (F_1\ f\ x))
+\end{alignat*}
+
+Defining composition and identity morphisms is similar to what we have
+done in~\cref{sec:nondepdialg}. Equality of algebra morphisms is a bit
+more involved, since the second constructor is a \emph{dependent}
+dialgebra.
 
 \section{Induction principle}
 
@@ -1831,8 +1919,6 @@ where:
 \subsection{Dependent algebra morphisms}
 
 \section{Limitations}
-
-While being quite general, the approach explained here has several shortcomings.
 
 \chapter{Thesis outline}
 \label{sec:outline}
@@ -1844,12 +1930,15 @@ While being quite general, the approach explained here has several shortcomings.
   \item \mltt
   \item \Hott
   \item Examples of \hits
-  \item \omegacat theory
+  \item Category theory in type theory and \omegacat theory
   \item Generalised containers
   \end{itemize}
 \item Syntax of \hits
-\item Initiality and induction for \oits
-\item Initiality and induction for \hits
+\item Initiality and induction
+  \begin{itemize}
+  \item for \oits
+  \item for \hits
+  \end{itemize}
 \item Properties of \hits
   \begin{itemize}
   \item Reordering of constructors
@@ -1863,4 +1952,3 @@ While being quite general, the approach explained here has several shortcomings.
 \bibliography{second-year-report}
 
 \end{document}
-
