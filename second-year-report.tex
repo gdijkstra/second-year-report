@@ -1255,13 +1255,13 @@ $$
 $$
 A morphism $(X, \theta) \to (Y, \rho)$ consists of:
 $$
-(f : \C(X,Y)) \times (f_0 : (x : FX) \to G (\lift\ f\ x) (\theta\ x) = \rho (F f x))
+(f : \C(X,Y)) \times (f_0 : (x : FX) \to G\ (\lift f\ x)\ (\theta\ x) = \rho\ (F\ f\ x))
 $$
 where:
 %
 \begin{align*}
-&\lift : (f : \C(X,Y)) (x : FX) \to \int_{C}\ F ((X,x),(Y,Ffx)) \\
-&\lift f x \ddefeq (f , \refl)
+&\lift : (f : \C(X,Y))\ (x : FX) \to \int_{C}\ F ((X,x),(Y,F\ f\ x)) \\
+&\lift f\ x \ddefeq (f , \refl)
 \end{align*}
 %
 
@@ -1270,14 +1270,14 @@ inductive-recursive definition:
 %
 \begin{align*}
   &\Spec : \Type \\
-  &\Alg : Spec \to \Cat \\
+  &\Alg : \Spec \to \Cat \\
   \\
-  &\data \Spec \where \\
-  &\epsilon : \Spec \\
-  &\_,\_ : (s : \Spec) \to \Constr (\Alg s) \to \Spec \\
+  &\data\ \Spec\ \where \\
+  &\ \ \epsilon : \Spec \\
+  &\ \ \_,\_ : (s : \Spec) \to \Constr\ (\Alg\ s) \to \Spec \\
   \\
-  &\Alg \epsilon \ddefeq \Type\\
-  &\Alg (s , c) \ddefeq \extend (\Alg s) c
+  &\Alg\ \epsilon \ddefeq \Type\\
+  &\Alg\ (s , c) \ddefeq \extend\ (\Alg\ s)\ c
 \end{align*}
 %
 Since we have defined objects and morphisms, we have enough
@@ -1291,20 +1291,29 @@ modality from acting on families in $\Type$ to acting on families in
 $\C$. We can define for $F : \Alg_s \To \Type$ and
 $G : \int_{\Alg_s}\ F \To \Type$ the following mutually by induction
 on $s : \Spec$, assuming $\alg{X} : \Alg_s$ and
-$\algfib{P} : \Fam_s \alg{X}$:
+$\algfam{P} : \Fam_s \alg{X}$:
 %
 \begin{alignat*}{4}
-  &\Fam_s\ \alg{X} \ \algfib{P} &&: \Alg_s \to \Type&\\
-  &\Box_F\ \alg{X} \ \algfib{P} &&: F \alg{X} \to \Type&\\
-  &\Box_G\ \alg{X} \ \algfib{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfib{P}\ x) \to G (\alg{X} , x) \to \Type&\\
-  &\total\ \alg{X} \ \algfib{P} &&: \Alg_s&\\
-  &\proj\ \alg{X} \ \algfib{P}  &&: \Alg_s(\total\ \alg{X}\ \algfib{P}, \alg{X})&\\
-  &\phi_F\ \alg{X} \ \algfib{P} &&: \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \algfib{P}) \to F (\total\ \alg{X}\ \algfib{P})&\\
-  &\phi_G\ \alg{X} \ \algfib{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfib{P}\ x) &\\
-  &\ \ \ \ &&\to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfib{P}\ x\ y) 
-            \to G (\total\ \alg{X}\ \algfib{P}, \phi_F\ \alg{X}\ \algfib{P} (x , y)) &
+  &\Fam_s\ &&\alg{X}             &&: \Alg_s \to \Type&\\
+  &\Box_F\ &&\alg{X}\ \algfam{P} &&: F \alg{X} \to \Type&\\
+  &\Box_G\ &&\alg{X}\ \algfam{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfam{P}\ x) \to G (\alg{X} , x) \to \Type&\\
+  &\total\ &&\alg{X}\ \algfam{P} &&: \Alg_s&\\
+  &\proj\  &&\alg{X}\ \algfam{P} &&: \Alg_s(\total\ \alg{X}\ \algfam{P}, \alg{X})&\\
+  &\phi_F\ &&\alg{X}\ \algfam{P} &&: \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \algfam{P}) \to F (\total\ \alg{X}\ \algfam{P})&\\
+  &\phi_G\ &&\alg{X}\ \algfam{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfam{P}\ x) &\\
+  &&&&&\to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfam{P}\ x\ y) 
+            \to G (\total\ \alg{X}\ \algfam{P}, \phi_F\ \alg{X}\ \algfam{P} (x , y)) &
 \end{alignat*}
 %
+where $\Fam_s$ is defined as:
+\begin{align*}
+  &\Fam_\epsilon X &&\ddefeq X \to \Type \\
+  &\Fam_{s,(F,G)} (\alg{X},\theta) &&\ddefeq (\algfam{P} : \Fam_s\ \alg{X}) \\ 
+  &&&\times\ (m : (x : FX) \times (y : \Box_F\ \alg{X}\ \algfam{P}\ x) \to \Box_G\ \alg{X}\ \algfam{P}\ x\ y\ (\theta\ x)
+\end{align*}
+%
+The other functions are defined in the same manner as for $\algcat{F}$
+as we have seen in~\cref{sec:oits}.
 
 \section{Category structure and coherence issues}
 \label{sec:hitscategory}
@@ -1621,6 +1630,11 @@ $$
 &GX
 }
 $$
+The carrier of the equaliser is then $\eq_{\C}\ f g$. By the universal
+property of $\eq_{\Type}\ (G f)\ (G g)$ we have a function
+$F (\eq_{\C}\ f\ g) \to \eq_{\Type}\ (G f)\ (G g)$, composing this
+with $\Geq\ f\ g$ we get an algebra
+$F (\eq_{\C}\ f\ g) \to G (\eq_{\C}\ f\ g)$.
 
 \chapter{Generalised containers}
 \label{sec:gencontainers}
@@ -1823,7 +1837,28 @@ While being quite general, the approach explained here has several shortcomings.
 \chapter{Thesis outline}
 \label{sec:outline}
 
-
+\begin{itemize}
+\item Introduction
+\item Preliminaries
+  \begin{itemize}
+  \item \mltt
+  \item \Hott
+  \item Examples of \hits
+  \item \omegacat theory
+  \item Generalised containers
+  \end{itemize}
+\item Syntax of \hits
+\item Initiality and induction for \oits
+\item Initiality and induction for \hits
+\item Properties of \hits
+  \begin{itemize}
+  \item Reordering of constructors
+  \item Hub-spokes construction
+  \item Flattening lemma
+  \end{itemize}
+\item Semantics of \hits
+\item Future work
+\end{itemize}
 
 \bibliography{second-year-report}
 
