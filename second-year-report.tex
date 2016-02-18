@@ -143,6 +143,16 @@ themselves. Constructors such as $p$ and $q$ are called
 $n > 0$, \nconstructors{n} are also referred to as \emph{path
   constructors}.
 
+\section{Implementation of \hits}
+
+\todoi{Write up on status quo of HITs in Agda, refer to \texttt{HoTT-agda} library and calculating circle paper.}
+
+\todoi{Write up on status quo of HITs in Coq.}
+
+\todoi{Write up on status quo of HITs in Lean.}
+
+\todoi{Wrtie up on status quo of HITs in \texttt{cubicaltt}.}
+
 \section{\Hits versus quotients}
 \label{sec:quotients}
 
@@ -628,13 +638,14 @@ and define initiality and in~\cref{sec:oitinduction} the induction
 principle is defined. Instead of showing directly that initiality and
 induction are equivalent, we formulate the \emph{section principle}
 which is ``in between'' the two, in~\cref{sec:oitsection}. We will
-first show that this principle is logically equivalent to the
-induction principle in~\cref{sec:oitsectioninduction}. The section
-principle is also logically equivalent to initiality, given by a
-purely categorical proof in~\cref{sec:oitsectioninitiality}. The
-categorical structure of the algebras needed for this proof is given
-in~\cref{sec:oitalgcat}. In~\cref{sec:oitfreemonad} we conclude with
-some remarks on free monads and their relation to \oits.
+first show that the section principle is logically equivalent to
+initiality, given by a purely categorical proof
+in~\cref{sec:oitsectioninitiality}. The categorical structure of the
+algebras needed for this proof is given in~\cref{sec:oitalgcat}. We
+then have enough structure to show in~\cref{sec:oitsectioninduction}
+that the induction principle is equivalent to the section
+principle. In~\cref{sec:oitfreemonad} we conclude with some remarks on
+free monads and their relation to \oits.
 
 \section{Specification}
 \label{sec:oitspec}
@@ -760,7 +771,7 @@ Using this modality we can define what an algebra family is:
 %
 \begin{defn}
   An \emph{$F$-algebra family} over an algebra $(X,\theta)$, denoted
-  $\Famover{\algcat{F}}{(X,\theta)}$, consists of:
+  $\famover{\algcat{F}}{(X,\theta)}$, consists of:
 
   \begin{itemize}
   \item a motive $P : X \to \Type$
@@ -778,8 +789,8 @@ $F$ on dependent functions:
 %
 \begin{defn}
   A \emph{dependent $F$-algebra morphism} of an an $F$-algebra family
-  $(P,m) : \Famover{\algcat{F}}{(X,\theta)}$ over algebra
-  $(X,\theta)$, which is denoted as $\DepHom{\algcat{F}}{(P,m)}$,
+  $(P,m) : \famover{\algcat{F}}{(X,\theta)}$ over algebra
+  $(X,\theta)$, which is denoted as $\dephom{\algcat{F}}{(P,m)}$,
   consists of:
 
   \begin{itemize}
@@ -793,8 +804,8 @@ Now we have all the ingredients to specify the induction principle:
 \begin{defn}
   An algebra $(T,c) : \algcat{F}$ satisfies the \emph{induction
     principle} if for every algebra family
-  $(P,m) : \Famover{\algcat{F}}{(T,c)}$ there is a dependent algebra
-  morphism $(\ind,\ind_0) : \DepHom{\algcat{F}}{(P,m)}$.
+  $(P,m) : \famover{\algcat{F}}{(T,c)}$ there is a dependent algebra
+  morphism $(\ind,\ind_0) : \dephom{\algcat{F}}{(P,m)}$.
 \end{defn}
 
 So far we have been careful to avoid the words ``fibration'' and
@@ -810,7 +821,7 @@ interchangeably. In~\cref{sec:oitsectioninduction} we will show that
 giving a family over an algebra $\alg{X} : \algcat{F}$ is the same as
 giving an algebra morphism into $\alg{X}$:
 $$
-\Famover{\algcat{F}}{\alg{X}} = (\alg{Y} : \algcat{F}) \times \algcat{F}(\alg{Y},\alg{X})
+\famover{\algcat{F}}{\alg{X}} = (\alg{Y} : \algcat{F}) \times \algcat{F}(\alg{Y},\alg{X})
 $$
 
 \section{Section principle}
@@ -822,8 +833,8 @@ is somewhere in between the type theoretic induction principle and the
 categorical notion of initiality. In~\cref{sec:oitinduction}, the
 induction principle for an inductive type $T$ with constructor
 $c : FT \to T$ gives us for every algebra family
-$(P,m) : \Famover{\algcat{F}}{(T,c)}$, a dependent algebra morphism
-$(\ind,\ind_0) : \DepHom{\algcat{F}}(P,m)$. The section principle
+$(P,m) : \famover{\algcat{F}}{(T,c)}$, a dependent algebra morphism
+$(\ind,\ind_0) : \dephom{\algcat{F}}(P,m)$. The section principle
 states that every \emph{algebra fibration} has a \emph{section}:
 %
 \begin{defn}
@@ -851,40 +862,6 @@ states that every \emph{algebra fibration} has a \emph{section}:
 Note that in order for this to be a complete definition, we have to
 define composition of algebra morphisms and define the identity
 morphisms. This will be done in~\cref{sec:oitalgcat}.
-
-\section{Induction principle is logically equivalent to section principle}
-\label{sec:oitsectioninduction}
-
-To show that the induction and the section principle are logically
-equivalent, we need to show that, given an algebra
-$\alg{X} : \algcat{F}$:
-$$
-(\algfam{P} : \Famover{\algcat{F}}{\alg{X}}) \to \DepHom{\algcat{F}}{\algfam{P}}
-$$
-is logically equivalent to:
-$$
-(\algfib{P} : \fibover{\algcat{F}}{\alg{X}}) \to \sectionof{\algcat{F}}{\algfib{P}}
-$$
-We first have to show that $\Famover{\algcat{F}}{\alg{X}}$ is equivalent
-to $\fibover{\algcat{F}}{\alg{X}}$. 
-
-For a type family $A
-: \Type, B : A \to \Type$, we have the $\Sigma$-type $\Sigma A B :
-\Type$ along with a projection into $A$: $\pi_1 : \Sigma A B \to
-A$. For
-$F$-algebra
-families we have similar operations, that we will call $\total$
-for \emph{total space} and $\proj$,
-the project out of the total space into its base space:
-\begin{align*}
-  &\total : \Famover{\algcat{F}}{(X,\theta)} \to \algcat{F} \\
-  &\total\ (P, m) \ddefeq (\Sigma X P, \lambda x . (\theta\ (F\ \pi_1\ x) , \uncurry m \circ \phi)) \\
-  &\\
-  &\proj : (\algfam{P} : \Famover{\algcat{F}}{(X,\theta)}) \to \algcat{F}(\total \algfam{P}, (X,\theta)) \\
-  &\proj\ (P, m) \ddefeq (\pi_1 , \lambda x . \refl)
-\end{align*}
-
-\todoi{Work out this}
 
 \section{Section principle is logically equivalent to initiality}
 \label{sec:oitsectioninitiality}
@@ -1162,6 +1139,84 @@ $$
 We do not need to show that our equaliser satisfies the universal
 property as this is not used by the proof that the section principle
 implies initiality.
+
+\section{Induction principle is equivalent to section principle}
+\label{sec:oitsectioninduction}
+
+To show that the induction and the section principle are equivalent,
+we will show that the families, fixing an algebra $\alg{X} : \algcat{F}$:
+$$
+\dephom{\algcat{F}} : \famover{\algcat{F}}{\alg{X}} \to \Type
+$$
+and
+$$
+\sectionof{\algcat{F}} : \fibover{\algcat{F}}{\alg{X}} \to \Type
+$$
+are equivalent.
+
+We will first consider the similar case for $\Type$ instead of
+$\algcat{F}$. Note that in $\Type$ families over $X : \Type$ are
+functions $P : X \to \Type$ and fibrations over $X$ are elements of
+the $(A : \Type) \times (p : A \to X)$. Furthermore, we have:
+%
+\begin{align*}
+  &\dephom{\Type} : (P : X \to \Type) \to \Type \\
+  &\dephom{\Type} P \ddefeq (x : X) \to P\ x \\
+  &\\
+  &\sectionof{\Type} : (A : \Type) \times (p : A \to X) \to \Type \\
+  &\sectionof{\Type} (A , p) \ddefeq (s : X \to A) \times (p \circ s = \id{X})
+\end{align*}
+%
+To show that $\dephom{\Type}$ and $\sectionof{\Type}$ are equivalent
+families we need the following:
+\begin{itemize}
+\item an equivalence $f : (P : X \to \Type) \toequiv (A : \Type) \times (p : A \to X)$
+\item a family of equivalences $(P : X \to \Type) \to \dephom{\Type} P = \sectionof{\Type} (f\ P)$
+\end{itemize}
+
+We can show that $f\ P \ddefeq (\Sigma X P , \pi_1)$ is an equivalence
+(with the preimage family
+$\pi^{-1}\ p\ x \ddefeq (a : A) \times (p\ a = x)$ being its
+inverse). We can do the following calculation:
+%
+\begin{align*}
+& &&\dephom{\Type} P \\
+&=&&(x : X) \to P\ x \\
+&=&&(s_0 : X \to X) \times (s_1 : X \to P\ (s_0\ x)) \times (s_0 = \id{X}) \\
+&=&&(s : X \to \Sigma X P) \times (\pi_1 \circ s = \id{X}) \\
+&=&&\sectionof{\Type} (f\ P)
+\end{align*}
+%
+Generalising this argument to $\algcat{F}$ we need several
+ingredients. First of all, we need to show that, given
+$\alg{X} : \algcat{F}$,
+$\famover{\algcat{F}}{\alg{X}} = \fibover{\algcat{F}}{\alg{X}}$. This
+can be done by defining the following functions:
+%
+\begin{align*}
+  &\total_{\alg{X}} : \famover{\algcat{F}}{\alg{X}} \to \algcat{F} \\
+  &\total_{\alg{X}} (P,m) \ddefeq (\Sigma X P , \lambda x . (\theta\ (F\ \pi_1\ x) , \uncurry m\ (\phi_P\ x))) \\
+  &\\
+  &\proj_{\alg{X}} : (\algfam{P} : \famover{\algcat{F}}{\alg{X}}) \to \algcat{F}(\total_{\alg{X}}\ \algfam{P},\alg{X}) \\
+  &\proj_{\alg{X}} (P,m) \ddefeq (\pi_1 , \lambda x . \refl) \\
+  &\\
+  &\preimage_{\alg{X}} : (\algfam{P} : \fibover{\algcat{F}}{\alg{X}}) \to \famover{\algcat{F}}{\alg{X}} \\
+  &\preimage_{\alg{X}} ((A,\alpha),(p,p_0)) \ddefeq (\pi^{-1}\ p , m)
+\end{align*}
+%
+where
+$m : (x : FX) \times \Box_F\ (\pi^{-1}\ p)\ x \to \pi^{-1}\ p\
+(\theta\ x)$.
+This method can be defined in terms of $\alpha$ and $p_0$. It can then
+be shown that
+$\lambda \algfam{P} . (\total_{\alg{X}}\ \algfam{P},\proj_{\alg{X}}\
+\algfam{P})$
+and $\preimage_{\alg{X}}$ are inverses of one another, giving us the
+desired equivalence.
+
+\todoi{Work out showing that sections of algebra fibrations and
+  dependent algebra morphisms are equivalent, generalising the
+  situation in $\Type$.}
 
 \section{Free monads}
 \label{sec:oitfreemonad}
