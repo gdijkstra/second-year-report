@@ -1360,6 +1360,9 @@ where $\Fam_s$ is defined as:
 The other functions are defined in the same manner as for $\algcat{F}$
 as we have seen in~\cref{sec:oits}.
 
+\todoi{Prove that algebra families for general \hits are equivalent to
+  algebra fibrations.}
+
 \section{Category structure and coherence issues}
 \label{sec:hitscategory}
 
@@ -1681,6 +1684,11 @@ $F (\eq_{\C}\ f\ g) \to \eq_{\Type}\ (G f)\ (G g)$, composing this
 with $\Geq\ f\ g$ we get an algebra
 $F (\eq_{\C}\ f\ g) \to G (\eq_{\C}\ f\ g)$.
 
+\subsection{Induction principle}
+
+\todoi{Generalise dependent algebra morphisms to non-dependent
+  dialgebras and show them to be equivalent to the section principle.}
+
 \chapter{Generalised containers}
 \label{sec:gencontainers}
 
@@ -1889,7 +1897,8 @@ where:
 
 \section{Examples}
 
-\todoi{Write up examples of \onehits.}
+\todoi{Show that the circle, propositional truncation and
+  W-suspensions fit in the above scheme.}
 
 \section{Target functor}
 
@@ -1940,7 +1949,16 @@ $$
 
 We can also show that the target functor preserves composition and
 identity morphisms, appealing to functoriality of $\ap$ and of lifting
-of algebras. This means that $G$ is not a strict functor.
+of algebras. This means that $G$ is not a strict functor. Note that
+$G$ is a functor out of $\int_{\algcat{F_0}} (F_1 \circ U_0)$, but we
+will only need those morphisms in the category which are lifted from
+$\algcat{F_0}$. We will therefore denote the action of $G$ on
+morphisms as having the following type:
+$$
+G : ((f,f_0) : \algcat{F_0}(\alg{X},\alg{Y}))\ (x : F_1 \alg{X}) \to G (\alg{X},x) \to G (\alg{Y},F_1\ f\ x)
+$$
+The witnesses of the category laws and their coherences will also
+follow this rule.
 
 \section{Category of algebras}
 
@@ -1951,53 +1969,185 @@ our restricted version:
 \begin{alignat*}{3}
 &|\Alg_s| &&\ddefeq &&\ (X : Type) \\
 &&&\ \times &&\ (\theta_0 : F_0 X \to X) \\
-&&&\ \times &&\ (\theta_1 : (x : F_1 X) \to G\ ((X,\theta_0),x)
+&&&\ \times &&\ (\theta_1 : (x : F_1 X) \to G\ ((X,\theta_0),x))
 \end{alignat*}
 %
 with morphisms:
 \begin{alignat*}{3}
   &\Alg_s((X,\theta_0,\theta_1),(Y,\rho_0,\rho_1)) &&\ddefeq &&\ (f : X \to Y) \\
   &&&\ \times &&\ (f_0 : (x : F_0 X) \to f\ (\theta_0\ x) = \rho_0\ (F_0\ f\ x)) \\
-  &&&\ \times &&\ (f_1 : (x : F_1 X) \to G\ (\lift f) (\theta_1\ x) = \rho_1\ (F_1\ f\ x))
+  &&&\ \times &&\ (f_1 : (x : F_1 X) \to G\ f\ x\ (\theta_1\ x) = \rho_1\ (F_1\ f\ x))
 \end{alignat*}
 
 Defining composition and identity morphisms is similar to what we have
-done in~\cref{sec:nondepdialg}.
+done in~\cref{sec:nondepdialg}. We do not run into the issue we had
+when attempting to define identity morphisms for general \hits
+in~\cref{sec:hitscategory}, as $F_1$ is a strict functor.
 
-\todoi{composition}
+\subsection{Identity morphisms}
 
-\todoi{identity}
+Given an algebra $(X,\theta_0,\theta_1) : \Alg_s$, we can define:
+%
+\begin{align*}
+&\Id{(X,\theta_0,\theta_1)} : \Alg_s((X,\theta_0,\theta_1),(X\theta_0,\theta_1)) \\
+&\Id{(X,\theta_0,\theta_1)} \ddefeq \\
+&\ \ (\ \id{x} \\
+&\ \ ,\ \lambda x . \refl \\
+&\ \ ,\ \lambda x . \Gid_{((X,\theta_0),x)}\ x\ (\theta_1\ x) \\
+&\ \ )
+\end{align*}
+%
+where
+$$
+\Gid_{((X,\theta_0),x)} : (p : G ((X,\theta_0),x)) \to G\ \Id{((X,\theta_0),x)}\ p = p
+$$
 
+\subsection{Composition}
+
+Composition of two morphisms
+$(f,f_0,f_1) : \Alg_s((X,\theta_0,\theta_1),(Y,\rho_0,\rho_1))$ and
+$(g,g_0,g_1) : \Alg_s((Y,\rho_0,\rho_1),(Z,\zeta_0,\zeta_1))$ can be
+defined as follows:
+%
+\begin{align*}
+&(g,g_0,g_1) \circ (f,f_0,f_1) : \Alg_s((X,\theta_0,\theta_1),(Z,\zeta_0,\zeta_1)) \\
+&(g,g_0,g_1) \circ (f,f_0,f_1) \ddefeq \\
+&\ \ (\ g \circ f \\
+&\ \ ,\ \lambda x . \ap\ g\ (f_0\ x) \ct g_0\ (F_0\ f\ x) \\
+&\ \ ,\ \lambda x . \Gcomp\ (g,g_0)\ (f,f_0)\ x\ (\theta_1\ x) \ct \ap\ (G\ (g,g_0)\ (F_1\ f\ x))\ (f_1\ x) \ct g_1\ (F_1\ f\ x) \\
+&\ \ )
+\end{align*}
+%
+where
+%
+\begin{align*}
+&\Gcomp : \\ 
+&\ \ ((g,g_0) : \algcat{F_0}((Y,\rho_0),(Z,\zeta_0))) \\
+&\ \ ((f,f_0) : \algcat{F_0}((X,\theta_0),(Y,\rho_0))) \\
+&\ \ (x : F_1 X) \\
+&\ \ (p : G\ (X,\theta_0)\ x) \\
+&\ \to\ G\ ((g,g_0) \circ (f,f_0))\ x\ p = G\ (g,g_0)\ (F_1\ f\ x)\ (G\ (f,f_0)\ x\ p)
+\end{align*}
+%
+
+\subsection{Equality of algebra morphisms}
 Equality of algebra morphisms is a bit more involved, since the second
-constructor is a \emph{dependent} dialgebra.
+constructor is a \emph{dependent} dialgebra. Given algebra morphisms
+$(f,f_0,f_1), (g,g_0,g_1) :
+\Alg_s((X,\theta_0,\theta_1),(Y,\rho_0,\rho_1))$, we have:
+%
+\begin{align*}
+  & &&\ ((f,f_0,f_1) = (g,g_0,g_1)) \\
+  &=&&\ (p : f = g) \\
+  & &&\ \times (p_0 : (x : F_0 X) \to 
+  \xymatrix{
+    f\ (\theta_0\ x) \ar@{-}[d]_{f_0\ x} \ar@{-}[r]^{\ap\ (\lambda h . h\ (\theta_0\ x))\ p}  &g\ (\theta_0\ x) \ar@{-}[d]^{g_0\ x} \\
+    \rho_0\ (F_0\ f\ x) \ar@{-}[r]_{\ap\ (\lambda h . \rho_0\ (F_0\ h\ x))\ p} &\rho_0\ (F_0\ g\ x)
+  }) \\
+  & &&\ \times (p_1 : (x : F_1 X) \to
+  \xymatrix{
+    G\ (f,f_0)\ x\ (\theta_1\ x) \ar@{-}[d]_{f_1\ x} \ar@{-}[r]^{\apd\ (\lambda (h,h_0) . G\ (h,h_0)\ x\ (\theta_1\ x))\ (p,p_0)}  &G\ (g,g_0)\ x\ (\theta_1\ x) \ar@{-}[d]^{g_1\ x} \\
+    \rho_1\ (F_1\ f\ x) \ar@{-}[r]_{\apd\ (\lambda (h,h_0) . \rho_1\ (F_1\ h\ x))\ (p,p_0)} &\rho_1\ (F_1\ g\ x)
+  }) \\
+\end{align*}
+%
+The squares given by $p_1$ are actually \emph{dependent} squares: the
+$\apd$ parts yield dependent paths. 
 
-\todoi{eq of alg hom}
+\todoi{Explain how we get cubes for $p_1$ by working out the squares
+  for the $\apd$ parts.}
 
-\todoi{identity laws}
+\subsection{Category laws and structure}
 
-\todoi{associativity}
-
-\todoi{products}
-
-\todoi{equalisers}
+\todoi{Specify the coherence needed to show that $\Alg_s$ satisfies
+  the identity laws, associativity and has products and equalisers.}
 
 \section{Induction principle}
 
-\todoi{Write up induction principle for \onehits.}
+Following~\cref{sec:algfamhits} we can arrive at the definition of
+algebra families by instantiating the specification
+appropriately. Since the arguments of the path constructor, given by
+$F_1$, may only refer to the carrier and not the algebra, we can make
+some simplifications.
 
 \subsection{Algebra families}
 
-\todoi{Write up algebra families for \onehits.}
+\begin{defn}
+  An algebra family over $(X,\theta_0,\theta_1) : \Alg_s$, denoted
+  $\famover{\Alg_s}{(X,\theta_0,\theta_1)}$ consists of:
+
+  \begin{itemize}
+  \item a motive $P : X \to \Type$
+  \item a \emph{point method} $m_0 : (x : F_0 X) \to \Box_{F_0}\  P\ x \to P\ (\theta\ x)$
+  \item a \emph{path method} $m_1 : (x : F_1 X) \to (y : \Box_{F_1}\ P\ x) \to \Box_G\ (P,m_0)\ x\ y\ (\theta_1\ x)$
+  \end{itemize}
+\end{defn}
+where
+$$
+\Box_G : \famover{\algcat{F_0}}{(X,\theta_0)} \to (x : F_1 X) \to \Box_{F_1}\ P\ x \to G\ ((X,\theta_0),x) \to \Type
+$$
+We can calculate that $\Box_G$ is equivalent to the following:
+$$
+\Box_G\ (P,m_0)\ x\ y\ p = (m_0^{*d}\ (l^d\ (x , y)) = m_0^{*d}\ (r^d\ (x , y))\ [ P \downarrow p ]
+$$
+where
+$$
+m_0^{*d} : (x : F_0^* X) \times \Box_{F_0^*}\ P\ x \to P\ (\theta_0^*\ x)
+$$
+is the lifting of the method $m_0$ as a method of an $F_0$-algebra
+family to a method of an $F_0^*$-algebra family.
+$l^d, r,^d : (x : F_1 X) \times \Box_{F_1}\ P\ x \to (y : F_0^* X)
+\times \Box_{F_0^*}\ P\ y$
+are the ``dependent'' versions of the natural transformations.
+
+\todoi{Spell out the derivation of $\Box_G$ in greater detail.}
 
 \subsection{Dependent algebra morphisms}
 
-\todoi{Write up algebra families for \onehits.}
+\begin{defn}
+  A dependent algebra morphism of an algebra family
+  $(P,m_0,m_1) : \famover{\Alg_s}{(X,\theta_0,\theta_1)}$, denoted as
+  $\dephom{\Alg_s}{(P,m_0,m_1)}$, consists of:
+
+  \begin{itemize}
+  \item $s : (x : X) \to P\ x$, along with computation rules:
+  \item $s_0 : (x : F_0 X) \to s\ (\theta_0\ x) = m_0\ x\ (\actionsection{F_0}\ s\ x)$
+  \item $s_1 : (x : F_1 X) \to \actionsection{G}\ (s,s_0)\ x\ (\theta_1\ x) = m_1\ x\ (\actionsection{F_1}\ s\ x)$
+  \end{itemize}
+\end{defn}
+
+\todoi{Prove that the dependent algebra morphisms and sections are
+  equivalent.}
+
+\subsection{Examples}
+
+\todoi{Show that if we put in the specification of the circle, we get
+  something which is equivalent to the usual induction principle of
+  the circle.}
 
 \section{Limitations}
 
-\todoi{Work out circle example and show that we do not get what we expect.}
+\todoi{Work out circle example and show that things do not type check
+  as one would hope they would. This is the known issue of using
+  W-types to implement inductive types in an intensional type
+  theory.}
 
-\todoi{Show that truncation is not a container itself.}
+Another limitation is that the presented collection of \onehits is
+that we can represent \hits that are not representable as a
+container. One example is propositional truncation
+$|| \_ || : \Type \to \Type$. If it were representable as a container,
+its shape would be $|| \unitty ||$, which is $\unitty$, so $|| \_ ||$
+has to be a representable functor. However, $|| X || \neq \bot \to X$
+and $|| X || \neq \unitty \to X$. Any other candidates for the
+representing object yield functors which are not propositional
+truncation. This means that we cannot directly represent the type:
+
+\begin{alignat*}{2}
+  &\rlap{$\data\ T\ :\ \Type\ \where$} \\
+  &&\ \ c     &:\ || T || \to T
+\end{alignat*}
+
+
 
 \chapter{Thesis outline}
 \label{sec:outline}
@@ -2029,8 +2179,9 @@ constructor is a \emph{dependent} dialgebra.
 \end{itemize}
 
 \newpage
-\todototoc
+
 \listoftodos
+\todototoc
 
 \bibliography{second-year-report}
 
