@@ -765,7 +765,7 @@ Using this modality we can define what an algebra family is:
 
   \begin{itemize}
   \item a motive $P : X \to \Type$
-  \item a method $m : (x : F\ X) \to \Box_F\ P\ x \to P\ (\theta\ x)$
+  \item a method $m : (x : F\ X) \times \Box_F\ P\ x \to P\ (\theta\ x)$
   \end{itemize}
 \end{defn}
 %
@@ -785,7 +785,7 @@ $F$ on dependent functions:
 
   \begin{itemize}
   \item a dependent function $f : (x : X) \to P\ x$, along with
-  \item a computation rule $f_0 : (x : FX) \to f\ (\theta\ x) = m\ x\ (\actionsection{F}\ f\ x)$
+  \item a computation rule $f_0 : (x : FX) \to f\ (\theta\ x) = m\ (x, (\actionsection{F}\ f\ x))$
   \end{itemize}
 \end{defn}
 
@@ -1185,7 +1185,7 @@ can be done by defining the following functions:
 %
 \begin{align*}
   &\total_{\alg{X}} : \famover{\algcat{F}}{\alg{X}} \to \algcat{F} \\
-  &\total_{\alg{X}} (P,m) \ddefeq (\Sigma X P , \lambda x . (\theta\ (F\ \pi_1\ x) , \uncurry m\ (\phi_P\ x))) \\
+  &\total_{\alg{X}} (P,m) \ddefeq (\Sigma X P , \lambda x . (\theta\ (F\ \pi_1\ x) , m\ (\phi_P\ x))) \\
   &\\
   &\proj_{\alg{X}} : (\algfam{P} : \famover{\algcat{F}}{\alg{X}}) \to \algcat{F}(\total_{\alg{X}}\ \algfam{P},\alg{X}) \\
   &\proj_{\alg{X}} (P,m) \ddefeq (\pi_1 , \lambda x . \refl) \\
@@ -1341,12 +1341,12 @@ $\algfam{P} : \Fam_s \alg{X}$:
 \begin{alignat*}{4}
   &\Fam_s\ &&\alg{X}             &&: \Alg_s \to \Type&\\
   &\Box_F\ &&\alg{X}\ \algfam{P} &&: F \alg{X} \to \Type&\\
-  &\Box_G\ &&\alg{X}\ \algfam{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfam{P}\ x) \to G (\alg{X} , x) \to \Type&\\
+  &\Box_G\ &&\alg{X}\ \algfam{P} &&: (x : F \alg{X}) \times (y : \Box_F\ \alg{X} \ \algfam{P}\ x) \to G (\alg{X} , x) \to \Type&\\
   &\total\ &&\alg{X}\ \algfam{P} &&: \Alg_s&\\
   &\proj\  &&\alg{X}\ \algfam{P} &&: \Alg_s(\total\ \alg{X}\ \algfam{P}, \alg{X})&\\
   &\phi_F\ &&\alg{X}\ \algfam{P} &&: \Sigma (F \alg{X}) (\Box_F\ \alg{X}\ \algfam{P}) \to F (\total\ \alg{X}\ \algfam{P})&\\
-  &\phi_G\ &&\alg{X}\ \algfam{P} &&: (x : F \alg{X}) (y : \Box_F\ \alg{X} \ \algfam{P}\ x) &\\
-  &&&&&\to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfam{P}\ x\ y) 
+  &\phi_G\ &&\alg{X}\ \algfam{P} &&: (x : F \alg{X}) \times (y : \Box_F\ \alg{X} \ \algfam{P}\ x) &\\
+  &&&&&\to \Sigma (G\ (\alg{X},x)) (\Box_G\ \alg{X}\ \algfam{P}\ (x, y)) 
             \to G (\total\ \alg{X}\ \algfam{P}, \phi_F\ \alg{X}\ \algfam{P} (x , y)) &
 \end{alignat*}
 %
@@ -2052,7 +2052,7 @@ $(f,f_0,f_1), (g,g_0,g_1) :
 \end{align*}
 %
 The squares given by $p_1$ are actually \emph{dependent} squares: the
-$\apd$ parts yield dependent paths. 
+$\apd$ parts yield dependent paths.
 
 \todoi{Explain how we get cubes for $p_1$ by working out the squares
   for the $\apd$ parts.}
@@ -2078,17 +2078,17 @@ some simplifications.
 
   \begin{itemize}
   \item a motive $P : X \to \Type$
-  \item a \emph{point method} $m_0 : (x : F_0 X) \to \Box_{F_0}\  P\ x \to P\ (\theta\ x)$
-  \item a \emph{path method} $m_1 : (x : F_1 X) \to (y : \Box_{F_1}\ P\ x) \to \Box_G\ (P,m_0)\ x\ y\ (\theta_1\ x)$
+  \item a \emph{point method} $m_0 : (x : F_0 X) \times \Box_{F_0}\  P\ x \to P\ (\theta\ x)$
+  \item a \emph{path method} $m_1 : (x : F_1 X) \times (y : \Box_{F_1}\ P\ x) \to \Box_G\ (P,m_0)\ x\ y\ (\theta_1\ x)$
   \end{itemize}
 \end{defn}
 where
 $$
-\Box_G : \famover{\algcat{F_0}}{(X,\theta_0)} \to (x : F_1 X) \to \Box_{F_1}\ P\ x \to G\ ((X,\theta_0),x) \to \Type
+\Box_G : \famover{\algcat{F_0}}{(X,\theta_0)} \to (x : F_1 X) \times \Box_{F_1}\ P\ x \to G\ ((X,\theta_0),x) \to \Type
 $$
 We can calculate that $\Box_G$ is equivalent to the following:
 $$
-\Box_G\ (P,m_0)\ x\ y\ p = (m_0^{*d}\ (l^d\ (x , y)) = m_0^{*d}\ (r^d\ (x , y))\ [ P \downarrow p ]
+\Box_G\ (P,m_0)\ (x, y)\ p = (m_0^{*d}\ (l^d\ (x , y)) = m_0^{*d}\ (r^d\ (x , y))\ [ P \downarrow p ]
 $$
 where
 $$
