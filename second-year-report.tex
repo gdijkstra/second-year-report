@@ -2052,10 +2052,84 @@ $(f,f_0,f_1), (g,g_0,g_1) :
 \end{align*}
 %
 The squares given by $p_1$ are actually \emph{dependent} squares: the
-$\apd$ parts yield dependent paths.
+$\apd$ parts yield dependent paths and since these are dependent paths
+over a path type, we actually get squares.
+$\apd\ (\lambda (h,h_0) . G\ (h,h_0)\ x\ (\theta_1\ x))\ (p,p_0)$
+gives us a square of the following form:
+$$
+\xymatrixcolsep{10pc}
+\xymatrix{
+  \rho_0^*\ (l\ (F_1\ f\ x))
+  \ar@{-}[d]_{G\ (f,f_0)\ x\ (\theta_1\ x)}
+  \ar@{-}[r]^{\ap\ (\lambda (h,h_0) . \rho_0^*\ (l\ (F_1\ h\ x)))\ (p,p_0)}
+  &\rho_0^*\ (l\ (F_1\ g\ x)) 
+  \\
+  \rho_0^*\ (r\ (F_1\ f\ x))
+  &\rho_0^*\ (r\ (F_1\ g\ x)) 
+  \ar@{-}[l]^{\ap\ (\lambda (h,h_0) . \rho_0^*\ (r\ (F_1\ h\ x)))\ (p,p_0)}
+  \ar@{-}[u]_{G\ (g,g_0)\ x\ (\theta_1\ x)}
+  \\
+}
+$$
+Note for the top equation we have
+$\ap\ (\lambda (h,h_0) . \rho_0^*\ (l\ (F_1\ h\ x)))\ (p,p_0) = \ap\
+(\lambda h . \rho_0^*\ (l\ (F_1\ h\ x)))\ p$
+and similarly for the bottom equation. Unfolding the definition of
+$G$, we can prove that the square is the composite of three squares:
+$$
+\xymatrix{
+\rho_0^*\ (l\ (F_1\ f\ x))
+\ar@{-}[dd]_{f_0^*\ (l\ x)^{-1}}
+\ar@{-}[rr]^{\ap\ (\lambda h . \rho_0^*\ (l\ (F_1\ h\ x)))\ p}
+&&\rho_0^*\ (l\ (F_1\ g\ x))
+\ar@{-}[dd]^{g_0^*\ (l\ x)^{-1}}
+\\
+&p_0^*\ (l\ x)^{-1}&
+\\
+f\ (\theta_0^*\ (l\ x))
+\ar@{-}[dd]_{\ap\ f\ (\theta_1\ x)}
+\ar@{-}[rr]^{\ap\ (\lambda h . h\ (\theta_0^*\ (l\ x)))\ p}
+&&g\ (\theta_0^*\ (l\ x))
+\ar@{-}[dd]^{\ap\ g\ (\theta_1\ x)}
+\\
+&\apd\ (\lambda h . \ap\ h\ (\theta_1\ x))\ p&
+\\
+f\ (\theta_0^*\ (r\ x))
+\ar@{-}[dd]_{f_0^*\ (r\ x)}
+\ar@{-}[rr]^{\ap\ (\lambda h . h\ (\theta_0^*\ (r\ x)))\ p}
+&&g\ (\theta_0^*\ (r\ x))
+\ar@{-}[dd]^{g_0^*\ (r\ x)}
+\\
+&p_0^*\ (r\ x)&
+\\
+\rho_0^*\ (r\ (F_1\ f\ x))
+\ar@{-}[rr]_{\ap\ (\lambda h . \rho_0^*\ (r\ (F_1\ h\ x)))\ p}
+&&\rho_0^*\ (r\ (F_1\ g\ x))
+}
+$$
 
-\todoi{Explain how we get cubes for $p_1$ by working out the squares
-  for the $\apd$ parts.}
+The square for
+$\apd\ (\lambda (h,h_0) . \rho_1\ (F_1\ h\ x))\ (p,p_0)$, or rather
+the equivalent $\apd\ (\lambda h . \rho_1\ (F_1\ h\ x))\ p$ has the
+following form:
+$$
+\xymatrixcolsep{10pc}
+\xymatrix{
+  \rho_0^*\ (l\ (F_1\ f\ x))
+  \ar@{-}[d]_{\rho_1\ (F_1\ f\ x)}
+  \ar@{-}[r]^{\ap\ (\lambda (h,h_0) . \rho_0^*\ (l\ (F_1\ h\ x)))\ (p,p_0)}
+  &\rho_0^*\ (l\ (F_1\ g\ x)) 
+  \\
+  \rho_0^*\ (r\ (F_1\ f\ x))
+  &\rho_0^*\ (r\ (F_1\ g\ x)) 
+  \ar@{-}[l]^{\ap\ (\lambda (h,h_0) . \rho_0^*\ (r\ (F_1\ h\ x)))\ (p,p_0)}
+  \ar@{-}[u]_{\rho_1\ (F_1\ g\ x)}
+  \\
+}
+$$
+
+\todoi{Explain how the $p_1$ should be the composition of these two
+  squares with $f_1\ x$ and $g_1\ x$ as degenerate squares.}
 
 \subsection{Category laws and structure}
 
