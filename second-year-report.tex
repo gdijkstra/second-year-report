@@ -91,14 +91,14 @@ constructor, as it does not map into the type $S^1$, but one of its
 equality types. $S^1$ comes with a recursion principle or
 non-dependent eliminator:
 $$
-\rec : (A : \Type) (b : A) (l : b = b) \to S^1 \to A
+\rec_{S^1} : (A : \Type) (b : A) (l : b = b) \to S^1 \to A
 $$
 which comes with the following computation rules, given $A : \Type$,
 $b : A$ and $l : b = b$:
 %
 \begin{align*}
-&\rec\mbox{-}\beta_0 : \rec\ A\ b\ l\ \base = b \\
-&\rec\mbox{-}\beta_1 : \ap\ \rec\ \loopcstr = l
+&\rec_{S^1}\mbox{-}\beta_0 : \rec_{S^1}\ A\ b\ l\ \base = b \\
+&\rec_{S^1}\mbox{-}\beta_1 : \ap\ \rec_{S^1}\ \loopcstr = l
 \end{align*}
 %
 The recursion principle for $S^1$ tells us that in order to map out of
@@ -112,16 +112,19 @@ of $S^1$, nor the data for the recursion principle.
 The induction principle or dependent eliminator of $S^1$ is as
 follows:
 $$
-\ind : (P : S^1 \to \Type) (b : P\ \base) (l : b = b [ P \downarrow \loopcstr ]) \to (x : S^1) \to P\ x
+\ind_{S^1} : (P : S^1 \to \Type) (b : P\ \base) (l : b = b\ [\ P \downarrow \loopcstr\ ]) \to (x : S^1) \to P\ x
 $$
 Note that for $l$ we now have to give a dependent path over
 $\loopcstr$.
 
 For \oits, it is usually the case that the computation rules for the
-elimination principles hold definitionally. In this note we want to
-talk about the theory of \hits in type theory itself and as such we do
-not have a way to talk about definitional equalities, hence the
-computation rules we talk about only hold by propositional equality.
+elimination principles hold definitionally/strictly. In this note we
+want to talk about the theory of \hits in type theory itself and as
+such we do not have a way to talk about strict equalities. It is
+possible to extend the type theory to one where we have two equality
+types: a strict and a propositional one~\cite{Voevodsky2013}. However,
+we will not do this and instead will just work with propositional
+equality.
 
 We can also have constructors that map into an equality type of an
 equality of the type we are defining, one example being the torus:
@@ -147,7 +150,7 @@ $n > 0$, \nconstructors{n} are also referred to as \emph{path
 \label{sec:quotients}
 
 Another example of a \hit is the quotient of a type $A$ by a relation
-$~ : A \to A \to \Type$:
+$\sim : A \to A \to \Type$:
 \begin{alignat*}{2}
   &\rlap{$\data\ A/\sim\ :\ \Type\ \where$} \\
   &&\ \ [\_]  &:\ A \to A/\sim \\
@@ -159,8 +162,8 @@ Note that we have to add $\uipc$ as a constructor to make sure that the
 result is a set. Without it, we may get non-trivial equalities even
 though we $A$ might be a set and $~$ is propositional everywhere. An
 example of this is taking $A$ to be the unit type and ``quotienting''
-it by the trivial, relation, \ie $x ~ y = \unitty$ for all
-$x\ y : \unitty$. Without the $\uipc$ constructor, $A/~$ will be
+it by the trivial, relation, \ie $x \sim y = \unitty$ for all
+$x\ y : \unitty$. Without the $\uipc$ constructor, $A/\sim$ will be
 equivalent to the circle.
 
 It is clear that we can implement quotient types using \hits. The
@@ -195,7 +198,7 @@ quotienting this type by the permutation relation:
 \begin{align*}
   &\sim : \Pretree \to \Pretree \to \Type \\
   &l \sim l \defeq \top \\
-  &n\ f \sim n\ g \defeq (p : \Nat = \Nat) \times ((x : Nat) \to f\ x ~ g\ (\coe\ p\ x)) \\
+  &n\ f \sim n\ g \defeq (p : \Nat = \Nat) \times ((x : Nat) \to f\ x \sim g\ (\coe\ p\ x)) \\
   &l \sim n\ g \defeq \bot \\
   &n\ f \sim l \defeq \bot
 \end{align*}
@@ -258,9 +261,9 @@ definitions, \ie we know that the following describe equivalent types:
 \end{alignat*}
 %
 \begin{alignat*}{2}
-  &\rlap{$\data\ \Nat \prime\ :\ \Type\ \where$} \\
-  &&\ \ \suc  &:\ \Nat \prime \to \Nat \prime \\
-  &&\ \ \zero &:\ \Nat \prime
+  &\rlap{$\data\ \Nat^\prime\ :\ \Type\ \where$} \\
+  &&\ \ \suc  &:\ \Nat^\prime \to \Nat^\prime \\
+  &&\ \ \zero &:\ \Nat^\prime
 \end{alignat*}
 
 Similarly, we expect the following to be equivalent as well:
@@ -274,8 +277,8 @@ Similarly, we expect the following to be equivalent as well:
 \end{alignat*}
 %
 \begin{alignat*}{2}
-  &\rlap{$\data\ T^2 \prime\ :\ \Type\ \where$} \\
-  &&\ \ \base     &:\ T^2 \prime \\
+  &\rlap{$\data\ T^{2\prime}\ :\ \Type\ \where$} \\
+  &&\ \ \base     &:\ T^{2\prime} \\
   &&\ \ q         &:\ \base = \base \\
   &&\ \ p         &:\ \base = \base \\
   &&\ \ s         &:\ p \ct q = q \ct p
@@ -304,15 +307,7 @@ and a \oneconstructor (spokes):
 %
 \begin{align*}
 &h : T^2 \\
-&s' : (x : S^1) \to f\ x = h
-\end{align*}
-%
-where $f : S^1 \to T^2$ is defined using the recursion principle of
-$S^1$ with:
-%
-\begin{align*}
-  &f\ \base \ddefeq \base \\
-  &\ap\ f\ \loopcstr \ddefeq p \ct q \ct (q \ct p)^{-1}
+&s' : (x : S^1) \to \rec_{S^1}\ T^2\ \base\ (p \ct q \ct (q \ct p)^{-1}\ x = h
 \end{align*}
 %
 In this special case, one can show that the resulting type is
@@ -369,10 +364,13 @@ sequential colimit of this sequence is given by the following \hit:
   &&\ \ g : (n : \Nat) \to (a : A\ n) \to i\ n\ a = i\ (\suc n)\ (f\ n\ a)
 \end{alignat*}
 %
-We conjecture that there is a class of \hits with recursive path
-constructors, such as propositional truncation, that can be
-implemented as a colimit of a sequence of types given as \hits without
-recursive path constructors, similar to the construction above.
+We conjecture that the class of \hits with recursive path
+constructors, of which the arguments functors preserve sequential
+colimits, such as propositional truncation, can be implemented as a
+colimit of a sequence of types given as \hits without recursive path
+constructors, similar to the construction above. It should be enough
+to have a type theory with homotopy pushouts and natural numbers to
+construct these \hits.
 
 \section{Categories in type theory}
 \label{sec:catintt}
@@ -643,10 +641,12 @@ Specifying an \oit is done by giving an endofunctor
 $F : \Type \to \Type$. We will assume this functor to be given as a
 container~\cite{Abbott2005}, which ensures that it is strictly
 positive. Since we are not primarily interested in the existence of
-the inductive types, we do not need this particular
-restriction. Containers do give rise to functors that satisfy the
-functor laws strictly, which makes the equational, reasoning a lot more
-convenient for us.
+the inductive types, we do not need this particular restriction:
+showing that initiality and induction coincide does not involve
+appealing to the functor its strict positivity. Using containers does
+have another advantage, namely that they give rise to functors that
+satisfy the functor laws strictly. Working with strict functors makes
+the equational reasoning a lot more convenient.
 
 A functor $F$ defines an inductive type $T$ with type formation rule:
 $$
@@ -733,10 +733,7 @@ the introduction and elimination rules interact:
 Another way of stating the induction principle for $\Nat$ is that for
 any \emph{$\Nat$-algebra family} (the family $P$ along with its
 methods) we get a \emph{dependent $\Nat$-algebra morphism} ($\indnat$
-along with its computation rules). Note that usually the computation
-laws for $\indnat$ hold strictly. Since we are working inside type
-theory, we cannot state that a computation rule holds strictly, hence
-all the rules hold up to propositional equality.
+along with its computation rules).
 
 Defining what constitutes an algebra family for a functor
 $F : \Type \to \Type$ requires us to be able to state that a family
@@ -1366,7 +1363,7 @@ as we have seen in~\cref{sec:oits}.
 \section{Category structure and coherence issues}
 \label{sec:hitscategory}
 
-While we the above specification of \hits allows us to define algebras
+While the above specification of \hits allows us to define algebras
 and algebra morphisms, we run into coherence issues as soon as we try
 to add more category structure. To add more category structure, we
 need to change the definition of $\Cat$ and hence the definitions of
@@ -1415,8 +1412,10 @@ $\lift \Id{\alg{X}} x : \int_{\Alg_s} F ((\alg{X},x), (\alg{X}, F\
 \Id{\alg{X}}\ x)$,
 whereas the identity morphism of $\int_{\Alg_s} F$ would have type
 $\int_{\Alg_s} F ((\alg{X},x),(\alg{X},x))$, which are not
-definitionally the same, unless $F$ happens to satisfy the functor
-laws strictly, which is not something we can assume in \mltt.
+strictly the same, unless $F$ happens to satisfy the functor
+laws strictly. If $F$ is a container on $\Type$, then it will be a
+strict functor, but as we are working with generalised containers from
+non-strict categories, $F$ will often not be strict.
 
 \section{Non-dependent dialgebras}
 \label{sec:nondepdialg}
@@ -2039,12 +2038,16 @@ $(f,f_0,f_1), (g,g_0,g_1) :
 \begin{align*}
   & &&\ ((f,f_0,f_1) = (g,g_0,g_1)) \\
   &=&&\ (p : f = g) \\
-  & &&\ \times (p_0 : (x : F_0 X) \to 
+  & &&\ \times (p_0 : (x : F_0 X) \to \\
+  & &&
+  \xymatrixcolsep{10pc}
   \xymatrix{
     f\ (\theta_0\ x) \ar@{-}[d]_{f_0\ x} \ar@{-}[r]^{\ap\ (\lambda h . h\ (\theta_0\ x))\ p}  &g\ (\theta_0\ x) \ar@{-}[d]^{g_0\ x} \\
     \rho_0\ (F_0\ f\ x) \ar@{-}[r]_{\ap\ (\lambda h . \rho_0\ (F_0\ h\ x))\ p} &\rho_0\ (F_0\ g\ x)
   }) \\
-  & &&\ \times (p_1 : (x : F_1 X) \to
+  & &&\ \times (p_1 : (x : F_1 X) \to \\
+  & &&
+  \xymatrixcolsep{10pc}
   \xymatrix{
     G\ (f,f_0)\ x\ (\theta_1\ x) \ar@{-}[d]_{f_1\ x} \ar@{-}[r]^{\apd\ (\lambda (h,h_0) . G\ (h,h_0)\ x\ (\theta_1\ x))\ (p,p_0)}  &G\ (g,g_0)\ x\ (\theta_1\ x) \ar@{-}[d]^{g_1\ x} \\
     \rho_1\ (F_1\ f\ x) \ar@{-}[r]_{\apd\ (\lambda (h,h_0) . \rho_1\ (F_1\ h\ x))\ (p,p_0)} &\rho_1\ (F_1\ g\ x)
@@ -2128,8 +2131,9 @@ $$
 }
 $$
 
-\todoi{Explain how the $p_1$ should be the composition of these two
-  squares with $f_1\ x$ and $g_1\ x$ as degenerate squares.}
+Instead of giving dependent squares for $p_1$, we may show that
+precomposing $f_0\ x$ (as a degenerate square) with the second square
+is the same as postcomposing $g_0\ x$ with the first square.
 
 \subsection{Category laws and structure}
 
@@ -2207,21 +2211,19 @@ are the ``dependent'' versions of the natural transformations.
   theory.}
 
 Another limitation is that the presented collection of \onehits is
-that we can represent \hits that are not representable as a
+that it we can represent functors that are not representable as a
 container. One example is propositional truncation
 $|| \_ || : \Type \to \Type$. If it were representable as a container,
 its shape would be $|| \unitty ||$, which is $\unitty$, so $|| \_ ||$
-has to be a representable functor. However, $|| X || \neq \bot \to X$
-and $|| X || \neq \unitty \to X$. Any other candidates for the
-representing object yield functors which are not propositional
-truncation. This means that we cannot directly represent the type:
+has to be a representable functor $|| X || = P \to X$ for some
+$P : \Type$. $P$ cannot be inhabited, as $P \to \Bool$ will not be
+$\unitty$. If $P$ is empty, then $P \to \bot = \unitty$, instead of
+$\bot$. This means that we cannot directly represent \hits such as:
 
 \begin{alignat*}{2}
   &\rlap{$\data\ T\ :\ \Type\ \where$} \\
-  &&\ \ c     &:\ || T || \to T
+  &&\ \ c_1     &:\ || T || \to T
 \end{alignat*}
-
-
 
 \chapter{Thesis outline}
 \label{sec:outline}
